@@ -1,18 +1,13 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import SolanaWalletProvider from "@/components/WalletProvider";
 import Navbar from "@/components/Navbar";
-
-const inter = Inter({
-  variable: "--font-sans",
-  subsets: ["latin"],
-});
+import Scanlines from "@/components/Scanlines";
+import Ticker from "@/components/Ticker";
 
 export const metadata: Metadata = {
-  title: "Avellum - Trust Layer for the A2A Economy",
+  title: "Avellum // Trust Layer",
   description: "The decentralized trust layer for AI agents. Rate, verify, and discover trustworthy agents in the A2A economy.",
-  keywords: ["AI agents", "trust score", "A2A", "Solana", "blockchain", "verification"],
 };
 
 export default function RootLayout({
@@ -22,10 +17,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body className={`${inter.variable} antialiased animated-gradient min-h-screen`}>
+      <body className="antialiased min-h-screen">
         <SolanaWalletProvider>
+          <Scanlines />
+          <Ticker />
           <Navbar />
-          <main className="pt-16">
+          <main className="pt-24 pb-12">
             {children}
           </main>
         </SolanaWalletProvider>

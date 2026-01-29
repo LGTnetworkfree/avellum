@@ -1,93 +1,163 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0a0a0a;
-  --foreground: #ededed;
+  /* Terminal Theme Palette */
+  --background: #0a1628;
+  --foreground: #00d4ff;
+  --text-dim: #4b6a8a;
+  --border-color: #1e3a5a;
+  --accent: #00d4ff;
+
+  /* Fonts */
+  --font-serif: "Times New Roman", serif;
+  --font-mono: "Courier New", monospace;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-text-dim: var(--text-dim);
+  --color-border-color: var(--border-color);
+  --color-accent: var(--accent);
+
+  --font-serif: var(--font-serif);
+  --font-mono: var(--font-mono);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  font-family: var(--font-mono);
+  overflow-x: hidden;
+}
+
+/* Base resets */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-serif);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: bold;
 }
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
+  width: 10px;
+  background: var(--background);
+  border-left: 1px solid var(--border-color);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(139, 92, 246, 0.5);
-  border-radius: 4px;
+  background: var(--border-color);
+  border: 1px solid var(--accent);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(139, 92, 246, 0.8);
+  background: var(--accent);
 }
 
-/* Gradient text utility */
-.gradient-text {
-  background: linear-gradient(135deg, #a855f7 0%, #ec4899 50%, #f97316 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+/* Terminal Utilities */
+.terminal-border {
+  border: 1px solid var(--border-color);
+  background: rgba(10, 22, 40, 0.95);
+  box-shadow: 0 0 10px rgba(0, 212, 255, 0.1);
 }
 
-/* Animated gradient background */
-.animated-gradient {
-  background: linear-gradient(-45deg, #0f0f23, #1a0b2e, #16132d, #0d1117);
-  background-size: 400% 400%;
-  animation: gradientShift 15s ease infinite;
+.terminal-grid {
+  background-image:
+    linear-gradient(var(--border-color) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
+  background-size: 40px 40px;
+  background-position: center top;
 }
 
-@keyframes gradientShift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+/* Scanline Overlay */
+.scanlines {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom,
+      rgba(255, 255, 255, 0),
+      rgba(255, 255, 255, 0) 50%,
+      rgba(0, 0, 0, 0.1) 50%,
+      rgba(0, 0, 0, 0.1));
+  background-size: 100% 4px;
+  pointer-events: none;
+  z-index: 9999;
+  animation: scan 10s linear infinite;
+  opacity: 0.6;
 }
 
-/* Glow effects */
-.glow-purple {
-  box-shadow: 0 0 40px rgba(139, 92, 246, 0.3);
+@keyframes scan {
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: 0 100%;
+  }
 }
 
-.glow-pink {
-  box-shadow: 0 0 40px rgba(236, 72, 153, 0.3);
+/* Marquee Animation */
+.marquee-container {
+  overflow: hidden;
+  white-space: nowrap;
 }
 
-/* Card hover effects */
-.card-hover {
-  transition: all 0.3s ease;
+.marquee-content {
+  display: inline-block;
+  animation: marquee 20s linear infinite;
 }
 
-.card-hover:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
 }
 
-/* Wallet adapter overrides */
+/* Glow Effects */
+.text-glow {
+  text-shadow: 0 0 5px rgba(0, 212, 255, 0.5);
+}
+
+.border-glow {
+  box-shadow: 0 0 10px rgba(0, 212, 255, 0.2), inset 0 0 10px rgba(0, 212, 255, 0.1);
+}
+
+/* Wallet Adapter Overrides */
 .wallet-adapter-button {
-  background-image: linear-gradient(to right, #9333ea, #db2777) !important;
+  font-family: var(--font-mono) !important;
+  background-color: transparent !important;
+  border: 1px solid var(--accent) !important;
+  color: var(--accent) !important;
+  border-radius: 0 !important;
+  text-transform: uppercase !important;
+  transition: all 0.2s !important;
+}
+
+.wallet-adapter-button:hover {
+  background-color: rgba(0, 212, 255, 0.1) !important;
+  box-shadow: 0 0 15px rgba(0, 212, 255, 0.4) !important;
 }
 
 .wallet-adapter-modal-wrapper {
-  background-color: rgba(0, 0, 0, 0.9) !important;
+  background-color: var(--background) !important;
+  border: 2px solid var(--border-color) !important;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.8) !important;
 }
 
-.wallet-adapter-modal-container {
-  background-color: #1a1a2e !important;
-  border: 1px solid rgba(139, 92, 246, 0.3) !important;
-  border-radius: 1rem !important;
+.wallet-adapter-modal-title {
+  font-family: var(--font-serif) !important;
+  color: var(--accent) !important;
+  text-transform: uppercase !important;
 }
