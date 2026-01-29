@@ -44,10 +44,10 @@ export default function AgentsPage() {
     );
 
     const registryFilters: { value: Registry; label: string; color: string }[] = [
-        { value: 'all', label: 'All Registries', color: 'from-gray-500 to-gray-600' },
-        { value: 'x402scan', label: 'x402scan', color: 'from-blue-500 to-cyan-500' },
-        { value: 'mcp', label: 'MCP Registry', color: 'from-purple-500 to-pink-500' },
-        { value: 'a2a', label: 'A2A Registry', color: 'from-orange-500 to-amber-500' }
+        { value: 'all', label: 'All Registries', color: 'from-gray-700 to-gray-800' },
+        { value: 'x402scan', label: 'x402scan', color: 'from-blue-600 to-cyan-600' },
+        { value: 'mcp', label: 'MCP Registry', color: 'from-blue-800 to-indigo-900' },
+        { value: 'a2a', label: 'A2A Registry', color: 'from-cyan-700 to-blue-800' }
     ];
 
     return (
@@ -58,7 +58,7 @@ export default function AgentsPage() {
                     <h1 className="text-4xl font-bold text-white mb-4">AI Agents</h1>
                     <p className="text-gray-400 text-lg">
                         Browse and rate AI agents from multiple registries.
-                        {!connected && <span className="text-purple-400"> Connect your wallet to submit ratings.</span>}
+                        {!connected && <span className="text-[#00d4ff] text-glow"> Connect your wallet to submit ratings.</span>}
                     </p>
                 </div>
 
@@ -79,7 +79,7 @@ export default function AgentsPage() {
                             placeholder="Search agents by name, address, or description..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full pl-12 pr-4 py-3 rounded-xl bg-gray-900/80 border border-gray-700/50 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500/50 transition-colors"
+                            className="w-full pl-12 pr-4 py-3 bg-[#050d18] border border-[#1e3a5a] text-white placeholder-[#4b6a8a] focus:outline-none focus:border-[#00d4ff] font-mono text-sm transition-colors rounded-none"
                         />
                     </div>
 
@@ -89,9 +89,9 @@ export default function AgentsPage() {
                             <button
                                 key={reg.value}
                                 onClick={() => setFilter(reg.value)}
-                                className={`px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 ${filter === reg.value
-                                    ? `bg-gradient-to-r ${reg.color} text-white shadow-lg`
-                                    : 'bg-gray-900/80 border border-gray-700/50 text-gray-400 hover:text-white hover:border-gray-600'
+                                className={`px-4 py-3 text-sm font-mono tracking-wide uppercase transition-all duration-300 rounded-none ${filter === reg.value
+                                    ? `bg-gradient-to-r ${reg.color} text-white border border-transparent`
+                                    : 'bg-[#050d18] border border-[#1e3a5a] text-[#4b6a8a] hover:text-[#00d4ff] hover:border-[#00d4ff]'
                                     }`}
                             >
                                 {reg.label}

@@ -23,9 +23,9 @@ export default function AgentCard({ agent, showRating = true }: Props) {
     const [copied, setCopied] = useState(false);
 
     const registryColors: Record<string, string> = {
-        x402scan: 'from-blue-500 to-cyan-500',
-        mcp: 'from-purple-500 to-pink-500',
-        a2a: 'from-orange-500 to-amber-500'
+        x402scan: 'from-blue-600 to-cyan-600',
+        mcp: 'from-blue-800 to-indigo-900',
+        a2a: 'from-cyan-700 to-blue-800'
     };
 
     const registryLabels: Record<string, string> = {
@@ -71,7 +71,7 @@ export default function AgentCard({ agent, showRating = true }: Props) {
     }
 
     return (
-        <div className="group relative bg-gradient-to-br from-gray-900/80 to-gray-800/80 rounded-2xl border border-gray-700/50 p-6 hover:border-purple-500/50 transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/10">
+        <div className="group relative bg-[#0a1628] rounded-none border border-[#1e3a5a] p-6 hover:border-[#00d4ff] transition-all duration-300 hover:shadow-[0_0_15px_rgba(0,212,255,0.1)]">
             {/* Registry badge */}
             <div className={`absolute -top-3 left-6 px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r ${registryColors[agent.registry]} text-white shadow-lg`}>
                 {registryLabels[agent.registry]}
@@ -80,7 +80,7 @@ export default function AgentCard({ agent, showRating = true }: Props) {
             <div className="flex items-start justify-between gap-4 mt-2">
                 <div className="flex-1 min-w-0">
                     <Link href={`/agents/${agent.address}`}>
-                        <h3 className="text-xl font-bold text-white hover:text-purple-400 transition-colors cursor-pointer truncate">
+                        <h3 className="text-xl font-bold text-white hover:text-[#00d4ff] transition-colors cursor-pointer truncate font-serif tracking-wide">
                             {agent.name || 'Unnamed Agent'}
                         </h3>
                     </Link>
@@ -97,7 +97,7 @@ export default function AgentCard({ agent, showRating = true }: Props) {
                                 setCopied(true);
                                 setTimeout(() => setCopied(false), 2000);
                             }}
-                            className="text-gray-500 hover:text-purple-400 transition-colors"
+                            className="text-[#4b6a8a] hover:text-[#00d4ff] transition-colors"
                             title="Copy address"
                         >
                             {copied ? (
@@ -134,7 +134,7 @@ export default function AgentCard({ agent, showRating = true }: Props) {
                                 setShowRatingPanel(!showRatingPanel);
                             }
                         }}
-                        className="ml-auto px-4 py-2 rounded-xl text-sm font-semibold bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white transition-all duration-300"
+                        className="ml-auto px-4 py-2 text-sm font-mono tracking-widest uppercase border border-[#00d4ff] text-[#00d4ff] hover:bg-[#00d4ff] hover:text-[#0a1628] transition-all duration-300"
                     >
                         {connected ? (showRatingPanel ? 'Cancel' : 'Rate Agent') : 'Connect to Rate'}
                     </button>
@@ -142,30 +142,32 @@ export default function AgentCard({ agent, showRating = true }: Props) {
             </div>
 
             {/* Rating panel */}
-            {showRatingPanel && connected && (
-                <div className="mt-4 pt-4 border-t border-gray-700/50 space-y-4">
-                    <RatingSlider value={rating} onChange={setRating} disabled={isSubmitting} />
+            {
+                showRatingPanel && connected && (
+                    <div className="mt-4 pt-4 border-t border-gray-700/50 space-y-4">
+                        <RatingSlider value={rating} onChange={setRating} disabled={isSubmitting} />
 
-                    <div className="flex items-center justify-between">
-                        <span className="text-xs text-gray-500">
-                            Your rating will be weighted by your $AVELLUM balance
-                        </span>
-                        <button
-                            onClick={submitRating}
-                            disabled={isSubmitting}
-                            className="px-6 py-2 rounded-xl text-sm font-semibold bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-400 hover:to-emerald-400 text-white transition-all duration-300 disabled:opacity-50"
-                        >
-                            {isSubmitting ? 'Submitting...' : 'Submit Rating'}
-                        </button>
+                        <div className="flex items-center justify-between">
+                            <span className="text-xs text-gray-500">
+                                Your rating will be weighted by your $AVELLUM balance
+                            </span>
+                            <button
+                                onClick={submitRating}
+                                disabled={isSubmitting}
+                                className="px-6 py-2 text-sm font-mono tracking-widest uppercase bg-[#00d4ff] text-[#0a1628] hover:bg-white transition-all duration-300 disabled:opacity-50"
+                            >
+                                {isSubmitting ? 'Submitting...' : 'Submit Rating'}
+                            </button>
+                        </div>
+
+                        {submitMessage && (
+                            <p className={`text-sm ${submitMessage.includes('submitted') ? 'text-green-400' : 'text-red-400'}`}>
+                                {submitMessage}
+                            </p>
+                        )}
                     </div>
-
-                    {submitMessage && (
-                        <p className={`text-sm ${submitMessage.includes('submitted') ? 'text-green-400' : 'text-red-400'}`}>
-                            {submitMessage}
-                        </p>
-                    )}
-                </div>
-            )}
-        </div>
+                )
+            }
+        </div >
     );
 }
