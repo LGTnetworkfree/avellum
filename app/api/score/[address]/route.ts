@@ -147,7 +147,7 @@ export async function GET(request: Request, { params }: RouteParams) {
             agent_address: address,
             fee_amount: 0.001,
             caller_ip: clientIp
-        }).then(() => { }).catch(() => { });
+        }).then(() => { }, () => { });
 
         // Return trust score response
         return NextResponse.json({
