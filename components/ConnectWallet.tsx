@@ -46,7 +46,9 @@ export default function ConnectWallet({ showBalance = true }: Props) {
                     </span>
                 </div>
             )}
-            <WalletMultiButton className="!bg-gradient-to-r !from-purple-600 !to-pink-600 hover:!from-purple-500 hover:!to-pink-500 !rounded-xl !h-11 !font-semibold !text-sm !transition-all !duration-300" />
+            <WalletMultiButton className="!bg-gradient-to-r !from-purple-600 !to-pink-600 hover:!from-purple-500 hover:!to-pink-500 !rounded-xl !h-11 !font-semibold !text-sm !transition-all !duration-300">
+                {connected ? (publicKey ? `${publicKey.toBase58().substring(0, 4)}...${publicKey.toBase58().substring(publicKey.toBase58().length - 4)}` : 'CONNECTED') : 'CONNECT WALLET'}
+            </WalletMultiButton>
         </div>
     );
 }

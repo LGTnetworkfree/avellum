@@ -7,54 +7,43 @@ import ConnectWallet from './ConnectWallet';
 export default function Navbar() {
     const pathname = usePathname();
 
-    const navLinks = [
-        { href: '/', label: 'HOME' },
-        { href: '/agents', label: 'AGENTS_DB' },
-        { href: '/dashboard', label: 'VERIFIER_DASH' },
-    ];
-
     return (
-        <nav className="fixed top-8 left-0 right-0 z-40 bg-[#0a1628]/95 backdrop-blur-sm border-b border-[#1e3a5a]">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex items-center justify-between h-16">
-                    {/* Logo */}
-                    <Link href="/" className="flex items-center gap-3 group">
-                        <div className="w-10 h-10 border border-[#00d4ff] flex items-center justify-center bg-[#00d4ff]/10 group-hover:bg-[#00d4ff]/20 transition-colors">
-                            <span className="text-[#00d4ff] font-serif font-bold text-2xl">A</span>
-                        </div>
-                        <div className="flex flex-col">
-                            <span className="text-xl font-bold text-[#00d4ff] tracking-widest leading-none">
-                                AVELLUM
-                            </span>
-                            <span className="text-[10px] text-[#4b6a8a] tracking-[0.2em] font-mono">
-                                TRUST_LAYER_V1.0
-                            </span>
-                        </div>
+        <nav className="fixed top-8 left-0 right-0 z-40">
+            <div className="max-w-7xl mx-auto border-l border-r border-b border-[#1e3a5a] bg-[#0a1628]/95 backdrop-blur-md">
+                <div className="grid grid-cols-2 md:grid-cols-[1.5fr_2fr_1.5fr] h-16 divide-x divide-[#1e3a5a]">
+
+                    {/* Logo Section */}
+                    <Link href="/" className="flex items-center px-6 hover:bg-[#142a44] transition-colors group">
+                        <span className="font-serif font-bold text-xl text-[#00d4ff] tracking-tight group-hover:text-white transition-colors">
+                            AVELLUM
+                        </span>
+                        <span className="ml-3 font-mono text-[0.6rem] text-[#4b6a8a] tracking-widest mt-1">
+                            v.2.0.4-CRYPTO
+                        </span>
                     </Link>
 
-                    {/* Navigation links */}
-                    <div className="hidden md:flex items-center gap-6">
-                        {navLinks.map((link) => (
+                    {/* Navigation Links (Center) */}
+                    <div className="hidden md:flex items-center justify-center divide-x divide-[#1e3a5a] h-full">
+                        {[
+                            { href: '/agents', label: 'EXPLORER' },
+                            { href: '/dashboard', label: 'DASHBOARD' },
+                            { href: '/docs', label: 'DOCS' }
+                        ].map((link) => (
                             <Link
                                 key={link.href}
                                 href={link.href}
-                                className={`text-sm tracking-widest transition-all duration-300 relative group px-2 py-1 ${pathname === link.href
-                                    ? 'text-[#00d4ff]'
-                                    : 'text-[#4b6a8a] hover:text-[#00d4ff]'
+                                className={`flex items-center justify-center h-full px-8 text-xs font-mono font-bold tracking-widest uppercase transition-all duration-300 hover:bg-[#00d4ff] hover:text-[#0a1628] ${pathname === link.href ? 'text-[#00d4ff] bg-[#142a44]' : 'text-[#4b6a8a]'
                                     }`}
                             >
-                                <span className="relative z-10 font-mono font-bold">
-                                    {pathname === link.href ? '> ' : ''}{link.label}
-                                </span>
-                                {pathname === link.href && (
-                                    <span className="absolute bottom-0 left-0 w-full h-[2px] bg-[#00d4ff] shadow-[0_0_10px_#00d4ff]" />
-                                )}
+                                {link.label}
                             </Link>
                         ))}
                     </div>
 
-                    {/* Wallet */}
-                    <ConnectWallet />
+                    {/* Wallet Connection (Right) */}
+                    <div className="flex items-center justify-center px-4 bg-[#0a1628]">
+                        <ConnectWallet />
+                    </div>
                 </div>
             </div>
         </nav>
