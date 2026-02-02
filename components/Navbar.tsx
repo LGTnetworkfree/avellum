@@ -18,12 +18,15 @@ export default function Navbar() {
     ];
 
     return (
-        <nav className="fixed top-6 left-0 right-0 z-40 bg-[#0a1628]/80 backdrop-blur-xl border-b border-[#ffffff08]">
+        <nav className="fixed top-6 left-0 right-0 z-40 bg-[#0a1628] backdrop-blur-xl border-b border-[#1e3a5a]">
+            {/* Gradient fade below navbar */}
+            <div className="absolute top-full left-0 right-0 h-6 bg-gradient-to-b from-[#0a1628]/80 to-transparent pointer-events-none" />
+
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="h-[60px] flex items-stretch">
 
                     {/* Logo */}
-                    <Link href="/" className="flex items-center gap-3 px-6 border-r border-[#ffffff08] hover:bg-[#ffffff04] transition-colors duration-200">
+                    <Link href="/" className="flex items-center gap-3 px-6 border-r border-[#1e3a5a]/30 hover:bg-[#00ffff]/[0.03] transition-colors duration-200">
                         <Image
                             src="/logo.svg"
                             alt="Avellum"
@@ -42,7 +45,7 @@ export default function Navbar() {
                             <Link
                                 key={link.href}
                                 href={link.href}
-                                className={`flex items-center px-5 text-[0.82rem] font-sans border-r border-[#ffffff08] nav-link-glow ${
+                                className={`flex items-center px-5 text-[0.82rem] font-sans border-r border-[#1e3a5a]/30 nav-link-glow ${
                                     pathname === link.href
                                         ? 'text-white'
                                         : 'text-[#ffffff66]'
@@ -57,14 +60,14 @@ export default function Navbar() {
                     <div className="flex-1" />
 
                     {/* Wallet */}
-                    <div className="hidden md:flex items-center px-5 border-l border-[#ffffff08]">
+                    <div className="hidden md:flex items-center px-5 border-l border-[#1e3a5a]/30">
                         <ConnectWallet />
                     </div>
 
                     {/* Mobile Menu Toggle */}
                     <button
                         onClick={() => setIsMenuOpen(!isMenuOpen)}
-                        className="md:hidden flex items-center px-5 border-l border-[#ffffff08] text-[#ffffff66] hover:text-white transition-colors duration-200"
+                        className="md:hidden flex items-center px-5 border-l border-[#1e3a5a]/30 text-[#ffffff66] hover:text-white transition-colors duration-200"
                     >
                         {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
                     </button>
@@ -73,13 +76,13 @@ export default function Navbar() {
 
             {/* Mobile Menu */}
             {isMenuOpen && (
-                <div className="md:hidden bg-[#0a1628]/95 backdrop-blur-xl border-b border-[#ffffff08]">
+                <div className="md:hidden bg-[#0a1628] backdrop-blur-xl border-b border-[#1e3a5a]">
                     {navLinks.map((link) => (
                         <Link
                             key={link.href}
                             href={link.href}
                             onClick={() => setIsMenuOpen(false)}
-                            className={`flex items-center px-6 py-4 text-[0.85rem] font-sans border-b border-[#ffffff08] transition-colors duration-200 ${
+                            className={`flex items-center px-6 py-4 text-[0.85rem] font-sans border-b border-[#1e3a5a]/30 transition-colors duration-200 ${
                                 pathname === link.href
                                     ? 'text-white'
                                     : 'text-[#ffffff66] hover:text-white'
