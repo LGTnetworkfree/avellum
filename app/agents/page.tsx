@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import AgentCard from '@/components/AgentCard';
 import GridField from '@/components/GridField';
@@ -10,6 +10,8 @@ import { FadeIn, ScaleIn, StaggerItem, CountUp, HeroSection, HeroTitle, HeroPara
 import type { Agent } from '@/lib/supabase';
 
 type Registry = 'all' | 'x402scan' | 'mcp' | 'a2a';
+
+const PAGE_SIZE = 24;
 
 const registryFilters: { value: Registry; label: string }[] = [
     { value: 'all', label: 'All' },
@@ -22,43 +24,105 @@ export default function AgentsPage() {
     const { connected } = useWallet();
     const [agents, setAgents] = useState<Agent[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [isLoadingMore, setIsLoadingMore] = useState(false);
     const [total, setTotal] = useState(0);
+    const [offset, setOffset] = useState(0);
     const [filter, setFilter] = useState<Registry>('all');
     const [searchQuery, setSearchQuery] = useState('');
+    const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-    useEffect(() => {
-        async function fetchAgents() {
+    const hasMore = agents.length < total;
+
+    const fetchAgents = useCallback(async (currentOffset: number, append: boolean) => {
+        if (append) {
+            setIsLoadingMore(true);
+        } else {
             setIsLoading(true);
-            try {
-                const params = new URLSearchParams();
-                if (filter !== 'all') params.set('registry', filter);
-                params.set('limit', '50');
-
-                const response = await fetch(`/api/agents?${params}`);
-                const data = await response.json();
-                setAgents(data.agents || []);
-                setTotal(data.total || 0);
-            } catch (error) {
-                console.error('Error fetching agents:', error);
-            } finally {
-                setIsLoading(false);
-            }
         }
-        fetchAgents();
-    }, [filter]);
 
-    const filteredAgents = agents.filter(agent =>
-        searchQuery === '' ||
-        agent.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        agent.address.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        agent.description?.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+        try {
+            const params = new URLSearchParams();
+            if (filter !== 'all') params.set('registry', filter);
+            if (searchQuery.trim()) params.set('search', searchQuery.trim());
+            params.set('limit', String(PAGE_SIZE));
+            params.set('offset', String(currentOffset));
+
+            const response = await fetch(`/api/agents?${params}`);
+            const data = await response.json();
+            const fetched: Agent[] = data.agents || [];
+
+            if (append) {
+                setAgents(prev => [...prev, ...fetched]);
+            } else {
+                setAgents(fetched);
+            }
+            setTotal(data.total || 0);
+        } catch (error) {
+            console.error('Error fetching agents:', error);
+        } finally {
+            setIsLoading(false);
+            setIsLoadingMore(false);
+        }
+    }, [filter, searchQuery]);
+
+    // Reset and fetch when filter or search changes
+    useEffect(() => {
+        setOffset(0);
+        fetchAgents(0, false);
+    }, [filter, fetchAgents]);
+
+    // Debounce search input
+    function handleSearchChange(value: string) {
+        setSearchQuery(value);
+        if (debounceRef.current) clearTimeout(debounceRef.current);
+        debounceRef.current = setTimeout(() => {
+            setOffset(0);
+        }, 300);
+    }
+
+    function loadMore() {
+        const nextOffset = offset + PAGE_SIZE;
+        setOffset(nextOffset);
+        fetchAgents(nextOffset, true);
+    }
 
     const registryCounts = {
-        x402scan: agents.filter(a => a.registry === 'x402scan').length,
-        mcp: agents.filter(a => a.registry === 'mcp').length,
-        a2a: agents.filter(a => a.registry === 'a2a').length,
+        x402scan: filter === 'x402scan' ? total : 0,
+        mcp: filter === 'mcp' ? total : 0,
+        a2a: filter === 'a2a' ? total : 0,
     };
+
+    // When filter is 'all', we need separate counts — fetch them once
+    const [allCounts, setAllCounts] = useState({ x402scan: 0, mcp: 0, a2a: 0, total: 0 });
+
+    useEffect(() => {
+        async function fetchCounts() {
+            try {
+                const results = await Promise.all(
+                    (['x402scan', 'mcp', 'a2a'] as const).map(async (r) => {
+                        const res = await fetch(`/api/agents?registry=${r}&limit=1`);
+                        const data = await res.json();
+                        return { registry: r, count: data.total || 0 };
+                    })
+                );
+                const counts = { x402scan: 0, mcp: 0, a2a: 0, total: 0 };
+                for (const r of results) {
+                    counts[r.registry] = r.count;
+                    counts.total += r.count;
+                }
+                setAllCounts(counts);
+            } catch {
+                // ignore
+            }
+        }
+        fetchCounts();
+    }, []);
+
+    const displayCounts = filter === 'all'
+        ? { x402scan: allCounts.x402scan, mcp: allCounts.mcp, a2a: allCounts.a2a }
+        : registryCounts;
+
+    const displayTotal = filter === 'all' ? allCounts.total : total;
 
     return (
         <>
@@ -109,10 +173,10 @@ export default function AgentsPage() {
             <FadeIn>
                 <div className="grid grid-cols-2 md:grid-cols-4 border-b border-[#1e3a5a]">
                     {[
-                        { label: 'Total Agents', value: total, accent: '#00ffff' },
-                        { label: 'x402', value: registryCounts.x402scan, accent: '#00d4ff' },
-                        { label: 'MCP', value: registryCounts.mcp, accent: '#00d4ff' },
-                        { label: 'A2A', value: registryCounts.a2a, accent: '#00d4ff' },
+                        { label: 'Total Agents', value: displayTotal, accent: '#00ffff' },
+                        { label: 'x402', value: displayCounts.x402scan, accent: '#00d4ff' },
+                        { label: 'MCP', value: displayCounts.mcp, accent: '#00d4ff' },
+                        { label: 'A2A', value: displayCounts.a2a, accent: '#00d4ff' },
                     ].map((stat, i) => (
                         <div
                             key={stat.label}
@@ -129,13 +193,13 @@ export default function AgentsPage() {
                                 <p className="font-serif text-3xl text-white group-hover:text-[#00ffff] transition-colors duration-300">
                                     <CountUp end={stat.value} />
                                 </p>
-                                {i > 0 && total > 0 && (
+                                {i > 0 && displayTotal > 0 && (
                                     <div className="flex-1 mb-2">
                                         <div className="h-[3px] bg-[#1e3a5a]/50 rounded-full overflow-hidden">
                                             <div
                                                 className="h-full rounded-full transition-all duration-700"
                                                 style={{
-                                                    width: `${(stat.value / total) * 100}%`,
+                                                    width: `${(stat.value / displayTotal) * 100}%`,
                                                     background: `linear-gradient(90deg, ${stat.accent}, transparent)`
                                                 }}
                                             />
@@ -166,7 +230,7 @@ export default function AgentsPage() {
                                 type="text"
                                 placeholder="Search by name, address, or description..."
                                 value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
+                                onChange={(e) => handleSearchChange(e.target.value)}
                                 className="w-full pl-10 pr-4 py-3 text-white placeholder-[#2a4a6a] focus:outline-none font-mono text-sm input-glow"
                             />
                         </div>
@@ -191,7 +255,7 @@ export default function AgentsPage() {
 
                     {/* Results count */}
                     <div className="mt-4 label-terminal !text-[#2a4a6a]">
-                        Showing <span className="mono-data text-[#4b6a8a]">{filteredAgents.length}</span> of <span className="mono-data text-[#4b6a8a]">{total}</span> indexed agents
+                        Showing <span className="mono-data text-[#4b6a8a]">{agents.length}</span> of <span className="mono-data text-[#4b6a8a]">{total}</span> indexed agents
                     </div>
                 </div>
             </FadeIn>
@@ -207,14 +271,28 @@ export default function AgentsPage() {
                                 <div key={i} className="bg-[#0d1e33]/40 border border-transparent h-56 animate-pulse" />
                             ))}
                         </div>
-                    ) : filteredAgents.length > 0 ? (
-                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            {filteredAgents.map((agent, i) => (
-                                <StaggerItem key={agent.id} index={i % 6}>
-                                    <AgentCard agent={agent} showRating={true} />
-                                </StaggerItem>
-                            ))}
-                        </div>
+                    ) : agents.length > 0 ? (
+                        <>
+                            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                {agents.map((agent, i) => (
+                                    <StaggerItem key={agent.id} index={i % 6}>
+                                        <AgentCard agent={agent} showRating={true} />
+                                    </StaggerItem>
+                                ))}
+                            </div>
+
+                            {hasMore && (
+                                <div className="flex justify-center mt-10">
+                                    <button
+                                        onClick={loadMore}
+                                        disabled={isLoadingMore}
+                                        className="font-mono text-[0.7rem] tracking-[0.15em] uppercase border border-[#1e3a5a] text-[#4b6a8a] px-8 py-3 hover:border-[#00ffff]/40 hover:text-[#00ffff] hover:bg-[#00ffff]/5 transition-all duration-300 disabled:opacity-50"
+                                    >
+                                        {isLoadingMore ? 'Loading...' : `Load More (${total - agents.length} remaining)`}
+                                    </button>
+                                </div>
+                            )}
+                        </>
                     ) : (
                         <div className="py-20 text-center">
                             <p className="font-serif text-2xl text-white mb-3">

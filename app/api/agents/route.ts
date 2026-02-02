@@ -110,9 +110,10 @@ export async function GET(request: Request) {
         const { searchParams } = new URL(request.url);
 
         const registry = searchParams.get('registry') as 'x402scan' | 'mcp' | 'a2a' | null;
+        const search = searchParams.get('search')?.trim() || null;
         const minScore = searchParams.get('minScore');
         const maxScore = searchParams.get('maxScore');
-        const limit = parseInt(searchParams.get('limit') || '20');
+        const limit = parseInt(searchParams.get('limit') || '24');
         const offset = parseInt(searchParams.get('offset') || '0');
 
         // Try to fetch from Supabase
@@ -120,6 +121,11 @@ export async function GET(request: Request) {
 
         if (registry) {
             query = query.eq('registry', registry);
+        }
+
+        if (search) {
+            const pattern = `%${search}%`;
+            query = query.or(`name.ilike.${pattern},description.ilike.${pattern},address.ilike.${pattern}`);
         }
 
         if (minScore) {
