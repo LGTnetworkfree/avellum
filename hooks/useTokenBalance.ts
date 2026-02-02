@@ -24,25 +24,15 @@ export function useTokenBalance() {
         let cancelled = false;
         setLoading(true);
 
-        console.log('[useTokenBalance] Fetching AVLM balance', {
-            wallet: publicKey.toBase58(),
-            mint: AVLM_MINT.toBase58(),
-            rpc: connection.rpcEndpoint,
-        });
-
         connection
             .getParsedTokenAccountsByOwner(publicKey, { mint: AVLM_MINT })
             .then((res) => {
                 if (cancelled) return;
-                console.log('[useTokenBalance] RPC response:', JSON.stringify(res.value.map(v => v.account.data.parsed.info.tokenAmount)));
                 const amount =
                     res.value[0]?.account.data.parsed.info.tokenAmount.amount ?? '0';
-                const humanBalance = Number(amount) / 10 ** DECIMALS;
-                console.log('[useTokenBalance] Balance:', humanBalance);
-                setBalance(humanBalance);
+                setBalance(Number(amount) / 10 ** DECIMALS);
             })
-            .catch((err) => {
-                console.error('[useTokenBalance] RPC error:', err);
+            .catch(() => {
                 if (!cancelled) setBalance(0);
             })
             .finally(() => {
