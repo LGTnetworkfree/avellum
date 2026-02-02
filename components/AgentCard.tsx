@@ -66,7 +66,7 @@ export default function AgentCard({ agent, showRating = true }: Props) {
     }
 
     return (
-        <div className="card-hover p-6 group cursor-default flex flex-col relative overflow-hidden">
+        <div className="card-hover p-6 group cursor-default flex flex-col relative h-auto">
             {/* Top accent line */}
             <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#00ffff]/20 to-transparent group-hover:via-[#00ffff]/50 transition-all duration-500" />
 
@@ -96,7 +96,7 @@ export default function AgentCard({ agent, showRating = true }: Props) {
             </div>
 
             {/* Description */}
-            <p className="text-[#4b6a8a] text-[0.82rem] leading-relaxed group-hover:text-[#8aa0b8] transition-colors duration-300 line-clamp-2 mb-4 flex-1" style={{ fontFamily: 'var(--font-sans)' }}>
+            <p className="text-[#4b6a8a] text-[0.82rem] leading-relaxed group-hover:text-[#8aa0b8] transition-colors duration-300 line-clamp-2 mb-4" style={{ fontFamily: 'var(--font-sans)' }}>
                 {agent.description || 'No description available'}
             </p>
 
