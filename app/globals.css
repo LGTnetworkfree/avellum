@@ -773,6 +773,7 @@ h6 {
   transition: all 0.3s !important;
   letter-spacing: 0.08em !important;
   font-size: 0.72rem !important;
+  white-space: nowrap !important;
   clip-path: polygon(
     0.4rem 0%,
     calc(100% - 0.4rem) 0%,

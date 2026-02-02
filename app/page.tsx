@@ -172,9 +172,9 @@ export default function HomePage() {
             Start rating agents and earning revenue.
           </p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
           <Link href="/docs">
-            <button className="btn-interactive border border-[#1e3a5a] text-[#4b6a8a] px-6 py-3 font-sans font-medium text-[0.65rem] tracking-[0.15em] uppercase hover:border-[#00ffff]/40 hover:text-[#00ffff] hover:bg-[#00ffff]/5 cursor-pointer">
+            <button className="btn-interactive border border-[#1e3a5a] text-[#4b6a8a] px-4 sm:px-6 py-3 font-sans font-medium text-[0.65rem] tracking-[0.15em] uppercase whitespace-nowrap hover:border-[#00ffff]/40 hover:text-[#00ffff] hover:bg-[#00ffff]/5 cursor-pointer w-full sm:w-auto">
               View Docs
             </button>
           </Link>
