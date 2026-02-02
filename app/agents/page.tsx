@@ -28,8 +28,35 @@ export default function AgentsPage() {
     const [total, setTotal] = useState(0);
     const [offset, setOffset] = useState(0);
     const [filter, setFilter] = useState<Registry>('all');
-    const [searchQuery, setSearchQuery] = useState('');
+    const [searchInput, setSearchInput] = useState('');
+    const [debouncedSearch, setDebouncedSearch] = useState('');
     const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    // Real counts fetched once on mount — always accurate regardless of filter
+    const [counts, setCounts] = useState({ x402scan: 0, mcp: 0, a2a: 0, total: 0 });
+
+    useEffect(() => {
+        async function fetchCounts() {
+            try {
+                const results = await Promise.all(
+                    (['x402scan', 'mcp', 'a2a'] as const).map(async (r) => {
+                        const res = await fetch(`/api/agents?registry=${r}&limit=1`);
+                        const data = await res.json();
+                        return { registry: r, count: data.total || 0 };
+                    })
+                );
+                const c = { x402scan: 0, mcp: 0, a2a: 0, total: 0 };
+                for (const r of results) {
+                    c[r.registry] = r.count;
+                    c.total += r.count;
+                }
+                setCounts(c);
+            } catch {
+                // ignore
+            }
+        }
+        fetchCounts();
+    }, []);
 
     const hasMore = agents.length < total;
 
@@ -43,7 +70,7 @@ export default function AgentsPage() {
         try {
             const params = new URLSearchParams();
             if (filter !== 'all') params.set('registry', filter);
-            if (searchQuery.trim()) params.set('search', searchQuery.trim());
+            if (debouncedSearch) params.set('search', debouncedSearch);
             params.set('limit', String(PAGE_SIZE));
             params.set('offset', String(currentOffset));
 
@@ -63,20 +90,20 @@ export default function AgentsPage() {
             setIsLoading(false);
             setIsLoadingMore(false);
         }
-    }, [filter, searchQuery]);
+    }, [filter, debouncedSearch]);
 
-    // Reset and fetch when filter or search changes
+    // Reset and fetch when filter or debounced search changes
     useEffect(() => {
         setOffset(0);
         fetchAgents(0, false);
     }, [filter, fetchAgents]);
 
-    // Debounce search input
+    // Debounce: update debouncedSearch 300ms after user stops typing
     function handleSearchChange(value: string) {
-        setSearchQuery(value);
+        setSearchInput(value);
         if (debounceRef.current) clearTimeout(debounceRef.current);
         debounceRef.current = setTimeout(() => {
-            setOffset(0);
+            setDebouncedSearch(value.trim());
         }, 300);
     }
 
@@ -86,44 +113,6 @@ export default function AgentsPage() {
         fetchAgents(nextOffset, true);
     }
 
-    const registryCounts = {
-        x402scan: filter === 'x402scan' ? total : 0,
-        mcp: filter === 'mcp' ? total : 0,
-        a2a: filter === 'a2a' ? total : 0,
-    };
-
-    // When filter is 'all', we need separate counts — fetch them once
-    const [allCounts, setAllCounts] = useState({ x402scan: 0, mcp: 0, a2a: 0, total: 0 });
-
-    useEffect(() => {
-        async function fetchCounts() {
-            try {
-                const results = await Promise.all(
-                    (['x402scan', 'mcp', 'a2a'] as const).map(async (r) => {
-                        const res = await fetch(`/api/agents?registry=${r}&limit=1`);
-                        const data = await res.json();
-                        return { registry: r, count: data.total || 0 };
-                    })
-                );
-                const counts = { x402scan: 0, mcp: 0, a2a: 0, total: 0 };
-                for (const r of results) {
-                    counts[r.registry] = r.count;
-                    counts.total += r.count;
-                }
-                setAllCounts(counts);
-            } catch {
-                // ignore
-            }
-        }
-        fetchCounts();
-    }, []);
-
-    const displayCounts = filter === 'all'
-        ? { x402scan: allCounts.x402scan, mcp: allCounts.mcp, a2a: allCounts.a2a }
-        : registryCounts;
-
-    const displayTotal = filter === 'all' ? allCounts.total : total;
-
     return (
         <>
         <div className="noise-texture min-h-screen max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-l border-r border-[#1e3a5a] relative z-10 bg-[#0a1628]">
@@ -131,19 +120,15 @@ export default function AgentsPage() {
             {/* ========== HEADER ========== */}
             <section className="grid grid-cols-1 md:grid-cols-[45%_55%] border-b border-[#1e3a5a]">
                 <ScaleIn className="hidden md:flex items-center justify-center relative border-r border-[#1e3a5a] bg-[#050d18] overflow-hidden">
-                    {/* Grid background */}
                     <div className="absolute inset-0" style={{
                         backgroundImage:
                             'linear-gradient(rgba(30,58,90,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(30,58,90,0.08) 1px, transparent 1px)',
                         backgroundSize: '32px 32px'
                     }} />
-                    {/* Radial glow */}
                     <div className="absolute inset-0" style={{
                         background: 'radial-gradient(circle at 50% 50%, rgba(0, 212, 255, 0.08) 0%, rgba(0, 212, 255, 0.02) 40%, transparent 70%)'
                     }} />
-                    {/* Flow field animation */}
                     <FlowField />
-                    {/* Edge fades */}
                     <div className="absolute inset-y-0 left-0 w-16 z-[2] pointer-events-none" style={{ background: 'linear-gradient(to right, #050d18, transparent)' }} />
                     <div className="absolute inset-y-0 right-0 w-16 z-[2] pointer-events-none" style={{ background: 'linear-gradient(to left, #050d18, transparent)' }} />
                 </ScaleIn>
@@ -173,10 +158,10 @@ export default function AgentsPage() {
             <FadeIn>
                 <div className="grid grid-cols-2 md:grid-cols-4 border-b border-[#1e3a5a]">
                     {[
-                        { label: 'Total Agents', value: displayTotal, accent: '#00ffff' },
-                        { label: 'x402', value: displayCounts.x402scan, accent: '#00d4ff' },
-                        { label: 'MCP', value: displayCounts.mcp, accent: '#00d4ff' },
-                        { label: 'A2A', value: displayCounts.a2a, accent: '#00d4ff' },
+                        { label: 'Total Agents', value: counts.total, accent: '#00ffff' },
+                        { label: 'x402', value: counts.x402scan, accent: '#00d4ff' },
+                        { label: 'MCP', value: counts.mcp, accent: '#00d4ff' },
+                        { label: 'A2A', value: counts.a2a, accent: '#00d4ff' },
                     ].map((stat, i) => (
                         <div
                             key={stat.label}
@@ -193,13 +178,13 @@ export default function AgentsPage() {
                                 <p className="font-serif text-3xl text-white group-hover:text-[#00ffff] transition-colors duration-300">
                                     <CountUp end={stat.value} />
                                 </p>
-                                {i > 0 && displayTotal > 0 && (
+                                {i > 0 && counts.total > 0 && (
                                     <div className="flex-1 mb-2">
                                         <div className="h-[3px] bg-[#1e3a5a]/50 rounded-full overflow-hidden">
                                             <div
                                                 className="h-full rounded-full transition-all duration-700"
                                                 style={{
-                                                    width: `${(stat.value / displayTotal) * 100}%`,
+                                                    width: `${(stat.value / counts.total) * 100}%`,
                                                     background: `linear-gradient(90deg, ${stat.accent}, transparent)`
                                                 }}
                                             />
@@ -216,7 +201,6 @@ export default function AgentsPage() {
             <FadeIn>
                 <div className="px-8 md:px-12 py-6 border-b border-[#1e3a5a]">
                     <div className="flex flex-col md:flex-row gap-4">
-                        {/* Search */}
                         <div className="flex-1 relative">
                             <svg
                                 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#4b6a8a]"
@@ -229,13 +213,12 @@ export default function AgentsPage() {
                             <input
                                 type="text"
                                 placeholder="Search by name, address, or description..."
-                                value={searchQuery}
+                                value={searchInput}
                                 onChange={(e) => handleSearchChange(e.target.value)}
                                 className="w-full pl-10 pr-4 py-3 text-white placeholder-[#2a4a6a] focus:outline-none font-mono text-sm input-glow"
                             />
                         </div>
 
-                        {/* Registry filter tabs */}
                         <div className="flex gap-0">
                             {registryFilters.map((reg) => (
                                 <button
@@ -253,7 +236,6 @@ export default function AgentsPage() {
                         </div>
                     </div>
 
-                    {/* Results count */}
                     <div className="mt-4 label-terminal !text-[#2a4a6a]">
                         Showing <span className="mono-data text-[#4b6a8a]">{agents.length}</span> of <span className="mono-data text-[#4b6a8a]">{total}</span> indexed agents
                     </div>
@@ -299,7 +281,7 @@ export default function AgentsPage() {
                                 No agents found.
                             </p>
                             <p className="text-[#4b6a8a] font-sans text-sm max-w-sm mx-auto">
-                                {searchQuery
+                                {searchInput
                                     ? 'Try adjusting your search query or registry filter.'
                                     : 'No agents have been indexed yet. Check back once the indexer has synced.'}
                             </p>
