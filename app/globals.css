@@ -1,3 +1,4 @@
+@import url('https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
 @import "tailwindcss";
 
@@ -13,6 +14,7 @@
   --font-serif: "Instrument Serif", serif;
   --font-mono: "JetBrains Mono", monospace;
   --font-sans: "Inter", sans-serif;
+  --font-heading: "Satoshi", sans-serif;
 
   /* Nominal Spacing constants */
   --spacing-std: 1rem;
@@ -28,6 +30,7 @@
   --font-serif: var(--font-serif);
   --font-mono: var(--font-mono);
   --font-sans: var(--font-sans);
+  --font-heading: var(--font-heading);
 }
 
 html {
@@ -241,14 +244,20 @@ h6 {
   background: rgba(0, 229, 255, 0.03);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(0, 229, 255, 0.1);
-  transition: transform 0.3s ease-out, box-shadow 0.3s ease-out, border-color 0.3s ease-out;
+  border: 1px solid rgba(0, 229, 255, 0.08);
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+              border-color 0.35s ease-out,
+              background 0.35s ease-out;
 }
 
 .card-hover:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 28px rgba(0, 229, 255, 0.1), 0 0 0 1px rgba(0, 229, 255, 0.2);
-  border-color: rgba(0, 229, 255, 0.25);
+  transform: translateY(-6px);
+  background: rgba(0, 229, 255, 0.05);
+  box-shadow: 0 8px 32px rgba(0, 229, 255, 0.12),
+              0 0 0 1px rgba(0, 229, 255, 0.2),
+              inset 0 1px 0 rgba(0, 229, 255, 0.06);
+  border-color: rgba(0, 229, 255, 0.3);
 }
 
 /* Glassmorphism panel (stats, sidebar) */

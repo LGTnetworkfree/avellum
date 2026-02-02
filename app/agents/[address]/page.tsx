@@ -25,7 +25,7 @@ export default function AgentDetailPage({ params }: Props) {
     const { address } = use(params);
     const { connected, publicKey } = useWallet();
     const { setVisible } = useWalletModal();
-    const { balance, loading: balanceLoading } = useTokenBalance();
+    const { balance, loading: balanceLoading, error: balanceError, refetch: refetchBalance } = useTokenBalance();
     const { submitVote, isSubmitting } = useMemoVote();
     const canVote = balance !== null && balance >= MIN_AVLM_TO_VOTE;
     const [agent, setAgent] = useState<Agent | null>(null);
@@ -145,7 +145,7 @@ export default function AgentDetailPage({ params }: Props) {
                                 <span className="h-px flex-1 bg-[#1e3a5a]" />
                             </div>
 
-                            <h1 className="font-serif text-4xl md:text-5xl font-normal text-white leading-[1.1] mb-4">
+                            <h1 className="text-4xl md:text-5xl font-bold text-white leading-[1.05] mb-4 uppercase" style={{ fontFamily: 'var(--font-heading)', letterSpacing: '-0.02em' }}>
                                 {agent.name || 'Unnamed Agent'}
                             </h1>
 
@@ -217,6 +217,15 @@ export default function AgentDetailPage({ params }: Props) {
                         <div className="card-hover p-8 max-w-2xl">
                             {balanceLoading ? (
                                 <p className="font-mono text-xs text-[#4b6a8a]">Loading $AVLM balance...</p>
+                            ) : balanceError ? (
+                                <div className="flex items-center gap-3">
+                                    <p className="font-mono text-xs text-[#ff6b6b]">
+                                        Could not fetch $AVLM balance.
+                                    </p>
+                                    <button onClick={refetchBalance} className="font-mono text-xs text-[#00d4ff] hover:text-[#00ffff] underline transition-colors">
+                                        Retry
+                                    </button>
+                                </div>
                             ) : !canVote ? (
                                 <p className="font-mono text-xs text-[#ff6b6b]">
                                     You must hold at least {MIN_AVLM_TO_VOTE.toLocaleString()} $AVLM to rate agents
