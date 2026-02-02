@@ -20,6 +20,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
+    site: "@Avellumxyz",
+    creator: "@Avellumxyz",
     title: "Avellum // Trust Layer",
     description: "The decentralized trust layer for AI agents.",
   },
