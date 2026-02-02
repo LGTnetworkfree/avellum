@@ -24,7 +24,7 @@ const registryLabels: Record<string, string> = {
 export default function AgentCard({ agent, showRating = true }: Props) {
     const { connected, publicKey } = useWallet();
     const { setVisible } = useWalletModal();
-    const { balance, loading: balanceLoading } = useTokenBalance();
+    const { balance, loading: balanceLoading, error: balanceError, refetch: refetchBalance } = useTokenBalance();
     const { submitVote, isSubmitting } = useMemoVote();
     const [rating, setRating] = useState(50);
     const [submitMessage, setSubmitMessage] = useState<string | null>(null);
@@ -66,7 +66,10 @@ export default function AgentCard({ agent, showRating = true }: Props) {
     }
 
     return (
-        <div className="card-hover p-6 group cursor-default flex flex-col">
+        <div className="card-hover p-6 group cursor-default flex flex-col relative overflow-hidden">
+            {/* Top accent line */}
+            <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#00ffff]/20 to-transparent group-hover:via-[#00ffff]/50 transition-all duration-500" />
+
             {/* Header: registry + trust score */}
             <div className="flex items-start justify-between gap-4 mb-5">
                 <div className="flex-1 min-w-0">
@@ -74,27 +77,32 @@ export default function AgentCard({ agent, showRating = true }: Props) {
                         <span className="border border-[#1e3a5a] text-[#00d4ff] font-mono text-[0.6rem] tracking-[0.15em] uppercase px-2.5 py-1 group-hover:border-[#00ffff]/40 group-hover:bg-[#00ffff]/5 transition-all duration-300">
                             {registryLabels[agent.registry] || agent.registry}
                         </span>
-                        <span className="h-px flex-1 bg-[#1e3a5a] group-hover:bg-[#00ffff]/30 transition-colors duration-300" />
+                        <span className="h-px flex-1 bg-[#1e3a5a] group-hover:bg-[#00ffff]/30 transition-colors duration-500" />
                     </div>
 
                     <Link href={`/agents/${agent.address}`}>
-                        <h3 className="font-serif text-xl text-white group-hover:text-[#00ffff] transition-colors duration-300 truncate">
+                        <h3 className="text-[1.1rem] font-bold text-white group-hover:text-[#00ffff] transition-colors duration-300 truncate uppercase" style={{ fontFamily: 'var(--font-heading)', letterSpacing: '-0.02em' }}>
                             {agent.name || 'Unnamed Agent'}
                         </h3>
                     </Link>
                 </div>
 
-                <TrustBadge score={agent.trust_score} size="sm" showLabel={false} />
+                <div className="relative">
+                    <TrustBadge score={agent.trust_score} size="sm" showLabel={false} />
+                    <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 font-mono text-[0.55rem] text-[#4b6a8a] group-hover:text-[#00d4ff] transition-colors duration-300 whitespace-nowrap">
+                        {agent.trust_score.toFixed(1)}
+                    </div>
+                </div>
             </div>
 
             {/* Description */}
-            <p className="text-[#4b6a8a] font-sans text-sm leading-relaxed group-hover:text-[#a0a0a0] transition-colors duration-300 line-clamp-2 mb-4 flex-1">
+            <p className="text-[#4b6a8a] text-[0.82rem] leading-relaxed group-hover:text-[#8aa0b8] transition-colors duration-300 line-clamp-2 mb-4 flex-1" style={{ fontFamily: 'var(--font-sans)' }}>
                 {agent.description || 'No description available'}
             </p>
 
             {/* Address + copy */}
             <div className="flex items-center gap-2 mb-4">
-                <span className="font-mono text-[0.65rem] text-[#2a4a6a] tracking-[0.15em]">
+                <span className="font-mono text-[0.6rem] text-[#2a4a6a] tracking-[0.08em] bg-[#0a1628]/60 px-2 py-0.5 rounded-sm">
                     {agent.address.slice(0, 8)}...{agent.address.slice(-6)}
                 </span>
                 <button
@@ -119,8 +127,8 @@ export default function AgentCard({ agent, showRating = true }: Props) {
             </div>
 
             {/* Bottom bar: ratings count + action */}
-            <div className="flex items-center justify-between pt-4 border-t border-[#1e3a5a]/50">
-                <span className="font-mono text-[0.6rem] tracking-[0.15em] uppercase text-[#4b6a8a]">
+            <div className="flex items-center justify-between pt-4 border-t border-[#1e3a5a]/40">
+                <span className="font-mono text-[0.6rem] tracking-[0.12em] uppercase text-[#4b6a8a]">
                     {agent.total_ratings} {agent.total_ratings === 1 ? 'rating' : 'ratings'}
                 </span>
 
@@ -133,7 +141,7 @@ export default function AgentCard({ agent, showRating = true }: Props) {
                                 setShowRatingPanel(!showRatingPanel);
                             }
                         }}
-                        className="font-mono text-[0.65rem] tracking-[0.15em] uppercase border border-[#1e3a5a] text-[#4b6a8a] px-3 py-1.5 hover:border-[#00ffff]/40 hover:text-[#00ffff] hover:bg-[#00ffff]/5 transition-all duration-300"
+                        className="font-mono text-[0.6rem] tracking-[0.12em] uppercase border border-[#1e3a5a] text-[#4b6a8a] px-3 py-1.5 hover:border-[#00ffff]/40 hover:text-[#00ffff] hover:bg-[#00ffff]/5 transition-all duration-300"
                     >
                         {connected ? (showRatingPanel ? 'Cancel' : 'Rate') : 'Connect'}
                     </button>
@@ -145,6 +153,15 @@ export default function AgentCard({ agent, showRating = true }: Props) {
                 <div className="mt-4 pt-4 border-t border-[#1e3a5a]/50 space-y-4">
                     {balanceLoading ? (
                         <p className="font-mono text-xs text-[#4b6a8a]">Loading $AVLM balance...</p>
+                    ) : balanceError ? (
+                        <div className="flex items-center gap-3">
+                            <p className="font-mono text-xs text-[#ff6b6b]">
+                                Could not fetch $AVLM balance.
+                            </p>
+                            <button onClick={refetchBalance} className="font-mono text-xs text-[#00d4ff] hover:text-[#00ffff] underline transition-colors">
+                                Retry
+                            </button>
+                        </div>
                     ) : !canVote ? (
                         <p className="font-mono text-xs text-[#ff6b6b]">
                             You must hold at least {MIN_AVLM_TO_VOTE.toLocaleString()} $AVLM to rate agents
