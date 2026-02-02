@@ -141,9 +141,9 @@ export async function GET(request: Request) {
 
         const { data, error, count } = await query;
 
-        // If database error or no data, use mock data
-        if (error || !data || data.length === 0) {
-            console.log('Using mock agents data');
+        // Only fall back to mock on actual DB connection errors, not empty results
+        if (error) {
+            console.log('Database error, using mock agents data:', error.message);
 
             let filteredAgents = [...MOCK_AGENTS];
 
@@ -159,10 +159,7 @@ export async function GET(request: Request) {
                 filteredAgents = filteredAgents.filter(a => a.trust_score <= parseFloat(maxScore));
             }
 
-            // Sort by trust score
             filteredAgents.sort((a, b) => b.trust_score - a.trust_score);
-
-            // Apply pagination
             const paginatedAgents = filteredAgents.slice(offset, offset + limit);
 
             return NextResponse.json({
@@ -175,8 +172,8 @@ export async function GET(request: Request) {
         }
 
         return NextResponse.json({
-            agents: data,
-            total: count || 0,
+            agents: data || [],
+            total: count ?? 0,
             limit,
             offset,
             source: 'database'
