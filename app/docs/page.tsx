@@ -82,7 +82,7 @@ export default function DocsPage() {
 
                 {/* Sidebar Navigation */}
                 <div className="hidden lg:block w-64 shrink-0 border-r border-[rgba(0,229,255,0.1)]">
-                    <div className="sticky top-[130px] py-8 pr-4 max-h-[calc(100vh-140px)] overflow-y-auto">
+                    <div className="sticky top-[100px] py-8 pr-4 max-h-[calc(100vh-110px)] overflow-y-auto">
                         <nav className="space-y-0.5 pl-6" style={{ background: 'rgba(0, 229, 255, 0.02)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', borderRadius: '0', padding: '0.75rem 0' }}>
                             {SECTIONS.map((section, i) => (
                                 <StaggerItem key={section.id} index={i}>
@@ -108,7 +108,7 @@ export default function DocsPage() {
 
                     {/* 1. Executive Summary */}
                     <FadeIn>
-                        <section id="executive-summary" className="mb-16 scroll-mt-[130px]">
+                        <section id="executive-summary" className="mb-16 scroll-mt-[100px]">
                             <h2 className="font-sans text-2xl md:text-3xl font-bold text-white leading-snug mb-6">1. Executive Summary</h2>
                             <div className="border border-[#1e3a5a] bg-[#0d1e33]/40 p-6 relative">
                                 <div className="absolute top-0 right-0 p-3 font-sans font-medium text-[0.6rem] tracking-[0.15em] uppercase text-[#2a4a6a]">SYS_DOC_V2</div>
@@ -128,7 +128,7 @@ export default function DocsPage() {
 
                     {/* 2. The Problem */}
                     <FadeIn>
-                        <section id="the-problem" className="mb-16 scroll-mt-[130px]">
+                        <section id="the-problem" className="mb-16 scroll-mt-[100px]">
                             <h2 className="font-sans text-2xl md:text-3xl font-bold text-white leading-snug mb-6">2. The Problem</h2>
                             <div className="space-y-4">
                                 {[
@@ -150,7 +150,7 @@ export default function DocsPage() {
 
                     {/* 3. How Avellum Works */}
                     <FadeIn>
-                        <section id="how-avellum-works" className="mb-16 scroll-mt-[130px]">
+                        <section id="how-avellum-works" className="mb-16 scroll-mt-[100px]">
                             <h2 className="font-sans text-2xl md:text-3xl font-bold text-white leading-snug mb-6">3. How Avellum Works</h2>
 
                             {/* Architecture Diagram */}
@@ -207,7 +207,7 @@ export default function DocsPage() {
 
                     {/* 4. Trust Score Algorithm */}
                     <FadeIn>
-                        <section id="trust-score" className="mb-16 scroll-mt-[130px]">
+                        <section id="trust-score" className="mb-16 scroll-mt-[100px]">
                             <h2 className="font-sans text-2xl md:text-3xl font-bold text-white leading-snug mb-6">4. Trust Score Algorithm</h2>
                             <div className="bg-[#050d18] p-6 border-l-2 border-[#00ffff] mb-6">
                                 <code className="text-[#00ffff] block mb-2 text-lg font-sans font-medium">trust_score = &Sigma;(rating &times; token_weight) / &Sigma;(token_weight)</code>
@@ -225,7 +225,7 @@ export default function DocsPage() {
 
                     {/* 5. Verifier Economics */}
                     <FadeIn>
-                        <section id="verifier-economics" className="mb-16 scroll-mt-[130px]">
+                        <section id="verifier-economics" className="mb-16 scroll-mt-[100px]">
                             <h2 className="font-sans text-2xl md:text-3xl font-bold text-white leading-snug mb-6">5. Verifier Economics</h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 font-sans text-sm font-medium mb-6">
                                 <div className="card-hover p-5">
@@ -247,7 +247,7 @@ export default function DocsPage() {
 
                     {/* 6. API Reference */}
                     <FadeIn>
-                        <section id="api-reference" className="mb-16 scroll-mt-[130px]">
+                        <section id="api-reference" className="mb-16 scroll-mt-[100px]">
                             <h2 className="font-sans text-2xl md:text-3xl font-bold text-white leading-snug mb-6">6. API Reference</h2>
                             <div className="border border-[#1e3a5a] mb-4 overflow-hidden">
                                 <div className="bg-[#0d1e33]/60 px-5 py-3 flex items-center gap-3 border-b border-[#1e3a5a]/50">
@@ -275,7 +275,7 @@ export default function DocsPage() {
 
                     {/* 7. Supported Protocols */}
                     <FadeIn>
-                        <section id="supported-protocols" className="mb-16 scroll-mt-[130px]">
+                        <section id="supported-protocols" className="mb-16 scroll-mt-[100px]">
                             <h2 className="font-sans text-2xl md:text-3xl font-bold text-white leading-snug mb-6">7. Supported Protocols</h2>
                             <div className="space-y-3">
                                 {[
@@ -301,7 +301,7 @@ export default function DocsPage() {
 
                     {/* 8. Token Utility */}
                     <FadeIn>
-                        <section id="token-utility" className="mb-16 scroll-mt-[130px]">
+                        <section id="token-utility" className="mb-16 scroll-mt-[100px]">
                             <h2 className="font-sans text-2xl md:text-3xl font-bold text-white leading-snug mb-6">8. Token Utility</h2>
                             <p className="text-[#a0a0a0] leading-relaxed mb-6 font-sans text-sm">
                                 $AVLM is the native utility token of the network. It is used for:
@@ -328,7 +328,7 @@ export default function DocsPage() {
 
                     {/* 9. FAQ */}
                     <FadeIn>
-                        <section id="faq" className="mb-16 scroll-mt-[130px]">
+                        <section id="faq" className="mb-16 scroll-mt-[100px]">
                             <h2 className="font-sans text-2xl md:text-3xl font-bold text-white leading-snug mb-6">9. FAQ</h2>
                             <div className="space-y-0 border border-[#1e3a5a] divide-y divide-[#1e3a5a]/50">
                                 {[

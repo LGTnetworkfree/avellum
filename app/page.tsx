@@ -147,7 +147,7 @@ export default function HomePage() {
             { id: 'step-query', num: '04', title: 'Query', desc: 'Any app or agent can query trust scores via a public API before interacting — instant, permissionless, on-chain.' },
           ].map((step, i) => (
             <StaggerItem key={step.id} index={i}>
-              <div id={step.id} className="card-hover p-8 group cursor-default scroll-mt-[130px] h-full">
+              <div id={step.id} className="card-hover p-8 group cursor-default scroll-mt-[100px] h-full">
                 <div className="flex items-center gap-4 mb-5">
                   <span className="font-sans text-3xl font-bold text-[#1e3a5a] group-hover:text-[#00ffff] transition-colors duration-300">{step.num}</span>
                   <span className="h-px flex-1 bg-[#1e3a5a] group-hover:bg-[#00ffff]/30 transition-colors duration-300" />
