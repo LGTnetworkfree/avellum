@@ -18,9 +18,9 @@ export default function Navbar() {
     ];
 
     return (
-        <nav className="fixed top-6 left-0 right-0 z-40">
+        <nav className="fixed top-6 left-0 right-0 z-40 bg-[#0a1628]/80 backdrop-blur-xl border-b border-[#ffffff08]">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="h-[60px] flex items-stretch bg-[#0a1628]/80 backdrop-blur-xl border border-[#ffffff08]">
+                <div className="h-[60px] flex items-stretch">
 
                     {/* Logo */}
                     <Link href="/" className="flex items-center gap-3 px-6 border-r border-[#ffffff08] hover:bg-[#ffffff04] transition-colors duration-200">
@@ -73,7 +73,7 @@ export default function Navbar() {
 
             {/* Mobile Menu */}
             {isMenuOpen && (
-                <div className="md:hidden mt-px mx-4 sm:mx-6 lg:mx-8 bg-[#0a1628]/95 backdrop-blur-xl border border-[#ffffff08] border-t-0">
+                <div className="md:hidden bg-[#0a1628]/95 backdrop-blur-xl border-b border-[#ffffff08]">
                     {navLinks.map((link) => (
                         <Link
                             key={link.href}
