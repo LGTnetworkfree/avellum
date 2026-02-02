@@ -1,0 +1,9 @@
+/Users/ferdinandletendre/.gemini/antigravity/scratch/avellum/anchor/target/debug/deps/libsolana_instruction-923b7593babe2f02.rmeta: /Users/ferdinandletendre/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/solana-instruction-2.3.3/src/lib.rs /Users/ferdinandletendre/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/solana-instruction-2.3.3/src/account_meta.rs /Users/ferdinandletendre/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/solana-instruction-2.3.3/src/error.rs
+
+/Users/ferdinandletendre/.gemini/antigravity/scratch/avellum/anchor/target/debug/deps/libsolana_instruction-923b7593babe2f02.rlib: /Users/ferdinandletendre/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/solana-instruction-2.3.3/src/lib.rs /Users/ferdinandletendre/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/solana-instruction-2.3.3/src/account_meta.rs /Users/ferdinandletendre/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/solana-instruction-2.3.3/src/error.rs
+
+/Users/ferdinandletendre/.gemini/antigravity/scratch/avellum/anchor/target/debug/deps/solana_instruction-923b7593babe2f02.d: /Users/ferdinandletendre/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/solana-instruction-2.3.3/src/lib.rs /Users/ferdinandletendre/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/solana-instruction-2.3.3/src/account_meta.rs /Users/ferdinandletendre/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/solana-instruction-2.3.3/src/error.rs
+
+/Users/ferdinandletendre/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/solana-instruction-2.3.3/src/lib.rs:
+/Users/ferdinandletendre/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/solana-instruction-2.3.3/src/account_meta.rs:
+/Users/ferdinandletendre/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/solana-instruction-2.3.3/src/error.rs:

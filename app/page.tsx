@@ -1,133 +1,194 @@
 'use client';
 
-import { useWallet } from '@solana/wallet-adapter-react';
 import Link from 'next/link';
-import NeuralNoise from '@/components/NeuralNoise';
-import MetricBar from '@/components/MetricBar';
-import StampGrid from '@/components/StampGrid';
+import OrbitalNetwork from '@/components/OrbitalNetwork';
+import GridField from '@/components/GridField';
+import DataFlowLines from '@/components/DataFlowLines';
+import Footer from '@/components/Footer';
+import ConnectWallet from '@/components/ConnectWallet';
+import { FadeIn, ScaleIn, StaggerItem, HeroSection, HeroTitle, HeroParagraph, HeroLabel } from '@/components/ScrollAnimations';
 
 export default function HomePage() {
-  const { connected } = useWallet();
-
-  const metrics = [
-    { label: 'Agent Indexing', sub: 'x402, MCP, A2A Registries', value: '0.04s', perc: 98, status: 'NOMINAL', color: 'text-[#00d4ff]' },
-    { label: 'Trust Scoring', sub: 'Token-weighted ratings', value: '1.20s', perc: 85, status: 'ACTIVE', color: 'text-[#4b6a8a]' },
-    { label: 'Verifier Network', sub: 'Decentralized verification', value: '0.89s', perc: 92, status: 'STABLE', color: 'text-[#00d4ff]' },
-    { label: 'API Access', sub: 'Public trust score queries', value: 'INSTANT', perc: 100, status: 'READY', color: 'text-[#4b6a8a]' }
-  ];
-
   return (
-    <div className="min-h-screen pt-24 pb-12 max-w-7xl mx-auto border-l border-r border-[#1e3a5a] relative z-10 bg-[#0a1628]">
+    <>
+    <div className="noise-texture min-h-screen max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-l border-r border-[#1e3a5a] relative z-10 bg-[#0a1628]">
 
-      {/* Hero Section - Split Grid */}
+      {/* ========== 1. HERO ========== */}
       <section className="grid grid-cols-1 md:grid-cols-[60%_40%] min-h-[60vh] border-b border-[#1e3a5a]">
-        <div className="p-8 md:p-16 flex flex-col justify-between relative order-2 md:order-1">
+        <HeroSection className="p-8 md:p-16 flex flex-col justify-between relative order-2 md:order-1">
           <div>
-            <div className="grid grid-cols-[100px_1fr] gap-4 mb-2 text-[0.7rem] font-mono">
-              <span className="text-[#00d4ff] tracking-widest">PROTOCOL</span>
-              <span className="text-white tracking-widest">TRUST VERIFICATION</span>
-            </div>
-            <div className="grid grid-cols-[100px_1fr] gap-4 mb-12 text-[0.7rem] font-mono">
-              <span className="text-[#00d4ff] tracking-widest">NETWORK</span>
-              <span className="text-white tracking-widest">SOLANA MAINNET</span>
-            </div>
+            <HeroTitle
+              lines={['Trust autonomy', 'for the A2A']}
+              accent="economy."
+              className="h1-terminal hero"
+            />
 
-            <h1 className="text-5xl md:text-7xl font-serif text-white leading-[0.9] tracking-tight mb-8">
-              TRUST AUTONOMY<br />
-              FOR THE A2A<br />
-              <span className="italic text-[#00d4ff]">ECONOMY.</span>
-            </h1>
+            <HeroParagraph delay={1.35} className="text-body mb-8 text-[#a0a0a0]">
+              Avellum is the trust layer for autonomous agent-to-agent interactions,
+              providing the infrastructure for verifiable, secure, and decentralized
+              intelligence on Solana and beyond.
+            </HeroParagraph>
+
+            <HeroLabel index={0} baseDelay={1.75} className="grid grid-cols-[100px_1fr] gap-4 mb-2 label-terminal">
+              <span>PROTOCOL</span>
+              <span className="text-white">TRUST VERIFICATION</span>
+            </HeroLabel>
+            <HeroLabel index={1} baseDelay={1.75} className="grid grid-cols-[100px_1fr] gap-4 mb-8 label-terminal">
+              <span>NETWORK</span>
+              <span className="text-white">SOLANA MAINNET</span>
+            </HeroLabel>
           </div>
 
-          <div className="mt-8">
-            <p className="max-w-md text-[#4b6a8a] font-mono text-sm leading-relaxed mb-8">
-              Eliminate human error variance. Avellum ingests agent performance data and outputs immutable trust scores with 99.99% accuracy.
-            </p>
+          <HeroLabel index={0} baseDelay={2.05}>
             <Link href="/agents">
-              <button className="bg-transparent border border-[#00d4ff] text-[#00d4ff] px-8 py-4 font-mono text-sm uppercase tracking-widest hover:bg-[#00d4ff] hover:text-[#0a1628] hover:shadow-[0_0_15px_rgba(0,212,255,0.4)] transition-all duration-200 cursor-pointer">
-                EXPLORE AGENTS
+              <button className="btn-interactive border border-[#1e3a5a] text-[#4b6a8a] px-6 py-3 font-mono text-[0.65rem] tracking-[0.15em] uppercase hover:border-[#00ffff]/40 hover:text-[#00ffff] hover:bg-[#00ffff]/5 cursor-pointer">
+                Explore Agents
               </button>
             </Link>
-          </div>
-        </div>
+          </HeroLabel>
+        </HeroSection>
 
-        {/* Visual Container - Noise */}
-        <div className="relative border-l border-[#1e3a5a] bg-[#050d18] order-1 md:order-2 h-[300px] md:h-auto overflow-hidden">
+        <ScaleIn className="relative border-l border-[#1e3a5a] bg-[#050d18] order-1 md:order-2 h-[300px] md:h-auto overflow-hidden">
           <div className="absolute top-4 left-4 text-[#00d4ff] text-[0.6rem] font-mono z-10 pointer-events-none space-y-1">
-            <div>X: 42.9001</div>
-            <div>Y: 88.1023</div>
+            <div>PROTOCOL: ACTIVE</div>
             <div>STAT: SYNCED</div>
           </div>
-          <NeuralNoise />
+          <OrbitalNetwork />
+        </ScaleIn>
+      </section>
+
+      {/* ========== 2. PROTOCOL SUPPORT ========== */}
+      <FadeIn>
+        <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] border-b border-[#1e3a5a]">
+          {/* Left — Supported Protocols */}
+          <div className="px-8 md:px-12 py-8">
+            <span className="label-terminal !text-[#4b6a8a] block mb-4">Indexing Agents From</span>
+            <div className="flex items-center gap-3">
+              <span className="border border-[#1e3a5a] text-[#00d4ff] font-mono text-sm tracking-[0.15em] px-4 py-2 hover:bg-[#00ffff]/5 hover:border-[#00ffff]/40 transition-all duration-300">x402</span>
+              <span className="border border-[#1e3a5a] text-[#00d4ff] font-mono text-sm tracking-[0.15em] px-4 py-2 hover:bg-[#00ffff]/5 hover:border-[#00ffff]/40 transition-all duration-300">MCP</span>
+              <span className="border border-[#1e3a5a] text-[#00d4ff] font-mono text-sm tracking-[0.15em] px-4 py-2 hover:bg-[#00ffff]/5 hover:border-[#00ffff]/40 transition-all duration-300">A2A</span>
+            </div>
+          </div>
+
+          {/* Divider */}
+          <div className="hidden md:block w-px bg-[#1e3a5a]" />
+
+          {/* Right — Revenue Model */}
+          <div className="px-8 md:px-12 py-8 border-t md:border-t-0 border-[#1e3a5a]">
+            <span className="label-terminal !text-[#4b6a8a] block mb-4">Verifier Revenue</span>
+            <p className="font-serif text-2xl text-white leading-snug">
+              100% <span className="text-[#4b6a8a] text-2xl">of protocol fees go to verifiers.</span>
+            </p>
+          </div>
         </div>
-      </section >
+      </FadeIn>
 
-      {/* System Metrics Header */}
-      < div className="border-b border-[#1e3a5a] p-2 bg-[#0d1e33] text-[#00d4ff] text-[0.7rem] uppercase font-mono tracking-widest" >
-        System Metrics & Capabilities // Medical Grade Computation
-      </div >
+      {/* ========== 3. THE PROBLEM ========== */}
+      <div className="section-gradient relative">
+        <GridField />
+        <FadeIn className="px-8 md:px-12 pt-12 pb-8 relative z-[1]">
+          <span className="label-terminal text-[#00ffff] block mb-3">THE PROBLEM</span>
+          <h2 className="font-serif text-2xl md:text-3xl font-normal text-white leading-snug">
+            AI agents are powerful. <span className="italic text-[#4b6a8a]">But who do you trust?</span>
+          </h2>
+        </FadeIn>
 
-      {/* Metrics Table */}
-      < div className="border-b border-[#1e3a5a]" >
-        {/* Header Row */}
-        < div className="grid grid-cols-[1.5fr_1.5fr_1fr] md:grid-cols-[2fr_1fr_1fr] border-b border-[#1e3a5a] text-xs md:text-sm bg-[#0d1e33] text-[#00d4ff] font-serif italic" >
-          <div className="p-3 border-r border-[#1e3a5a]">MODULE TYPE</div>
-          <div className="p-3 border-r border-[#1e3a5a]">EFFICIENCY</div>
-          <div className="p-3">LOAD</div>
-        </div >
+        <div className="px-8 md:px-12 pb-12 grid grid-cols-1 md:grid-cols-3 gap-4 relative z-[1]">
+          {[
+            { num: '01', stat: '87%', text: 'AI agent success rate exploiting vulnerabilities autonomously' },
+            { num: '02', stat: '$8.80', text: 'Average cost of a successful AI-powered attack' },
+            { num: '03', stat: '5 min', text: 'Frequency of deepfake attacks detected in 2024' },
+          ].map((card, i) => (
+            <StaggerItem key={card.num} index={i}>
+              <div className="card-hover p-6 group cursor-default h-full">
+                <div className="flex items-center justify-between mb-6">
+                  <span className="label-terminal !text-[#4b6a8a] group-hover:!text-[#00ffff] transition-colors duration-300">{card.num}</span>
+                  <span className="w-8 h-px bg-[#1e3a5a] group-hover:bg-[#00ffff] group-hover:w-12 transition-all duration-300" />
+                </div>
+                <p className="font-serif text-5xl text-white mb-4 group-hover:text-[#00ffff] transition-colors duration-300">{card.stat}</p>
+                <p className="text-[#4b6a8a] font-sans text-sm leading-relaxed group-hover:text-[#a0a0a0] transition-colors duration-300">
+                  {card.text}
+                </p>
+              </div>
+            </StaggerItem>
+          ))}
+        </div>
+      </div>
 
-        {/* Data Rows */}
-        {
-          metrics.map((m, i) => (
-            <MetricBar
-              key={i}
-              label={m.label}
-              subLabel={m.sub}
-              value={m.value}
-              percentage={m.perc}
-              status={m.status}
-              statusColor={m.color}
-              delay={i * 200}
-            />
-          ))
-        }
-      </div >
+      {/* ========== 4. MANIFESTO BRIDGE ========== */}
+      <div className="gradient-separator" />
+      <FadeIn className="px-8 md:px-12 py-14 text-center relative">
+        <DataFlowLines />
+        <p className="font-serif text-3xl md:text-4xl font-normal text-white leading-snug max-w-3xl mx-auto relative z-[1]">
+          Trust is the foundation.{' '}
+          <span className="text-[#4b6a8a]">We built Avellum to verify which agents deserve yours.</span>
+        </p>
+      </FadeIn>
+      <div className="gradient-separator" />
 
-      {/* Manifesto */}
-      < div className="p-16 border-b border-[#1e3a5a]" >
-        <h2 className="font-serif text-2xl md:text-3xl leading-relaxed max-w-3xl text-[#4b6a8a]">
-          <span className="text-white">TRUST IS THE FOUNDATION.</span><br />
-          In the A2A economy, agents transact billions without human oversight. We built Avellum to verify which agents deserve your trust.
-        </h2>
-      </div >
+      {/* ========== 5. HOW IT WORKS ========== */}
+      <div className="section-gradient relative">
+        <GridField />
+        <FadeIn className="px-8 md:px-12 pt-12 pb-8 flex flex-col md:flex-row md:items-end md:justify-between gap-4 relative z-[1]" delay={0}>
+          <div id="solution-heading" style={{ scrollMarginTop: '100px' }}>
+            <span className="label-terminal text-[#00ffff] block mb-3">THE SOLUTION</span>
+            <h2 className="font-serif text-2xl md:text-3xl font-normal text-white leading-snug">
+              Four steps to verifiable trust.
+            </h2>
+          </div>
+          <span className="label-terminal !text-[#4b6a8a] shrink-0">Protocol v1.0</span>
+        </FadeIn>
 
-      {/* Certifications / Stamps */}
-      < StampGrid />
+        <div className="px-8 md:px-12 pb-12 grid grid-cols-1 md:grid-cols-2 gap-4 relative z-[1]">
+          {[
+            { id: 'step-index', num: '01', title: 'Index', desc: 'Discover and catalog AI agents from x402, MCP, and A2A registries into a unified on-chain directory.' },
+            { id: 'step-verify', num: '02', title: 'Verify', desc: 'Decentralized verifiers stake tokens to audit agent behavior, capabilities, and safety through structured challenges.' },
+            { id: 'step-score', num: '03', title: 'Score', desc: 'Token-weighted trust scores are computed from verifier consensus. Verifiers earn protocol revenue for accurate ratings.' },
+            { id: 'step-query', num: '04', title: 'Query', desc: 'Any app or agent can query trust scores via a public API before interacting — instant, permissionless, on-chain.' },
+          ].map((step, i) => (
+            <StaggerItem key={step.id} index={i}>
+              <div id={step.id} className="card-hover p-8 group cursor-default scroll-mt-[130px] h-full">
+                <div className="flex items-center gap-4 mb-5">
+                  <span className="font-serif text-3xl text-[#1e3a5a] group-hover:text-[#00ffff] transition-colors duration-300">{step.num}</span>
+                  <span className="h-px flex-1 bg-[#1e3a5a] group-hover:bg-[#00ffff]/30 transition-colors duration-300" />
+                </div>
+                <h3 className="font-sans text-white text-base font-semibold uppercase tracking-wider mb-2 group-hover:text-[#00ffff] transition-colors duration-300">{step.title}</h3>
+                <p className="text-[#4b6a8a] font-sans text-sm leading-relaxed group-hover:text-[#a0a0a0] transition-colors duration-300">
+                  {step.desc}
+                </p>
+              </div>
+            </StaggerItem>
+          ))}
+        </div>
+      </div>
 
-      {/* CTA Footer */}
-      < div className="p-16 flex flex-col md:flex-row justify-between items-end gap-8" >
+      {/* ========== 6. CTA ========== */}
+      <div className="gradient-separator" />
+      <FadeIn className="px-8 md:px-12 py-14 flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
         <div>
-          <h2 className="font-serif text-3xl text-[#00d4ff] mb-4">READY TO VERIFY?</h2>
-          <p className="text-[#4b6a8a] font-mono text-sm max-w-xs">
+          <span className="label-terminal !text-[#4b6a8a] block mb-3">GET STARTED</span>
+          <h2 className="font-serif text-3xl md:text-4xl font-normal text-white mb-2">Ready to verify?</h2>
+          <p className="text-body text-[#a0a0a0] max-w-sm">
             Start rating agents and earning revenue.
           </p>
         </div>
-        <div className="flex gap-4">
-          <button className="bg-transparent border border-[#4b6a8a] text-[#4b6a8a] px-8 py-4 font-mono text-sm uppercase tracking-widest hover:border-[#00d4ff] hover:text-[#00d4ff] transition-all duration-200">
-            VIEW API DOCS
-          </button>
-          <button className="bg-transparent border border-[#00d4ff] text-[#00d4ff] px-8 py-4 font-mono text-sm uppercase tracking-widest hover:bg-[#00d4ff] hover:text-[#0a1628] hover:shadow-[0_0_15px_rgba(0,212,255,0.4)] transition-all duration-200 cursor-pointer">
-            CONNECT WALLET
-          </button>
+        <div className="flex gap-3">
+          <Link href="/docs">
+            <button className="btn-interactive border border-[#1e3a5a] text-[#4b6a8a] px-6 py-3 font-mono text-[0.65rem] tracking-[0.15em] uppercase hover:border-[#00ffff]/40 hover:text-[#00ffff] hover:bg-[#00ffff]/5 cursor-pointer">
+              View Docs
+            </button>
+          </Link>
+          <ConnectWallet showBalance={false} />
         </div>
-      </div >
+      </FadeIn>
 
-      {/* Footer Ref */}
-      < div className="border-t border-[#1e3a5a] p-4 flex justify-between text-[0.6rem] font-mono text-[#4b6a8a] tracking-widest" >
-        <div>REF: IMG_STEEL_BLUE_SYS_01</div>
-        <div>©2026 AVELLUM SYSTEMS INC.</div>
-      </div >
+    </div>
 
-    </div >
+    {/* ========== 7. FOOTER TRANSITION ========== */}
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="h-16 bg-gradient-to-b from-[#0a1628] to-[#00ffff]/10" />
+    </div>
+    <Footer />
+    </>
   );
 }

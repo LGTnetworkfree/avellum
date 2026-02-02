@@ -146,23 +146,23 @@ export async function getVerifierRating(
 }
 
 /**
- * Get trust score color based on score value
+ * Get trust score color based on score value — monochrome cyan scale
  */
 export function getTrustScoreColor(score: number): string {
-    if (score >= 80) return '#22c55e'; // Green - Excellent
-    if (score >= 60) return '#84cc16'; // Lime - Good
-    if (score >= 40) return '#eab308'; // Yellow - Average
-    if (score >= 20) return '#f97316'; // Orange - Poor
-    return '#ef4444'; // Red - Very Poor
+    if (score >= 80) return '#00ffff';
+    if (score >= 60) return '#00d4ff';
+    if (score >= 40) return '#4b8aaa';
+    if (score >= 20) return '#4b6a8a';
+    return '#2a4a6a';
 }
 
 /**
  * Get trust level label based on score
  */
 export function getTrustLevel(score: number): string {
-    if (score >= 80) return 'Excellent';
-    if (score >= 60) return 'Good';
-    if (score >= 40) return 'Average';
-    if (score >= 20) return 'Poor';
+    if (score >= 80) return 'Verified';
+    if (score >= 60) return 'Trusted';
+    if (score >= 40) return 'Moderate';
+    if (score >= 20) return 'Low';
     return 'Unverified';
 }

@@ -41,7 +41,7 @@ export async function POST(request: Request) {
 
         if (tokenBalance <= 0) {
             return NextResponse.json(
-                { error: 'You must hold $AVELLUM tokens to rate agents' },
+                { error: 'You must hold at least 10,000 $AVLM to rate agents' },
                 { status: 403 }
             );
         }
