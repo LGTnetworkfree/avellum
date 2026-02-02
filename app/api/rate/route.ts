@@ -1,30 +1,33 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { getAvellumBalance } from '@/lib/helius';
+import { verifyMemoTransaction } from '@/lib/verify-memo-tx';
+import { getExplorerUrl } from '@/lib/memo';
 
 // In-memory mock storage for ratings when database is not available
-const mockRatings: Map<string, { score: number; tokenWeight: number; updatedAt: string }> = new Map();
+const mockRatings: Map<string, { score: number; tokenWeight: number; txSignature: string; updatedAt: string }> = new Map();
 
 interface RatingRequest {
     walletAddress: string;
     agentAddress: string;
     score: number;
-    signature?: string;
+    timestamp: number;
+    txSignature: string;
 }
 
 /**
  * POST /api/rate
- * Submit a rating for an agent (requires wallet verification)
+ * Submit a rating for an agent (requires on-chain memo verification)
  */
 export async function POST(request: Request) {
     try {
         const body: RatingRequest = await request.json();
-        const { walletAddress, agentAddress, score } = body;
+        const { walletAddress, agentAddress, score, timestamp, txSignature } = body;
 
         // Validate inputs
-        if (!walletAddress || !agentAddress || score === undefined) {
+        if (!walletAddress || !agentAddress || score === undefined || !txSignature || !timestamp) {
             return NextResponse.json(
-                { error: 'Missing required fields: walletAddress, agentAddress, score' },
+                { error: 'Missing required fields: walletAddress, agentAddress, score, timestamp, txSignature' },
                 { status: 400 }
             );
         }
@@ -32,6 +35,15 @@ export async function POST(request: Request) {
         if (score < 0 || score > 100) {
             return NextResponse.json(
                 { error: 'Score must be between 0 and 100' },
+                { status: 400 }
+            );
+        }
+
+        // Verify the on-chain memo transaction
+        const verification = await verifyMemoTransaction(txSignature, walletAddress, agentAddress, score, timestamp);
+        if (!verification.valid) {
+            return NextResponse.json(
+                { error: verification.error || 'Transaction verification failed' },
                 { status: 400 }
             );
         }
@@ -46,8 +58,25 @@ export async function POST(request: Request) {
             );
         }
 
+        const network = process.env.NEXT_PUBLIC_SOLANA_NETWORK || 'devnet';
+        const explorerUrl = getExplorerUrl(txSignature, network);
+
         // Try database operation first
         try {
+            // Check tx_signature not already used (replay protection)
+            const { data: existingTx } = await supabase
+                .from('ratings')
+                .select('id')
+                .eq('tx_signature', txSignature)
+                .single();
+
+            if (existingTx) {
+                return NextResponse.json(
+                    { error: 'This transaction has already been used for a rating' },
+                    { status: 409 }
+                );
+            }
+
             // Get or create verifier
             let { data: verifier } = await supabase
                 .from('verifiers')
@@ -97,6 +126,7 @@ export async function POST(request: Request) {
                         agent_id: agent.id,
                         score,
                         token_weight: tokenBalance,
+                        tx_signature: txSignature,
                         updated_at: new Date().toISOString()
                     },
                     {
@@ -116,7 +146,8 @@ export async function POST(request: Request) {
 
             return NextResponse.json({
                 success: true,
-                message: 'Rating submitted successfully',
+                txSignature,
+                explorerUrl,
                 tokenWeight: tokenBalance,
                 source: 'database'
             });
@@ -128,12 +159,14 @@ export async function POST(request: Request) {
             mockRatings.set(ratingKey, {
                 score,
                 tokenWeight: tokenBalance,
+                txSignature,
                 updatedAt: new Date().toISOString()
             });
 
             return NextResponse.json({
                 success: true,
-                message: 'Rating submitted successfully (demo mode)',
+                txSignature,
+                explorerUrl,
                 tokenWeight: tokenBalance,
                 source: 'mock'
             });

@@ -45,6 +45,7 @@ export interface Rating {
     agent_id: string;
     score: number;
     token_weight: number;
+    tx_signature: string | null;
     created_at: string;
     updated_at: string;
 }
