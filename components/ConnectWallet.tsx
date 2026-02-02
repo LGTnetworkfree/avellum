@@ -30,8 +30,8 @@ export default function ConnectWallet({ showBalance = true }: Props) {
         <div className="flex items-center gap-4">
             {connected && showBalance && (
                 <div className="hidden md:flex items-center gap-2 px-3 py-1.5 border border-[#00d4ff]/20 bg-[#00d4ff]/5 rounded-sm">
-                    <span className="text-[10px] font-mono text-[#4b6a8a] tracking-tight">$AVLM</span>
-                    <span className="text-xs font-mono font-bold text-[#00d4ff]">
+                    <span className="text-[10px] font-sans font-medium text-[#4b6a8a] tracking-tight">$AVLM</span>
+                    <span className="text-xs font-sans font-bold text-[#00d4ff]">
                         {loading ? '...' : balance?.toLocaleString() || '0'}
                     </span>
                 </div>

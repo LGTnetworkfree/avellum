@@ -73,7 +73,7 @@ export default function TrustBadge({ score, size = 'md', showLabel = true }: Pro
                     />
                 </svg>
                 <span
-                    className={`font-mono font-medium z-10 ${text}`}
+                    className={`font-sans font-medium z-10 ${text}`}
                     style={{ color }}
                 >
                     {inView ? displayScore : 0}
@@ -81,7 +81,7 @@ export default function TrustBadge({ score, size = 'md', showLabel = true }: Pro
             </div>
             {showLabel && (
                 <span
-                    className={`font-mono uppercase tracking-[0.15em] ${label}`}
+                    className={`font-sans font-medium uppercase tracking-[0.15em] ${label}`}
                     style={{ color }}
                 >
                     {level}

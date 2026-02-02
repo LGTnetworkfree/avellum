@@ -15,7 +15,7 @@ export default function RatingSlider({ value, onChange, disabled = false }: Prop
         <div className="w-full space-y-3">
             <div className="flex justify-between items-center">
                 <span className="label-terminal !text-[#4b6a8a]">Your Rating</span>
-                <span className="font-mono text-xl font-medium text-[#00ffff]">
+                <span className="font-sans text-xl font-bold text-[#00ffff]">
                     {value}
                 </span>
             </div>
@@ -54,7 +54,7 @@ export default function RatingSlider({ value, onChange, disabled = false }: Prop
                 />
             </div>
 
-            <div className="flex justify-between font-mono text-[0.6rem] tracking-[0.15em] uppercase text-[#2a4a6a]">
+            <div className="flex justify-between font-sans font-medium text-[0.6rem] tracking-[0.15em] uppercase text-[#2a4a6a]">
                 <span>Untrustworthy</span>
                 <span>Highly Trusted</span>
             </div>

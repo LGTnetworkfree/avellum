@@ -41,7 +41,7 @@ export default function HomePage() {
 
           <HeroLabel index={0} baseDelay={2.05}>
             <Link href="/agents">
-              <button className="btn-interactive border border-[#1e3a5a] text-[#4b6a8a] px-6 py-3 font-mono text-[0.65rem] tracking-[0.15em] uppercase hover:border-[#00ffff]/40 hover:text-[#00ffff] hover:bg-[#00ffff]/5 cursor-pointer">
+              <button className="btn-interactive border border-[#1e3a5a] text-[#4b6a8a] px-6 py-3 font-sans font-medium text-[0.65rem] tracking-[0.15em] uppercase hover:border-[#00ffff]/40 hover:text-[#00ffff] hover:bg-[#00ffff]/5 cursor-pointer">
                 Explore Agents
               </button>
             </Link>
@@ -49,7 +49,7 @@ export default function HomePage() {
         </HeroSection>
 
         <ScaleIn className="relative border-l border-[#1e3a5a] bg-[#050d18] order-1 md:order-2 h-[300px] md:h-auto overflow-hidden">
-          <div className="absolute top-4 left-4 text-[#00d4ff] text-[0.6rem] font-mono z-10 pointer-events-none space-y-1">
+          <div className="absolute top-4 left-4 text-[#00d4ff] text-[0.6rem] font-sans font-medium z-10 pointer-events-none space-y-1">
             <div>PROTOCOL: ACTIVE</div>
             <div>STAT: SYNCED</div>
           </div>
@@ -64,9 +64,9 @@ export default function HomePage() {
           <div className="px-8 md:px-12 py-8">
             <span className="label-terminal !text-[#4b6a8a] block mb-4">Indexing Agents From</span>
             <div className="flex items-center gap-3">
-              <span className="border border-[#1e3a5a] text-[#00d4ff] font-mono text-sm tracking-[0.15em] px-4 py-2 hover:bg-[#00ffff]/5 hover:border-[#00ffff]/40 transition-all duration-300">x402</span>
-              <span className="border border-[#1e3a5a] text-[#00d4ff] font-mono text-sm tracking-[0.15em] px-4 py-2 hover:bg-[#00ffff]/5 hover:border-[#00ffff]/40 transition-all duration-300">MCP</span>
-              <span className="border border-[#1e3a5a] text-[#00d4ff] font-mono text-sm tracking-[0.15em] px-4 py-2 hover:bg-[#00ffff]/5 hover:border-[#00ffff]/40 transition-all duration-300">A2A</span>
+              <span className="border border-[#1e3a5a] text-[#00d4ff] font-sans text-sm font-medium tracking-[0.15em] px-4 py-2 hover:bg-[#00ffff]/5 hover:border-[#00ffff]/40 transition-all duration-300">x402</span>
+              <span className="border border-[#1e3a5a] text-[#00d4ff] font-sans text-sm font-medium tracking-[0.15em] px-4 py-2 hover:bg-[#00ffff]/5 hover:border-[#00ffff]/40 transition-all duration-300">MCP</span>
+              <span className="border border-[#1e3a5a] text-[#00d4ff] font-sans text-sm font-medium tracking-[0.15em] px-4 py-2 hover:bg-[#00ffff]/5 hover:border-[#00ffff]/40 transition-all duration-300">A2A</span>
             </div>
           </div>
 
@@ -76,7 +76,7 @@ export default function HomePage() {
           {/* Right — Revenue Model */}
           <div className="px-8 md:px-12 py-8 border-t md:border-t-0 border-[#1e3a5a]">
             <span className="label-terminal !text-[#4b6a8a] block mb-4">Verifier Revenue</span>
-            <p className="font-serif text-2xl text-white leading-snug">
+            <p className="font-sans text-2xl font-bold text-white leading-snug">
               100% <span className="text-[#4b6a8a] text-2xl">of protocol fees go to verifiers.</span>
             </p>
           </div>
@@ -88,7 +88,7 @@ export default function HomePage() {
         <GridField />
         <FadeIn className="px-8 md:px-12 pt-12 pb-8 relative z-[1]">
           <span className="label-terminal text-[#00ffff] block mb-3">THE PROBLEM</span>
-          <h2 className="font-serif text-2xl md:text-3xl font-normal text-white leading-snug">
+          <h2 className="font-sans text-2xl md:text-3xl font-bold text-white leading-snug">
             AI agents are powerful. <span className="italic text-[#4b6a8a]">But who do you trust?</span>
           </h2>
         </FadeIn>
@@ -105,7 +105,7 @@ export default function HomePage() {
                   <span className="label-terminal !text-[#4b6a8a] group-hover:!text-[#00ffff] transition-colors duration-300">{card.num}</span>
                   <span className="w-8 h-px bg-[#1e3a5a] group-hover:bg-[#00ffff] group-hover:w-12 transition-all duration-300" />
                 </div>
-                <p className="font-serif text-5xl text-white mb-4 group-hover:text-[#00ffff] transition-colors duration-300">{card.stat}</p>
+                <p className="font-sans text-5xl font-bold text-white mb-4 group-hover:text-[#00ffff] transition-colors duration-300">{card.stat}</p>
                 <p className="text-[#4b6a8a] font-sans text-sm leading-relaxed group-hover:text-[#a0a0a0] transition-colors duration-300">
                   {card.text}
                 </p>
@@ -119,7 +119,7 @@ export default function HomePage() {
       <div className="gradient-separator" />
       <FadeIn className="px-8 md:px-12 py-14 text-center relative">
         <DataFlowLines />
-        <p className="font-serif text-3xl md:text-4xl font-normal text-white leading-snug max-w-3xl mx-auto relative z-[1]">
+        <p className="font-sans text-3xl md:text-4xl font-bold text-white leading-snug max-w-3xl mx-auto relative z-[1]">
           Trust is the foundation.{' '}
           <span className="text-[#4b6a8a]">We built Avellum to verify which agents deserve yours.</span>
         </p>
@@ -132,7 +132,7 @@ export default function HomePage() {
         <FadeIn className="px-8 md:px-12 pt-12 pb-8 flex flex-col md:flex-row md:items-end md:justify-between gap-4 relative z-[1]" delay={0}>
           <div id="solution-heading" style={{ scrollMarginTop: '100px' }}>
             <span className="label-terminal text-[#00ffff] block mb-3">THE SOLUTION</span>
-            <h2 className="font-serif text-2xl md:text-3xl font-normal text-white leading-snug">
+            <h2 className="font-sans text-2xl md:text-3xl font-bold text-white leading-snug">
               Four steps to verifiable trust.
             </h2>
           </div>
@@ -149,7 +149,7 @@ export default function HomePage() {
             <StaggerItem key={step.id} index={i}>
               <div id={step.id} className="card-hover p-8 group cursor-default scroll-mt-[130px] h-full">
                 <div className="flex items-center gap-4 mb-5">
-                  <span className="font-serif text-3xl text-[#1e3a5a] group-hover:text-[#00ffff] transition-colors duration-300">{step.num}</span>
+                  <span className="font-sans text-3xl font-bold text-[#1e3a5a] group-hover:text-[#00ffff] transition-colors duration-300">{step.num}</span>
                   <span className="h-px flex-1 bg-[#1e3a5a] group-hover:bg-[#00ffff]/30 transition-colors duration-300" />
                 </div>
                 <h3 className="font-sans text-white text-base font-semibold uppercase tracking-wider mb-2 group-hover:text-[#00ffff] transition-colors duration-300">{step.title}</h3>
@@ -167,14 +167,14 @@ export default function HomePage() {
       <FadeIn className="px-8 md:px-12 py-14 flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
         <div>
           <span className="label-terminal !text-[#4b6a8a] block mb-3">GET STARTED</span>
-          <h2 className="font-serif text-3xl md:text-4xl font-normal text-white mb-2">Ready to verify?</h2>
+          <h2 className="font-sans text-3xl md:text-4xl font-bold text-white mb-2">Ready to verify?</h2>
           <p className="text-body text-[#a0a0a0] max-w-sm">
             Start rating agents and earning revenue.
           </p>
         </div>
         <div className="flex gap-3">
           <Link href="/docs">
-            <button className="btn-interactive border border-[#1e3a5a] text-[#4b6a8a] px-6 py-3 font-mono text-[0.65rem] tracking-[0.15em] uppercase hover:border-[#00ffff]/40 hover:text-[#00ffff] hover:bg-[#00ffff]/5 cursor-pointer">
+            <button className="btn-interactive border border-[#1e3a5a] text-[#4b6a8a] px-6 py-3 font-sans font-medium text-[0.65rem] tracking-[0.15em] uppercase hover:border-[#00ffff]/40 hover:text-[#00ffff] hover:bg-[#00ffff]/5 cursor-pointer">
               View Docs
             </button>
           </Link>

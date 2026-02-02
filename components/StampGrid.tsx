@@ -77,7 +77,7 @@ export default function StampGrid() {
 
                             <motion.div
                                 layoutId={`content-${stamp.id}`}
-                                className="z-10 leading-relaxed font-serif tracking-widest pointer-events-none"
+                                className="z-10 leading-relaxed font-sans font-bold tracking-widest pointer-events-none"
                             >
                                 {stamp.line1}<br />
                                 {stamp.line2}<br />
@@ -122,12 +122,12 @@ export default function StampGrid() {
 
                                 {/* Header with Layout Transition */}
                                 <div className="p-8 pb-4 border-b border-[#1e3a5a] bg-gradient-to-r from-[#0d1e33] to-[#0a1628]">
-                                    <h3 className="text-[#00d4ff] font-serif text-2xl tracking-wide mb-1">
+                                    <h3 className="text-[#00d4ff] font-sans text-2xl font-bold tracking-wide mb-1">
                                         {stamps.find(s => s.id === selectedId)?.fullTitle}
                                     </h3>
                                     <motion.div
                                         layoutId={`content-${selectedId}`}
-                                        className="text-[#4b6a8a] font-mono text-xs uppercase tracking-widest"
+                                        className="text-[#4b6a8a] font-sans text-xs font-medium uppercase tracking-widest"
                                     >
                                         STATUS: ACTIVE // VERIFIED
                                     </motion.div>
@@ -150,8 +150,8 @@ export default function StampGrid() {
                                     {/* Stats & Description */}
                                     <div className="space-y-4">
                                         <div>
-                                            <div className="text-[0.65rem] text-[#4b6a8a] font-mono uppercase tracking-widest mb-1">LIVE METRICS</div>
-                                            <div className="text-xl text-white font-serif">{stamps.find(s => s.id === selectedId)?.stats}</div>
+                                            <div className="text-[0.65rem] text-[#4b6a8a] font-sans font-medium uppercase tracking-widest mb-1">LIVE METRICS</div>
+                                            <div className="text-xl text-white font-sans font-bold">{stamps.find(s => s.id === selectedId)?.stats}</div>
                                         </div>
 
                                         <p className="text-[#8b9bb4] leading-relaxed text-sm">
@@ -172,7 +172,7 @@ export default function StampGrid() {
 function Diagram({ type }: { type: string }) {
     if (type === 'x402') {
         return (
-            <div className="flex items-center justify-between text-[0.6rem] font-mono text-[#00d4ff] relative z-10 px-2">
+            <div className="flex items-center justify-between text-[0.6rem] font-sans font-medium text-[#00d4ff] relative z-10 px-2">
                 <div className="flex flex-col items-center gap-2">
                     <div className="w-12 h-12 border border-[#4b6a8a] flex items-center justify-center bg-[#0a1628]">x402</div>
                     <span className="text-[#4b6a8a]">SCAN</span>
@@ -197,7 +197,7 @@ function Diagram({ type }: { type: string }) {
 
     if (type === 'mcp') {
         return (
-            <div className="flex items-center justify-between text-[0.6rem] font-mono text-[#00d4ff] relative z-10 px-2">
+            <div className="flex items-center justify-between text-[0.6rem] font-sans font-medium text-[#00d4ff] relative z-10 px-2">
                 <div className="flex flex-col items-center gap-2">
                     <div className="w-12 h-12 border border-[#4b6a8a] flex items-center justify-center bg-[#0a1628]">MCP</div>
                     <span className="text-[#4b6a8a]">REGISTRY</span>
@@ -215,7 +215,7 @@ function Diagram({ type }: { type: string }) {
 
     if (type === 'a2a') {
         return (
-            <div className="flex items-center justify-center gap-8 text-[0.6rem] font-mono text-[#00d4ff] relative z-10">
+            <div className="flex items-center justify-center gap-8 text-[0.6rem] font-sans font-medium text-[#00d4ff] relative z-10">
                 <div className="flex flex-col items-center gap-2">
                     <div className="w-10 h-10 border border-[#4b6a8a] rounded-full flex items-center justify-center bg-[#0a1628]">AG1</div>
                 </div>
@@ -235,7 +235,7 @@ function Diagram({ type }: { type: string }) {
 
     if (type === 'fees') {
         return (
-            <div className="flex items-center justify-between text-[0.6rem] font-mono text-[#00d4ff] relative z-10 px-4">
+            <div className="flex items-center justify-between text-[0.6rem] font-sans font-medium text-[#00d4ff] relative z-10 px-4">
                 <div className="flex flex-col items-center gap-2">
                     <span className="text-[#4b6a8a]">API FEES</span>
                     <div className="w-1 h-8 bg-gradient-to-b from-[#4b6a8a] to-[#00d4ff]" />
