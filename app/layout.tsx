@@ -48,7 +48,7 @@ export default function RootLayout({
           <CursorGlow />
           <Ticker />
           <Navbar />
-          <main className="pt-[120px] md:pt-[132px]">
+          <main className="pt-[92px] md:pt-[96px]">
             <PageTransition>{children}</PageTransition>
           </main>
         </SolanaWalletProvider>
