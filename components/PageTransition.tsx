@@ -1,6 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
+import { useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
 export default function PageTransition({
@@ -9,6 +10,10 @@ export default function PageTransition({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
 
   return (
     <AnimatePresence mode="wait">
