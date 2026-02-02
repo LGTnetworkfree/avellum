@@ -74,7 +74,7 @@ export default function AgentCard({ agent, showRating = true }: Props) {
             <div className="flex items-start justify-between gap-4 mb-5">
                 <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-3 mb-3">
-                        <span className="border border-[#1e3a5a] text-[#00d4ff] font-mono text-[0.6rem] tracking-[0.15em] uppercase px-2.5 py-1 group-hover:border-[#00ffff]/40 group-hover:bg-[#00ffff]/5 transition-all duration-300">
+                        <span className="border border-[#1e3a5a] text-[#00d4ff] font-sans font-medium text-[0.6rem] tracking-[0.15em] uppercase px-2.5 py-1 group-hover:border-[#00ffff]/40 group-hover:bg-[#00ffff]/5 transition-all duration-300">
                             {registryLabels[agent.registry] || agent.registry}
                         </span>
                         <span className="h-px flex-1 bg-[#1e3a5a] group-hover:bg-[#00ffff]/30 transition-colors duration-500" />
@@ -89,7 +89,7 @@ export default function AgentCard({ agent, showRating = true }: Props) {
 
                 <div className="relative">
                     <TrustBadge score={agent.trust_score} size="sm" showLabel={false} />
-                    <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 font-mono text-[0.55rem] text-[#4b6a8a] group-hover:text-[#00d4ff] transition-colors duration-300 whitespace-nowrap">
+                    <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 font-sans font-medium text-[0.55rem] text-[#4b6a8a] group-hover:text-[#00d4ff] transition-colors duration-300 whitespace-nowrap">
                         {agent.trust_score.toFixed(1)}
                     </div>
                 </div>
@@ -102,7 +102,7 @@ export default function AgentCard({ agent, showRating = true }: Props) {
 
             {/* Address + copy */}
             <div className="flex items-center gap-2 mb-4">
-                <span className="font-mono text-[0.6rem] text-[#2a4a6a] tracking-[0.08em] bg-[#0a1628]/60 px-2 py-0.5 rounded-sm">
+                <span className="font-sans font-medium text-[0.6rem] text-[#2a4a6a] tracking-[0.08em] bg-[#0a1628]/60 px-2 py-0.5 rounded-sm">
                     {agent.address.slice(0, 8)}...{agent.address.slice(-6)}
                 </span>
                 <button
@@ -128,7 +128,7 @@ export default function AgentCard({ agent, showRating = true }: Props) {
 
             {/* Bottom bar: ratings count + action */}
             <div className="flex items-center justify-between pt-4 border-t border-[#1e3a5a]/40">
-                <span className="font-mono text-[0.6rem] tracking-[0.12em] uppercase text-[#4b6a8a]">
+                <span className="font-sans font-medium text-[0.6rem] tracking-[0.12em] uppercase text-[#4b6a8a]">
                     {agent.total_ratings} {agent.total_ratings === 1 ? 'rating' : 'ratings'}
                 </span>
 
@@ -141,7 +141,7 @@ export default function AgentCard({ agent, showRating = true }: Props) {
                                 setShowRatingPanel(!showRatingPanel);
                             }
                         }}
-                        className="font-mono text-[0.6rem] tracking-[0.12em] uppercase border border-[#1e3a5a] text-[#4b6a8a] px-3 py-1.5 hover:border-[#00ffff]/40 hover:text-[#00ffff] hover:bg-[#00ffff]/5 transition-all duration-300"
+                        className="font-sans font-medium text-[0.6rem] tracking-[0.12em] uppercase border border-[#1e3a5a] text-[#4b6a8a] px-3 py-1.5 hover:border-[#00ffff]/40 hover:text-[#00ffff] hover:bg-[#00ffff]/5 transition-all duration-300"
                     >
                         {connected ? (showRatingPanel ? 'Cancel' : 'Rate') : 'Connect'}
                     </button>
@@ -152,18 +152,18 @@ export default function AgentCard({ agent, showRating = true }: Props) {
             {showRatingPanel && connected && (
                 <div className="mt-4 pt-4 border-t border-[#1e3a5a]/50 space-y-4">
                     {balanceLoading ? (
-                        <p className="font-mono text-xs text-[#4b6a8a]">Loading $AVLM balance...</p>
+                        <p className="font-sans text-xs font-medium text-[#4b6a8a]">Loading $AVLM balance...</p>
                     ) : balanceError ? (
                         <div className="flex items-center gap-3">
-                            <p className="font-mono text-xs text-[#ff6b6b]">
+                            <p className="font-sans text-xs font-medium text-[#ff6b6b]">
                                 Could not fetch $AVLM balance.
                             </p>
-                            <button onClick={refetchBalance} className="font-mono text-xs text-[#00d4ff] hover:text-[#00ffff] underline transition-colors">
+                            <button onClick={refetchBalance} className="font-sans text-xs font-medium text-[#00d4ff] hover:text-[#00ffff] underline transition-colors">
                                 Retry
                             </button>
                         </div>
                     ) : !canVote ? (
-                        <p className="font-mono text-xs text-[#ff6b6b]">
+                        <p className="font-sans text-xs font-medium text-[#ff6b6b]">
                             You must hold at least {MIN_AVLM_TO_VOTE.toLocaleString()} $AVLM to rate agents
                         </p>
                     ) : (
@@ -171,7 +171,7 @@ export default function AgentCard({ agent, showRating = true }: Props) {
                             <RatingSlider value={rating} onChange={setRating} disabled={isSubmitting} />
 
                             <div className="flex items-center justify-between gap-4">
-                                <span className="font-mono text-[0.6rem] tracking-[0.15em] text-[#2a4a6a] uppercase">
+                                <span className="font-sans font-medium text-[0.6rem] tracking-[0.15em] text-[#2a4a6a] uppercase">
                                     Weight: {(balance ?? 0).toLocaleString()} $AVLM
                                 </span>
                                 <button
@@ -186,7 +186,7 @@ export default function AgentCard({ agent, showRating = true }: Props) {
                     )}
 
                     {submitMessage && (
-                        <p className={`font-mono text-xs ${submitMessage.includes('submitted') ? 'text-[#00ffff]' : 'text-[#ff6b6b]'}`}>
+                        <p className={`font-sans text-xs font-medium ${submitMessage.includes('submitted') ? 'text-[#00ffff]' : 'text-[#ff6b6b]'}`}>
                             {submitMessage}
                         </p>
                     )}
@@ -196,7 +196,7 @@ export default function AgentCard({ agent, showRating = true }: Props) {
                             href={explorerUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="font-mono text-xs text-[#00d4ff] hover:text-[#00ffff] transition-colors inline-block"
+                            className="font-sans text-xs font-medium text-[#00d4ff] hover:text-[#00ffff] transition-colors inline-block"
                         >
                             View on Solana Explorer &rarr;
                         </a>
@@ -208,13 +208,13 @@ export default function AgentCard({ agent, showRating = true }: Props) {
             {!showRatingPanel && explorerUrl && (
                 <div className="mt-4 pt-4 border-t border-[#1e3a5a]/50">
                     {submitMessage && (
-                        <p className="font-mono text-xs text-[#00ffff] mb-2">{submitMessage}</p>
+                        <p className="font-sans text-xs font-medium text-[#00ffff] mb-2">{submitMessage}</p>
                     )}
                     <a
                         href={explorerUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="font-mono text-xs text-[#00d4ff] hover:text-[#00ffff] transition-colors inline-block"
+                        className="font-sans text-xs font-medium text-[#00d4ff] hover:text-[#00ffff] transition-colors inline-block"
                     >
                         View on Solana Explorer &rarr;
                     </a>

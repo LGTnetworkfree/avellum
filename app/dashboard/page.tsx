@@ -82,7 +82,7 @@ export default function DashboardPage() {
                     <HeroTitle
                         lines={['Network']}
                         accent="leaderboard."
-                        className="font-serif text-4xl md:text-5xl font-normal text-white leading-[1.1] mb-4"
+                        className="font-sans text-4xl md:text-5xl font-bold text-white leading-[1.1] mb-4"
                     />
                     <HeroParagraph delay={0.75} className="text-body text-[#a0a0a0] max-w-lg mb-8">
                         Top performing verifiers and highest trust agents in the Avellum ecosystem.
@@ -126,7 +126,7 @@ export default function DashboardPage() {
                             className={`glass-panel px-6 md:px-8 py-5 ${i < 3 ? 'border-r' : ''} ${i >= 2 ? 'border-t md:border-t-0' : ''}`}
                         >
                             <span className="label-terminal !text-[#4b6a8a] block mb-1">{stat.label}</span>
-                            <p className="font-serif text-2xl text-white">
+                            <p className="font-sans text-2xl font-bold text-white">
                                 <LiveCounter end={stat.value} prefix={stat.prefix} suffix={stat.suffix} />
                             </p>
                             <StatBar percent={stat.bar} />
@@ -160,19 +160,19 @@ export default function DashboardPage() {
                                             onClick={() => setSelectedVerifier(verifier)}
                                             className="px-6 py-4 flex items-center gap-4 hover:bg-[#00ffff]/[0.02] transition-colors cursor-pointer group/row"
                                         >
-                                            <span className="font-serif text-lg text-[#1e3a5a] group-hover/row:text-[#00ffff] transition-colors duration-300 w-6 text-center">
+                                            <span className="font-sans text-lg font-bold text-[#1e3a5a] group-hover/row:text-[#00ffff] transition-colors duration-300 w-6 text-center">
                                                 {String(verifier.rank).padStart(2, '0')}
                                             </span>
                                             <div className="flex-1 min-w-0">
-                                                <div className="font-mono text-sm text-[#00d4ff] mb-1 group-hover/row:text-[#00ffff] transition-colors duration-300">{verifier.address}</div>
-                                                <div className="flex gap-3 font-mono text-[0.6rem] tracking-[0.15em] uppercase text-[#4b6a8a]">
+                                                <div className="font-sans text-sm font-medium text-[#00d4ff] mb-1 group-hover/row:text-[#00ffff] transition-colors duration-300">{verifier.address}</div>
+                                                <div className="flex gap-3 font-sans font-medium text-[0.6rem] tracking-[0.15em] uppercase text-[#4b6a8a]">
                                                     <span>{verifier.ratings} ratings</span>
                                                     <span>{verifier.stake} staked</span>
                                                 </div>
                                             </div>
                                             <div className="text-right">
-                                                <div className="font-mono text-lg text-white font-medium">{verifier.score}</div>
-                                                <div className="font-mono text-[0.6rem] tracking-[0.15em] uppercase text-[#2a4a6a]">PTS</div>
+                                                <div className="font-sans text-lg font-bold text-white font-medium">{verifier.score}</div>
+                                                <div className="font-sans font-medium text-[0.6rem] tracking-[0.15em] uppercase text-[#2a4a6a]">PTS</div>
                                             </div>
                                         </div>
                                     ))}
@@ -180,7 +180,7 @@ export default function DashboardPage() {
 
                                 {/* Footer */}
                                 <div className="px-6 py-4 border-t border-[#1e3a5a]/30 text-center">
-                                    <Link href="/agents" className="font-mono text-[0.65rem] tracking-[0.15em] uppercase text-[#4b6a8a] hover:text-[#00ffff] transition-colors duration-300">
+                                    <Link href="/agents" className="font-sans font-medium text-[0.65rem] tracking-[0.15em] uppercase text-[#4b6a8a] hover:text-[#00ffff] transition-colors duration-300">
                                         View All Verifiers
                                     </Link>
                                 </div>
@@ -196,7 +196,7 @@ export default function DashboardPage() {
                                         <span className="label-terminal text-[#00ffff]">Top Agents</span>
                                         <span className="h-px flex-1 bg-[#1e3a5a] min-w-[40px]" />
                                         {onChainAgents.length > 0 && (
-                                            <span className="font-mono text-[0.55rem] tracking-[0.15em] uppercase text-[#00ffff]/50">ON-CHAIN</span>
+                                            <span className="font-sans font-medium text-[0.55rem] tracking-[0.15em] uppercase text-[#00ffff]/50">ON-CHAIN</span>
                                         )}
                                     </div>
                                     <span className="label-terminal !text-[#2a4a6a]">Trust</span>
@@ -207,7 +207,7 @@ export default function DashboardPage() {
                                     {agentsLoading ? (
                                         Array.from({ length: 5 }).map((_, i) => (
                                             <div key={i} className="px-6 py-4 flex items-center gap-4 animate-pulse">
-                                                <span className="font-serif text-lg text-[#1e3a5a] w-6 text-center">
+                                                <span className="font-sans text-lg font-bold text-[#1e3a5a] w-6 text-center">
                                                     {String(i + 1).padStart(2, '0')}
                                                 </span>
                                                 <div className="flex-1 min-w-0 space-y-2">
@@ -224,16 +224,16 @@ export default function DashboardPage() {
                                                 href="/agents"
                                                 className="px-6 py-4 flex items-center gap-4 hover:bg-[#00ffff]/[0.02] transition-colors group/row block"
                                             >
-                                                <span className="font-serif text-lg text-[#1e3a5a] group-hover/row:text-[#00ffff] transition-colors duration-300 w-6 text-center">
+                                                <span className="font-sans text-lg font-bold text-[#1e3a5a] group-hover/row:text-[#00ffff] transition-colors duration-300 w-6 text-center">
                                                     {String(agent.rank).padStart(2, '0')}
                                                 </span>
                                                 <div className="flex-1 min-w-0">
-                                                    <div className="font-mono text-sm text-[#00d4ff] mb-1 group-hover/row:text-[#00ffff] transition-colors duration-300">{agent.name}</div>
+                                                    <div className="font-sans text-sm font-medium text-[#00d4ff] mb-1 group-hover/row:text-[#00ffff] transition-colors duration-300">{agent.name}</div>
                                                     <div className="flex gap-2 items-center">
-                                                        <span className="border border-[#1e3a5a] text-[#00d4ff] font-mono text-[0.6rem] tracking-[0.15em] uppercase px-2 py-0.5 group-hover/row:border-[#00ffff]/40 transition-all duration-300">
+                                                        <span className="border border-[#1e3a5a] text-[#00d4ff] font-sans font-medium text-[0.6rem] tracking-[0.15em] uppercase px-2 py-0.5 group-hover/row:border-[#00ffff]/40 transition-all duration-300">
                                                             {CONFIDENCE_LABELS[agent.confidence] ?? 'N/A'}
                                                         </span>
-                                                        <span className="font-mono text-[0.6rem] tracking-[0.15em] uppercase text-[#4b6a8a]">
+                                                        <span className="font-sans font-medium text-[0.6rem] tracking-[0.15em] uppercase text-[#4b6a8a]">
                                                             {agent.ratingCount} ratings
                                                         </span>
                                                     </div>
@@ -246,7 +246,7 @@ export default function DashboardPage() {
 
                                 {/* Footer */}
                                 <div className="px-6 py-4 border-t border-[#1e3a5a]/30 text-center">
-                                    <Link href="/agents" className="font-mono text-[0.65rem] tracking-[0.15em] uppercase text-[#4b6a8a] hover:text-[#00ffff] transition-colors duration-300">
+                                    <Link href="/agents" className="font-sans font-medium text-[0.65rem] tracking-[0.15em] uppercase text-[#4b6a8a] hover:text-[#00ffff] transition-colors duration-300">
                                         View Agent Registry
                                     </Link>
                                 </div>
@@ -264,7 +264,7 @@ export default function DashboardPage() {
                     <FadeIn className="px-8 md:px-12 py-14 flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
                         <div>
                             <span className="label-terminal !text-[#4b6a8a] block mb-3">Get Started</span>
-                            <h2 className="font-serif text-3xl md:text-4xl font-normal text-white mb-2">Start verifying.</h2>
+                            <h2 className="font-sans text-3xl md:text-4xl font-bold text-white mb-2">Start verifying.</h2>
                             <p className="text-body text-[#a0a0a0] max-w-sm">
                                 Connect your wallet to join the Verifier Network. Rate agents, stake tokens, and earn protocol fees.
                             </p>
@@ -307,7 +307,7 @@ export default function DashboardPage() {
                         >
                             <button
                                 onClick={() => setSelectedVerifier(null)}
-                                className="absolute top-5 right-5 text-[#4b6a8a] hover:text-[#00ffff] transition-colors font-mono text-sm"
+                                className="absolute top-5 right-5 text-[#4b6a8a] hover:text-[#00ffff] transition-colors font-sans text-sm font-medium"
                             >
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -317,18 +317,18 @@ export default function DashboardPage() {
                             {/* Modal header */}
                             <div className="px-6 pt-6 pb-4 border-b border-[#1e3a5a]/50">
                                 <span className="label-terminal text-[#00ffff] block mb-2">Verifier Profile</span>
-                                <h3 className="font-mono text-xl text-white">{selectedVerifier.address}</h3>
+                                <h3 className="font-sans text-xl font-bold text-white">{selectedVerifier.address}</h3>
                             </div>
 
                             {/* Stats grid */}
                             <div className="grid grid-cols-2 border-b border-[#1e3a5a]/50">
                                 <div className="px-6 py-4 border-r border-[#1e3a5a]/50">
                                     <span className="label-terminal !text-[#4b6a8a] block mb-1">Total Score</span>
-                                    <p className="font-serif text-2xl text-white">{selectedVerifier.score}</p>
+                                    <p className="font-sans text-2xl font-bold text-white">{selectedVerifier.score}</p>
                                 </div>
                                 <div className="px-6 py-4">
                                     <span className="label-terminal !text-[#4b6a8a] block mb-1">Rank</span>
-                                    <p className="font-serif text-2xl text-white">#{selectedVerifier.rank}</p>
+                                    <p className="font-sans text-2xl font-bold text-white">#{selectedVerifier.rank}</p>
                                 </div>
                             </div>
 
@@ -336,15 +336,15 @@ export default function DashboardPage() {
                             <div className="px-6 py-4 space-y-0">
                                 <div className="flex justify-between py-3 border-b border-[#1e3a5a]/30">
                                     <span className="label-terminal !text-[#4b6a8a]">Total Ratings</span>
-                                    <span className="font-mono text-sm text-white">{selectedVerifier.ratings}</span>
+                                    <span className="font-sans text-sm font-medium text-white">{selectedVerifier.ratings}</span>
                                 </div>
                                 <div className="flex justify-between py-3 border-b border-[#1e3a5a]/30">
                                     <span className="label-terminal !text-[#4b6a8a]">Staked Amount</span>
-                                    <span className="font-mono text-sm text-white">{selectedVerifier.stake} AVL</span>
+                                    <span className="font-sans text-sm font-medium text-white">{selectedVerifier.stake} AVL</span>
                                 </div>
                                 <div className="flex justify-between py-3">
                                     <span className="label-terminal !text-[#4b6a8a]">Network Status</span>
-                                    <span className="font-mono text-sm text-[#00ffff]">ONLINE</span>
+                                    <span className="font-sans text-sm font-medium text-[#00ffff]">ONLINE</span>
                                 </div>
                             </div>
                         </motion.div>

@@ -37,10 +37,10 @@ export default function PipelineSection() {
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 <div className="flex items-end justify-between mb-24 border-b border-[#1e3a5a] pb-4">
-                    <h2 className="text-3xl md:text-5xl font-bold text-white font-serif tracking-tight">
+                    <h2 className="text-3xl md:text-5xl font-bold text-white font-sans font-bold tracking-tight">
                         SYSTEM_ARCHITECTURE
                     </h2>
-                    <div className="text-[#00d4ff] font-mono text-sm hidden sm:block">
+                    <div className="text-[#00d4ff] font-sans text-sm font-medium hidden sm:block">
             // v2.1.0_PIPELINE
                     </div>
                 </div>
@@ -160,17 +160,17 @@ function PipelineCard({ step }: { step: any }) {
             <div className="absolute inset-0 bg-[#00d4ff] opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-500 rounded-lg" />
             <div className="relative p-8 bg-[#0a1628]/80 backdrop-blur-md border border-[#1e3a5a] group-hover:border-[#00d4ff] transition-all duration-300 shadow-[0_0_20px_rgba(0,0,0,0.3)] group-hover:shadow-[0_0_30px_rgba(0,212,255,0.2)]">
                 <div className="flex items-center justify-between mb-6 border-b border-[#1e3a5a] group-hover:border-[#00d4ff]/30 pb-4 transition-colors">
-                    <div className="text-[#4b6a8a] font-mono text-xs group-hover:text-[#00d4ff] tracking-widest">
+                    <div className="text-[#4b6a8a] font-sans text-xs font-medium group-hover:text-[#00d4ff] tracking-widest">
                         :: NODE_{step.id}
                     </div>
                     <div className="w-2 h-2 bg-[#1e3a5a] group-hover:bg-[#00d4ff] transition-colors rounded-full animate-pulse" />
                 </div>
 
-                <h3 className="text-3xl font-bold text-white mb-4 font-serif tracking-wide group-hover:text-[#00d4ff] transition-colors">
+                <h3 className="text-3xl font-bold text-white mb-4 font-sans font-bold tracking-wide group-hover:text-[#00d4ff] transition-colors">
                     {step.title}
                 </h3>
 
-                <p className="text-[#4b6a8a] font-mono text-sm leading-relaxed group-hover:text-[#a0c0e0] transition-colors">
+                <p className="text-[#4b6a8a] font-sans text-sm font-medium leading-relaxed group-hover:text-[#a0c0e0] transition-colors">
                     &gt; {step.description}
                 </p>
 

@@ -39,7 +39,7 @@ export default function MetricBar({
             </div>
 
             <div className="p-3 border-r border-[#1e3a5a] border-t border-[#1e3a5a] flex flex-col justify-center">
-                <div className="font-mono mb-1">{value}</div>
+                <div className="font-sans font-medium mb-1">{value}</div>
                 <div className="w-full h-2 bg-[#142a44] border border-[#1e3a5a]">
                     <div
                         className="h-full bg-[#00d4ff] shadow-[0_0_8px_#00d4ff] transition-all duration-1000 ease-[cubic-bezier(0.22,1,0.36,1)]"

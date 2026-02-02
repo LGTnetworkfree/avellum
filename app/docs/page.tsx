@@ -60,7 +60,7 @@ export default function DocsPage() {
                     <HeroTitle
                         lines={['Protocol']}
                         accent="documentation."
-                        className="font-serif text-4xl md:text-5xl font-normal text-white leading-[1.1] mb-4"
+                        className="font-sans text-4xl md:text-5xl font-bold text-white leading-[1.1] mb-4"
                     />
                     <HeroParagraph delay={0.75} className="text-body text-[#a0a0a0] max-w-lg mb-8">
                         Technical overview of the Avellum trust layer, verifier economics, and API reference.
@@ -88,7 +88,7 @@ export default function DocsPage() {
                                 <StaggerItem key={section.id} index={i}>
                                     <button
                                         onClick={() => scrollToSection(section.id)}
-                                        className={`w-full text-left px-4 py-2.5 font-mono text-xs tracking-[0.1em] transition-all duration-200 border-l-2 ${
+                                        className={`w-full text-left px-4 py-2.5 font-sans text-xs font-medium tracking-[0.1em] transition-all duration-200 border-l-2 ${
                                             activeSection === section.id
                                                 ? 'border-[#00ffff] text-[#00ffff]'
                                                 : 'border-[#1e3a5a]/50 text-[#4b6a8a] hover:text-white hover:border-[#4b6a8a]'
@@ -109,9 +109,9 @@ export default function DocsPage() {
                     {/* 1. Executive Summary */}
                     <FadeIn>
                         <section id="executive-summary" className="mb-16 scroll-mt-[130px]">
-                            <h2 className="font-serif text-2xl md:text-3xl font-normal text-white leading-snug mb-6">1. Executive Summary</h2>
+                            <h2 className="font-sans text-2xl md:text-3xl font-bold text-white leading-snug mb-6">1. Executive Summary</h2>
                             <div className="border border-[#1e3a5a] bg-[#0d1e33]/40 p-6 relative">
-                                <div className="absolute top-0 right-0 p-3 font-mono text-[0.6rem] tracking-[0.15em] uppercase text-[#2a4a6a]">SYS_DOC_V2</div>
+                                <div className="absolute top-0 right-0 p-3 font-sans font-medium text-[0.6rem] tracking-[0.15em] uppercase text-[#2a4a6a]">SYS_DOC_V2</div>
                                 <p className="text-[#a0a0a0] leading-relaxed mb-4 font-sans text-sm">
                                     The A2A (Agent-to-Agent) economy is growing rapidly, with AI agents transacting billions
                                     without human oversight. However, there&apos;s no standardized way to verify which agents are
@@ -129,7 +129,7 @@ export default function DocsPage() {
                     {/* 2. The Problem */}
                     <FadeIn>
                         <section id="the-problem" className="mb-16 scroll-mt-[130px]">
-                            <h2 className="font-serif text-2xl md:text-3xl font-normal text-white leading-snug mb-6">2. The Problem</h2>
+                            <h2 className="font-sans text-2xl md:text-3xl font-bold text-white leading-snug mb-6">2. The Problem</h2>
                             <div className="space-y-4">
                                 {[
                                     { code: '01', text: 'No unified trust standard for AI agents operating across disparate chains and runtimes.' },
@@ -139,7 +139,7 @@ export default function DocsPage() {
                                 ].map((item, i) => (
                                     <StaggerItem key={item.code} index={i}>
                                         <div className="flex items-start gap-4 card-hover p-5">
-                                            <span className="font-mono text-[0.65rem] tracking-[0.15em] uppercase text-[#00d4ff] shrink-0 pt-0.5">ERR_{item.code}</span>
+                                            <span className="font-sans font-medium text-[0.65rem] tracking-[0.15em] uppercase text-[#00d4ff] shrink-0 pt-0.5">ERR_{item.code}</span>
                                             <span className="text-[#4b6a8a] font-sans text-sm leading-relaxed">{item.text}</span>
                                         </div>
                                     </StaggerItem>
@@ -151,10 +151,10 @@ export default function DocsPage() {
                     {/* 3. How Avellum Works */}
                     <FadeIn>
                         <section id="how-avellum-works" className="mb-16 scroll-mt-[130px]">
-                            <h2 className="font-serif text-2xl md:text-3xl font-normal text-white leading-snug mb-6">3. How Avellum Works</h2>
+                            <h2 className="font-sans text-2xl md:text-3xl font-bold text-white leading-snug mb-6">3. How Avellum Works</h2>
 
                             {/* Architecture Diagram */}
-                            <div className="bg-[#050d18] border border-[#1e3a5a] p-4 md:p-8 mb-8 font-mono text-xs overflow-x-auto relative">
+                            <div className="bg-[#050d18] border border-[#1e3a5a] p-4 md:p-8 mb-8 font-sans text-xs font-medium overflow-x-auto relative">
                                 <div className="absolute inset-0" style={{
                                     backgroundImage:
                                         'linear-gradient(rgba(30,58,90,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(30,58,90,0.08) 1px, transparent 1px)',
@@ -208,10 +208,10 @@ export default function DocsPage() {
                     {/* 4. Trust Score Algorithm */}
                     <FadeIn>
                         <section id="trust-score" className="mb-16 scroll-mt-[130px]">
-                            <h2 className="font-serif text-2xl md:text-3xl font-normal text-white leading-snug mb-6">4. Trust Score Algorithm</h2>
+                            <h2 className="font-sans text-2xl md:text-3xl font-bold text-white leading-snug mb-6">4. Trust Score Algorithm</h2>
                             <div className="bg-[#050d18] p-6 border-l-2 border-[#00ffff] mb-6">
-                                <code className="text-[#00ffff] block mb-2 text-lg font-mono">trust_score = &Sigma;(rating &times; token_weight) / &Sigma;(token_weight)</code>
-                                <p className="text-sm text-[#4b6a8a] font-mono">
+                                <code className="text-[#00ffff] block mb-2 text-lg font-sans font-medium">trust_score = &Sigma;(rating &times; token_weight) / &Sigma;(token_weight)</code>
+                                <p className="text-sm text-[#4b6a8a] font-sans font-medium">
                                     // Weighted average based on verifier stake
                                 </p>
                             </div>
@@ -226,15 +226,15 @@ export default function DocsPage() {
                     {/* 5. Verifier Economics */}
                     <FadeIn>
                         <section id="verifier-economics" className="mb-16 scroll-mt-[130px]">
-                            <h2 className="font-serif text-2xl md:text-3xl font-normal text-white leading-snug mb-6">5. Verifier Economics</h2>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 font-mono text-sm mb-6">
+                            <h2 className="font-sans text-2xl md:text-3xl font-bold text-white leading-snug mb-6">5. Verifier Economics</h2>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 font-sans text-sm font-medium mb-6">
                                 <div className="card-hover p-5">
                                     <span className="label-terminal !text-[#4b6a8a] block mb-2">Revenue Model</span>
-                                    <p className="font-serif text-xl text-white">100% to Verifiers</p>
+                                    <p className="font-sans text-xl font-bold text-white">100% to Verifiers</p>
                                 </div>
                                 <div className="card-hover p-5">
                                     <span className="label-terminal !text-[#4b6a8a] block mb-2">Distribution</span>
-                                    <p className="font-serif text-xl text-white">Proportional to Activity</p>
+                                    <p className="font-sans text-xl font-bold text-white">Proportional to Activity</p>
                                 </div>
                             </div>
                             <p className="text-[#a0a0a0] font-sans text-sm leading-relaxed">
@@ -248,14 +248,14 @@ export default function DocsPage() {
                     {/* 6. API Reference */}
                     <FadeIn>
                         <section id="api-reference" className="mb-16 scroll-mt-[130px]">
-                            <h2 className="font-serif text-2xl md:text-3xl font-normal text-white leading-snug mb-6">6. API Reference</h2>
+                            <h2 className="font-sans text-2xl md:text-3xl font-bold text-white leading-snug mb-6">6. API Reference</h2>
                             <div className="border border-[#1e3a5a] mb-4 overflow-hidden">
                                 <div className="bg-[#0d1e33]/60 px-5 py-3 flex items-center gap-3 border-b border-[#1e3a5a]/50">
-                                    <span className="border border-[#00ffff]/40 text-[#00ffff] font-mono text-[0.6rem] tracking-[0.15em] uppercase px-2.5 py-1">GET</span>
-                                    <code className="text-white text-sm font-mono">/api/score/[agent_address]</code>
+                                    <span className="border border-[#00ffff]/40 text-[#00ffff] font-sans font-medium text-[0.6rem] tracking-[0.15em] uppercase px-2.5 py-1">GET</span>
+                                    <code className="text-white text-sm font-sans font-medium">/api/score/[agent_address]</code>
                                 </div>
                                 <div className="p-5 bg-[#050d18]">
-                                    <pre className="font-mono text-sm text-[#a0a0a0] overflow-x-auto">
+                                    <pre className="font-sans text-sm font-medium text-[#a0a0a0] overflow-x-auto">
                                         {`{
   "address": "0x7a2...9f1",
   "trust_score": 94.5,
@@ -276,7 +276,7 @@ export default function DocsPage() {
                     {/* 7. Supported Protocols */}
                     <FadeIn>
                         <section id="supported-protocols" className="mb-16 scroll-mt-[130px]">
-                            <h2 className="font-serif text-2xl md:text-3xl font-normal text-white leading-snug mb-6">7. Supported Protocols</h2>
+                            <h2 className="font-sans text-2xl md:text-3xl font-bold text-white leading-snug mb-6">7. Supported Protocols</h2>
                             <div className="space-y-3">
                                 {[
                                     { name: 'x402 Protocol', desc: 'Payment-enabled autonomous agents standard.', badge: 'x402' },
@@ -289,7 +289,7 @@ export default function DocsPage() {
                                                 <h3 className="font-sans text-white text-base font-semibold mb-1">{proto.name}</h3>
                                                 <p className="text-[#4b6a8a] font-sans text-sm">{proto.desc}</p>
                                             </div>
-                                            <span className="border border-[#1e3a5a] text-[#00d4ff] font-mono text-sm tracking-[0.15em] px-4 py-2 shrink-0">
+                                            <span className="border border-[#1e3a5a] text-[#00d4ff] font-sans text-sm font-medium tracking-[0.15em] px-4 py-2 shrink-0">
                                                 {proto.badge}
                                             </span>
                                         </div>
@@ -302,7 +302,7 @@ export default function DocsPage() {
                     {/* 8. Token Utility */}
                     <FadeIn>
                         <section id="token-utility" className="mb-16 scroll-mt-[130px]">
-                            <h2 className="font-serif text-2xl md:text-3xl font-normal text-white leading-snug mb-6">8. Token Utility</h2>
+                            <h2 className="font-sans text-2xl md:text-3xl font-bold text-white leading-snug mb-6">8. Token Utility</h2>
                             <p className="text-[#a0a0a0] leading-relaxed mb-6 font-sans text-sm">
                                 $AVLM is the native utility token of the network. It is used for:
                             </p>
@@ -314,7 +314,7 @@ export default function DocsPage() {
                                 ].map((item, i) => (
                                     <StaggerItem key={item.label} index={i}>
                                         <div className="flex items-start gap-4 card-hover p-5">
-                                            <span className="font-serif text-lg text-[#1e3a5a] shrink-0">{String(i + 1).padStart(2, '0')}</span>
+                                            <span className="font-sans text-lg font-bold text-[#1e3a5a] shrink-0">{String(i + 1).padStart(2, '0')}</span>
                                             <div>
                                                 <h4 className="text-white font-sans text-base font-semibold mb-1">{item.label}</h4>
                                                 <p className="text-[#4b6a8a] font-sans text-sm">{item.desc}</p>
@@ -329,7 +329,7 @@ export default function DocsPage() {
                     {/* 9. FAQ */}
                     <FadeIn>
                         <section id="faq" className="mb-16 scroll-mt-[130px]">
-                            <h2 className="font-serif text-2xl md:text-3xl font-normal text-white leading-snug mb-6">9. FAQ</h2>
+                            <h2 className="font-sans text-2xl md:text-3xl font-bold text-white leading-snug mb-6">9. FAQ</h2>
                             <div className="space-y-0 border border-[#1e3a5a] divide-y divide-[#1e3a5a]/50">
                                 {[
                                     { q: 'How fast do trust scores update?', a: 'Scores are updated in near real-time (every ~5 minutes) as new verifier signatures are aggregated on-chain.' },

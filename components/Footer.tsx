@@ -27,7 +27,7 @@ export default function Footer() {
                 href={link.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="border border-[#0a0a0a] flex items-center justify-center py-3 px-4 text-[#0a0a0a] font-mono text-xs tracking-[0.2em] hover:bg-[#0a0a0a] hover:text-[#00ffff] transition-colors duration-200"
+                className="border border-[#0a0a0a] flex items-center justify-center py-3 px-4 text-[#0a0a0a] font-sans text-xs font-medium tracking-[0.2em] hover:bg-[#0a0a0a] hover:text-[#00ffff] transition-colors duration-200"
               >
                 {link.label}
               </a>
@@ -35,7 +35,7 @@ export default function Footer() {
               <Link
                 key={link.label}
                 href={link.href}
-                className="border border-[#0a0a0a] flex items-center justify-center py-3 px-4 text-[#0a0a0a] font-mono text-xs tracking-[0.2em] hover:bg-[#0a0a0a] hover:text-[#00ffff] transition-colors duration-200"
+                className="border border-[#0a0a0a] flex items-center justify-center py-3 px-4 text-[#0a0a0a] font-sans text-xs font-medium tracking-[0.2em] hover:bg-[#0a0a0a] hover:text-[#00ffff] transition-colors duration-200"
               >
                 {link.label}
               </Link>
@@ -44,7 +44,7 @@ export default function Footer() {
         </div>
 
         {/* Copyright */}
-        <p className="text-center text-[#0a0a0a]/60 font-mono text-[0.65rem] tracking-[0.15em] uppercase">
+        <p className="text-center text-[#0a0a0a]/60 font-sans font-medium text-[0.65rem] tracking-[0.15em] uppercase">
           &copy; 2026 Avellum. All rights reserved.
         </p>
       </div>

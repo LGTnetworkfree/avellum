@@ -100,7 +100,7 @@ export default function AgentDetailPage({ params }: Props) {
             <>
             <div className="noise-texture min-h-screen max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-l border-r border-[#1e3a5a] relative z-10 bg-[#0a1628]">
                 <div className="flex flex-col items-center justify-center py-32 px-8">
-                    <p className="font-serif text-3xl text-white mb-3">Agent not found.</p>
+                    <p className="font-sans text-3xl font-bold text-white mb-3">Agent not found.</p>
                     <p className="text-[#4b6a8a] font-sans text-sm mb-8">This agent hasn&apos;t been indexed yet.</p>
                     <Link
                         href="/agents"
@@ -128,7 +128,7 @@ export default function AgentDetailPage({ params }: Props) {
                     {/* Back link */}
                     <Link
                         href="/agents"
-                        className="inline-flex items-center gap-2 font-mono text-[0.65rem] tracking-[0.15em] uppercase text-[#4b6a8a] hover:text-[#00ffff] transition-colors duration-300 mb-8"
+                        className="inline-flex items-center gap-2 font-sans font-medium text-[0.65rem] tracking-[0.15em] uppercase text-[#4b6a8a] hover:text-[#00ffff] transition-colors duration-300 mb-8"
                     >
                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -139,7 +139,7 @@ export default function AgentDetailPage({ params }: Props) {
                     <div className="flex items-start justify-between gap-6">
                         <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-3 mb-4">
-                                <span className="border border-[#1e3a5a] text-[#00d4ff] font-mono text-[0.6rem] tracking-[0.15em] uppercase px-2.5 py-1">
+                                <span className="border border-[#1e3a5a] text-[#00d4ff] font-sans font-medium text-[0.6rem] tracking-[0.15em] uppercase px-2.5 py-1">
                                     {registryLabels[agent.registry] || agent.registry}
                                 </span>
                                 <span className="h-px flex-1 bg-[#1e3a5a]" />
@@ -155,7 +155,7 @@ export default function AgentDetailPage({ params }: Props) {
 
                             {/* Address */}
                             <div className="flex items-center gap-3 bg-[#050d18] border border-[#1e3a5a] px-4 py-3 max-w-full">
-                                <span className="font-mono text-[0.65rem] text-[#4b6a8a] tracking-[0.15em] break-all">{agent.address}</span>
+                                <span className="font-sans font-medium text-[0.65rem] text-[#4b6a8a] tracking-[0.15em] break-all">{agent.address}</span>
                                 <button
                                     onClick={() => {
                                         navigator.clipboard.writeText(agent.address);
@@ -187,19 +187,19 @@ export default function AgentDetailPage({ params }: Props) {
             <div className="grid grid-cols-2 md:grid-cols-4 border-b border-[#1e3a5a]">
                 <div className="px-6 md:px-8 py-5 border-r border-[#1e3a5a]">
                     <span className="label-terminal !text-[#4b6a8a] block mb-1">Trust Score</span>
-                    <p className="font-serif text-2xl text-white">{agent.trust_score.toFixed(1)}</p>
+                    <p className="font-sans text-2xl font-bold text-white">{agent.trust_score.toFixed(1)}</p>
                 </div>
                 <div className="px-6 md:px-8 py-5 md:border-r border-[#1e3a5a]">
                     <span className="label-terminal !text-[#4b6a8a] block mb-1">Total Ratings</span>
-                    <p className="font-serif text-2xl text-white">{agent.total_ratings}</p>
+                    <p className="font-sans text-2xl font-bold text-white">{agent.total_ratings}</p>
                 </div>
                 <div className="px-6 md:px-8 py-5 border-r border-[#1e3a5a] border-t md:border-t-0">
                     <span className="label-terminal !text-[#4b6a8a] block mb-1">Registry</span>
-                    <p className="font-serif text-2xl text-white">{registryLabels[agent.registry] || agent.registry}</p>
+                    <p className="font-sans text-2xl font-bold text-white">{registryLabels[agent.registry] || agent.registry}</p>
                 </div>
                 <div className="px-6 md:px-8 py-5 border-t md:border-t-0">
                     <span className="label-terminal !text-[#4b6a8a] block mb-1">Indexed</span>
-                    <p className="font-serif text-2xl text-white">
+                    <p className="font-sans text-2xl font-bold text-white">
                         {new Date(agent.indexed_at).toLocaleDateString()}
                     </p>
                 </div>
@@ -209,25 +209,25 @@ export default function AgentDetailPage({ params }: Props) {
             <div className="section-gradient">
                 <div className="px-8 md:px-12 pt-10 pb-10">
                     <span className="label-terminal text-[#00ffff] block mb-3">Submit Rating</span>
-                    <h2 className="font-serif text-2xl md:text-3xl font-normal text-white leading-snug mb-8">
+                    <h2 className="font-sans text-2xl md:text-3xl font-bold text-white leading-snug mb-8">
                         Rate this agent.
                     </h2>
 
                     {connected ? (
                         <div className="card-hover p-8 max-w-2xl">
                             {balanceLoading ? (
-                                <p className="font-mono text-xs text-[#4b6a8a]">Loading $AVLM balance...</p>
+                                <p className="font-sans text-xs font-medium text-[#4b6a8a]">Loading $AVLM balance...</p>
                             ) : balanceError ? (
                                 <div className="flex items-center gap-3">
-                                    <p className="font-mono text-xs text-[#ff6b6b]">
+                                    <p className="font-sans text-xs font-medium text-[#ff6b6b]">
                                         Could not fetch $AVLM balance.
                                     </p>
-                                    <button onClick={refetchBalance} className="font-mono text-xs text-[#00d4ff] hover:text-[#00ffff] underline transition-colors">
+                                    <button onClick={refetchBalance} className="font-sans text-xs font-medium text-[#00d4ff] hover:text-[#00ffff] underline transition-colors">
                                         Retry
                                     </button>
                                 </div>
                             ) : !canVote ? (
-                                <p className="font-mono text-xs text-[#ff6b6b]">
+                                <p className="font-sans text-xs font-medium text-[#ff6b6b]">
                                     You must hold at least {MIN_AVLM_TO_VOTE.toLocaleString()} $AVLM to rate agents
                                 </p>
                             ) : (
@@ -235,7 +235,7 @@ export default function AgentDetailPage({ params }: Props) {
                                     <RatingSlider value={rating} onChange={setRating} disabled={isSubmitting} />
 
                                     <div className="flex items-center justify-between gap-4 mt-6">
-                                        <span className="font-mono text-[0.6rem] tracking-[0.15em] text-[#2a4a6a] uppercase">
+                                        <span className="font-sans font-medium text-[0.6rem] tracking-[0.15em] text-[#2a4a6a] uppercase">
                                             Weight: {(balance ?? 0).toLocaleString()} $AVLM
                                         </span>
                                         <button
@@ -250,7 +250,7 @@ export default function AgentDetailPage({ params }: Props) {
                             )}
 
                             {submitMessage && (
-                                <p className={`font-mono text-xs mt-4 ${submitMessage.includes('successfully') ? 'text-[#00ffff]' : 'text-[#ff6b6b]'}`}>
+                                <p className={`font-sans text-xs font-medium mt-4 ${submitMessage.includes('successfully') ? 'text-[#00ffff]' : 'text-[#ff6b6b]'}`}>
                                     {submitMessage}
                                 </p>
                             )}
@@ -260,7 +260,7 @@ export default function AgentDetailPage({ params }: Props) {
                                     href={explorerUrl}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="font-mono text-xs text-[#00d4ff] hover:text-[#00ffff] transition-colors inline-block mt-2"
+                                    className="font-sans text-xs font-medium text-[#00d4ff] hover:text-[#00ffff] transition-colors inline-block mt-2"
                                 >
                                     View on Solana Explorer &rarr;
                                 </a>
@@ -269,7 +269,7 @@ export default function AgentDetailPage({ params }: Props) {
                     ) : (
                         <div className="card-hover p-8 max-w-2xl text-center">
                             <p className="text-[#4b6a8a] font-sans text-sm mb-4">Connect your wallet to rate this agent.</p>
-                            <p className="font-mono text-[0.6rem] tracking-[0.15em] text-[#2a4a6a] uppercase mb-6">
+                            <p className="font-sans font-medium text-[0.6rem] tracking-[0.15em] text-[#2a4a6a] uppercase mb-6">
                                 You must hold at least 10,000 $AVLM to submit ratings
                             </p>
                             <button
@@ -287,13 +287,13 @@ export default function AgentDetailPage({ params }: Props) {
             <div className="gradient-separator" />
             <div className="px-8 md:px-12 py-10">
                 <span className="label-terminal !text-[#4b6a8a] block mb-3">Developer</span>
-                <h2 className="font-serif text-2xl font-normal text-white leading-snug mb-6">
+                <h2 className="font-sans text-2xl font-bold text-white leading-snug mb-6">
                     API Access
                 </h2>
                 <p className="text-[#4b6a8a] font-sans text-sm mb-4">
                     Query this agent&apos;s trust score programmatically:
                 </p>
-                <div className="bg-[#050d18] border border-[#1e3a5a] px-5 py-4 font-mono text-sm text-[#a0a0a0] overflow-x-auto">
+                <div className="bg-[#050d18] border border-[#1e3a5a] px-5 py-4 font-sans text-sm font-medium text-[#a0a0a0] overflow-x-auto">
                     <span className="text-[#00ffff]">GET</span> /api/score/{agent.address}
                 </div>
             </div>

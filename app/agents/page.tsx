@@ -137,7 +137,7 @@ export default function AgentsPage() {
                     <HeroTitle
                         lines={['Discover verified']}
                         accent="agents."
-                        className="font-serif text-4xl md:text-5xl font-normal text-white leading-[1.1] mb-4"
+                        className="font-sans text-4xl md:text-5xl font-bold text-white leading-[1.1] mb-4"
                     />
                     <HeroParagraph delay={0.9} className="text-body text-[#a0a0a0] max-w-lg mb-8">
                         Browse, search, and rate AI agents indexed from x402, MCP, and A2A registries.
@@ -176,7 +176,7 @@ export default function AgentsPage() {
                             />
                             <span className="label-terminal !text-[#4b6a8a] block mb-2">{stat.label}</span>
                             <div className="flex items-end gap-3">
-                                <p className="font-serif text-3xl text-white group-hover:text-[#00ffff] transition-colors duration-300">
+                                <p className="font-sans text-3xl font-bold text-white group-hover:text-[#00ffff] transition-colors duration-300">
                                     <CountUp end={stat.value} />
                                 </p>
                                 {i > 0 && counts.total > 0 && (
@@ -216,7 +216,7 @@ export default function AgentsPage() {
                                 placeholder="Search by name, address, or description..."
                                 value={searchInput}
                                 onChange={(e) => handleSearchChange(e.target.value)}
-                                className="w-full pl-10 pr-4 py-3 text-white placeholder-[#2a4a6a] focus:outline-none font-mono text-sm input-glow"
+                                className="w-full pl-10 pr-4 py-3 text-white placeholder-[#2a4a6a] focus:outline-none font-sans text-sm font-medium input-glow"
                             />
                         </div>
 
@@ -225,7 +225,7 @@ export default function AgentsPage() {
                                 <button
                                     key={reg.value}
                                     onClick={() => setFilter(reg.value)}
-                                    className={`px-4 py-3 font-mono text-[0.65rem] tracking-[0.15em] uppercase transition-all duration-300 border ${
+                                    className={`px-4 py-3 font-sans font-medium text-[0.65rem] tracking-[0.15em] uppercase transition-all duration-300 border ${
                                         filter === reg.value
                                             ? 'bg-[#00ffff]/10 border-[#00ffff]/40 text-[#00ffff]'
                                             : 'bg-[#050d18] border-[#1e3a5a] text-[#4b6a8a] hover:text-[#00d4ff] hover:border-[#00ffff]/30'
@@ -269,7 +269,7 @@ export default function AgentsPage() {
                                     <button
                                         onClick={loadMore}
                                         disabled={isLoadingMore}
-                                        className="font-mono text-[0.7rem] tracking-[0.15em] uppercase border border-[#1e3a5a] text-[#4b6a8a] px-8 py-3 hover:border-[#00ffff]/40 hover:text-[#00ffff] hover:bg-[#00ffff]/5 transition-all duration-300 disabled:opacity-50"
+                                        className="font-sans font-medium text-[0.7rem] tracking-[0.15em] uppercase border border-[#1e3a5a] text-[#4b6a8a] px-8 py-3 hover:border-[#00ffff]/40 hover:text-[#00ffff] hover:bg-[#00ffff]/5 transition-all duration-300 disabled:opacity-50"
                                     >
                                         {isLoadingMore ? 'Loading...' : `Load More (${total - agents.length} remaining)`}
                                     </button>
@@ -278,7 +278,7 @@ export default function AgentsPage() {
                         </>
                     ) : (
                         <div className="py-20 text-center">
-                            <p className="font-serif text-2xl text-white mb-3">
+                            <p className="font-sans text-2xl font-bold text-white mb-3">
                                 No agents found.
                             </p>
                             <p className="text-[#4b6a8a] font-sans text-sm max-w-sm mx-auto">
