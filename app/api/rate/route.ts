@@ -39,7 +39,7 @@ export async function POST(request: Request) {
         // Check token balance
         const tokenBalance = await getAvellumBalance(walletAddress);
 
-        if (tokenBalance <= 0) {
+        if (tokenBalance < 10000) {
             return NextResponse.json(
                 { error: 'You must hold at least 10,000 $AVLM to rate agents' },
                 { status: 403 }

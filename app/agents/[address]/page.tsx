@@ -7,6 +7,7 @@ import Link from 'next/link';
 import TrustBadge from '@/components/TrustBadge';
 import RatingSlider from '@/components/RatingSlider';
 import Footer from '@/components/Footer';
+import { useTokenBalance, MIN_AVLM_TO_VOTE } from '@/hooks/useTokenBalance';
 import type { Agent } from '@/lib/supabase';
 
 interface Props {
@@ -23,6 +24,8 @@ export default function AgentDetailPage({ params }: Props) {
     const { address } = use(params);
     const { connected, publicKey } = useWallet();
     const { setVisible } = useWalletModal();
+    const { balance, loading: balanceLoading } = useTokenBalance();
+    const canVote = balance !== null && balance >= MIN_AVLM_TO_VOTE;
     const [agent, setAgent] = useState<Agent | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [rating, setRating] = useState(50);
@@ -49,6 +52,10 @@ export default function AgentDetailPage({ params }: Props) {
 
     async function submitRating() {
         if (!connected || !publicKey) return;
+        if (!canVote) {
+            setSubmitMessage(`You must hold at least ${MIN_AVLM_TO_VOTE.toLocaleString()} $AVLM to rate agents`);
+            return;
+        }
 
         setIsSubmitting(true);
         setSubmitMessage(null);
@@ -221,20 +228,30 @@ export default function AgentDetailPage({ params }: Props) {
 
                     {connected ? (
                         <div className="card-hover p-8 max-w-2xl">
-                            <RatingSlider value={rating} onChange={setRating} disabled={isSubmitting} />
+                            {balanceLoading ? (
+                                <p className="font-mono text-xs text-[#4b6a8a]">Loading $AVLM balance...</p>
+                            ) : !canVote ? (
+                                <p className="font-mono text-xs text-[#ff6b6b]">
+                                    You must hold at least {MIN_AVLM_TO_VOTE.toLocaleString()} $AVLM to rate agents
+                                </p>
+                            ) : (
+                                <>
+                                    <RatingSlider value={rating} onChange={setRating} disabled={isSubmitting} />
 
-                            <div className="flex items-center justify-between gap-4 mt-6">
-                                <span className="font-mono text-[0.6rem] tracking-[0.15em] text-[#2a4a6a] uppercase">
-                                    Weight: $AVLM balance
-                                </span>
-                                <button
-                                    onClick={submitRating}
-                                    disabled={isSubmitting}
-                                    className="btn-angular btn-interactive bg-[#00ffff] text-[#0a1628] px-8 py-3 font-sans font-semibold text-sm uppercase tracking-[0.08em] hover:bg-white disabled:opacity-50 shrink-0"
-                                >
-                                    {isSubmitting ? 'Submitting...' : 'Submit Rating'}
-                                </button>
-                            </div>
+                                    <div className="flex items-center justify-between gap-4 mt-6">
+                                        <span className="font-mono text-[0.6rem] tracking-[0.15em] text-[#2a4a6a] uppercase">
+                                            Weight: {(balance ?? 0).toLocaleString()} $AVLM
+                                        </span>
+                                        <button
+                                            onClick={submitRating}
+                                            disabled={isSubmitting}
+                                            className="btn-angular btn-interactive bg-[#00ffff] text-[#0a1628] px-8 py-3 font-sans font-semibold text-sm uppercase tracking-[0.08em] hover:bg-white disabled:opacity-50 shrink-0"
+                                        >
+                                            {isSubmitting ? 'Submitting...' : 'Submit Rating'}
+                                        </button>
+                                    </div>
+                                </>
+                            )}
 
                             {submitMessage && (
                                 <p className={`font-mono text-xs mt-4 ${submitMessage.includes('successfully') ? 'text-[#00ffff]' : 'text-[#ff6b6b]'}`}>

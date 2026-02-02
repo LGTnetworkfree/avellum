@@ -31,8 +31,8 @@ interface TokenBalance {
 export async function getAvellumBalance(walletAddress: string): Promise<number> {
     try {
         if (!HELIUS_API_KEY) {
-            console.warn('Helius API key not configured, returning mock balance');
-            return 1000000; // Mock balance for testing
+            console.warn('Helius API key not configured, cannot verify balance');
+            return 0;
         }
 
         const response = await fetch(
@@ -59,8 +59,7 @@ export async function getAvellumBalance(walletAddress: string): Promise<number> 
         return 0;
     } catch (error) {
         console.error('Error fetching AVLM balance:', error);
-        // Return mock balance for development
-        return 1000000;
+        return 0;
     }
 }
 

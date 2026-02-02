@@ -31,7 +31,6 @@ export default function AgentCard({ agent, showRating = true }: Props) {
     const [copied, setCopied] = useState(false);
 
     const canVote = balance !== null && balance >= MIN_AVLM_TO_VOTE;
-    console.log('[AgentCard] AVLM balance:', balance, 'loading:', balanceLoading, 'min:', MIN_AVLM_TO_VOTE, 'canVote:', canVote);
 
     useEffect(() => {
         if (canVote && submitMessage?.includes('must hold')) {
