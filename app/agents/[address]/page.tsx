@@ -8,6 +8,7 @@ import TrustBadge from '@/components/TrustBadge';
 import RatingSlider from '@/components/RatingSlider';
 import Footer from '@/components/Footer';
 import { useTokenBalance, MIN_AVLM_TO_VOTE } from '@/hooks/useTokenBalance';
+import { useMemoVote } from '@/hooks/useMemoVote';
 import type { Agent } from '@/lib/supabase';
 
 interface Props {
@@ -25,12 +26,13 @@ export default function AgentDetailPage({ params }: Props) {
     const { connected, publicKey } = useWallet();
     const { setVisible } = useWalletModal();
     const { balance, loading: balanceLoading } = useTokenBalance();
+    const { submitVote, isSubmitting } = useMemoVote();
     const canVote = balance !== null && balance >= MIN_AVLM_TO_VOTE;
     const [agent, setAgent] = useState<Agent | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [rating, setRating] = useState(50);
-    const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitMessage, setSubmitMessage] = useState<string | null>(null);
+    const [explorerUrl, setExplorerUrl] = useState<string | null>(null);
     const [copied, setCopied] = useState(false);
 
     useEffect(() => {
@@ -50,43 +52,28 @@ export default function AgentDetailPage({ params }: Props) {
         fetchAgent();
     }, [address]);
 
-    async function submitRating() {
+    async function handleSubmitRating() {
         if (!connected || !publicKey) return;
         if (!canVote) {
             setSubmitMessage(`You must hold at least ${MIN_AVLM_TO_VOTE.toLocaleString()} $AVLM to rate agents`);
             return;
         }
 
-        setIsSubmitting(true);
         setSubmitMessage(null);
+        setExplorerUrl(null);
 
-        try {
-            const response = await fetch('/api/rate', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    walletAddress: publicKey.toBase58(),
-                    agentAddress: address,
-                    score: rating,
-                    signature: ''
-                })
-            });
+        const result = await submitVote(address, rating);
 
-            const data = await response.json();
-
-            if (response.ok) {
-                setSubmitMessage('Rating submitted successfully!');
-                const refreshResponse = await fetch(`/api/score/${address}`);
-                if (refreshResponse.ok) {
-                    setAgent(await refreshResponse.json());
-                }
-            } else {
-                setSubmitMessage(data.error || 'Failed to submit rating');
+        if (result.success) {
+            setSubmitMessage('Rating submitted successfully!');
+            setExplorerUrl(result.explorerUrl ?? null);
+            // Refresh agent data
+            const refreshResponse = await fetch(`/api/score/${address}`);
+            if (refreshResponse.ok) {
+                setAgent(await refreshResponse.json());
             }
-        } catch {
-            setSubmitMessage('Failed to submit rating');
-        } finally {
-            setIsSubmitting(false);
+        } else {
+            setSubmitMessage(result.error || 'Failed to submit rating');
         }
     }
 
@@ -243,11 +230,11 @@ export default function AgentDetailPage({ params }: Props) {
                                             Weight: {(balance ?? 0).toLocaleString()} $AVLM
                                         </span>
                                         <button
-                                            onClick={submitRating}
+                                            onClick={handleSubmitRating}
                                             disabled={isSubmitting}
                                             className="btn-angular btn-interactive bg-[#00ffff] text-[#0a1628] px-8 py-3 font-sans font-semibold text-sm uppercase tracking-[0.08em] hover:bg-white disabled:opacity-50 shrink-0"
                                         >
-                                            {isSubmitting ? 'Submitting...' : 'Submit Rating'}
+                                            {isSubmitting ? 'Signing...' : 'Submit Rating'}
                                         </button>
                                     </div>
                                 </>
@@ -257,6 +244,17 @@ export default function AgentDetailPage({ params }: Props) {
                                 <p className={`font-mono text-xs mt-4 ${submitMessage.includes('successfully') ? 'text-[#00ffff]' : 'text-[#ff6b6b]'}`}>
                                     {submitMessage}
                                 </p>
+                            )}
+
+                            {explorerUrl && (
+                                <a
+                                    href={explorerUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="font-mono text-xs text-[#00d4ff] hover:text-[#00ffff] transition-colors inline-block mt-2"
+                                >
+                                    View on Solana Explorer &rarr;
+                                </a>
                             )}
                         </div>
                     ) : (

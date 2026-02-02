@@ -7,6 +7,7 @@ import Link from 'next/link';
 import TrustBadge from './TrustBadge';
 import RatingSlider from './RatingSlider';
 import { useTokenBalance, MIN_AVLM_TO_VOTE } from '@/hooks/useTokenBalance';
+import { useMemoVote } from '@/hooks/useMemoVote';
 import type { Agent } from '@/lib/supabase';
 
 interface Props {
@@ -24,9 +25,10 @@ export default function AgentCard({ agent, showRating = true }: Props) {
     const { connected, publicKey } = useWallet();
     const { setVisible } = useWalletModal();
     const { balance, loading: balanceLoading } = useTokenBalance();
+    const { submitVote, isSubmitting } = useMemoVote();
     const [rating, setRating] = useState(50);
-    const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitMessage, setSubmitMessage] = useState<string | null>(null);
+    const [explorerUrl, setExplorerUrl] = useState<string | null>(null);
     const [showRatingPanel, setShowRatingPanel] = useState(false);
     const [copied, setCopied] = useState(false);
 
@@ -38,7 +40,7 @@ export default function AgentCard({ agent, showRating = true }: Props) {
         }
     }, [canVote, submitMessage]);
 
-    async function submitRating() {
+    async function handleSubmitRating() {
         if (!connected || !publicKey) {
             setSubmitMessage('Please connect your wallet first');
             return;
@@ -49,33 +51,17 @@ export default function AgentCard({ agent, showRating = true }: Props) {
             return;
         }
 
-        setIsSubmitting(true);
         setSubmitMessage(null);
+        setExplorerUrl(null);
 
-        try {
-            const response = await fetch('/api/rate', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    walletAddress: publicKey.toBase58(),
-                    agentAddress: agent.address,
-                    score: rating,
-                    signature: ''
-                })
-            });
+        const result = await submitVote(agent.address, rating);
 
-            const data = await response.json();
-
-            if (response.ok) {
-                setSubmitMessage(`Rating submitted! Weight: ${(balance ?? 0).toLocaleString()} $AVLM`);
-                setShowRatingPanel(false);
-            } else {
-                setSubmitMessage(data.error || 'Failed to submit rating');
-            }
-        } catch {
-            setSubmitMessage('Failed to submit rating. Please try again.');
-        } finally {
-            setIsSubmitting(false);
+        if (result.success) {
+            setSubmitMessage(`Rating submitted! Weight: ${(balance ?? 0).toLocaleString()} $AVLM`);
+            setExplorerUrl(result.explorerUrl ?? null);
+            setShowRatingPanel(false);
+        } else {
+            setSubmitMessage(result.error || 'Failed to submit rating');
         }
     }
 
@@ -172,11 +158,11 @@ export default function AgentCard({ agent, showRating = true }: Props) {
                                     Weight: {(balance ?? 0).toLocaleString()} $AVLM
                                 </span>
                                 <button
-                                    onClick={submitRating}
+                                    onClick={handleSubmitRating}
                                     disabled={isSubmitting}
                                     className="btn-angular bg-[#00ffff] text-[#0a1628] px-5 py-2 font-sans font-semibold text-[0.65rem] uppercase tracking-[0.08em] hover:bg-white transition-all duration-300 disabled:opacity-50 shrink-0"
                                 >
-                                    {isSubmitting ? 'Submitting...' : 'Submit'}
+                                    {isSubmitting ? 'Signing...' : 'Submit'}
                                 </button>
                             </div>
                         </>
@@ -187,6 +173,34 @@ export default function AgentCard({ agent, showRating = true }: Props) {
                             {submitMessage}
                         </p>
                     )}
+
+                    {explorerUrl && (
+                        <a
+                            href={explorerUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="font-mono text-xs text-[#00d4ff] hover:text-[#00ffff] transition-colors inline-block"
+                        >
+                            View on Solana Explorer &rarr;
+                        </a>
+                    )}
+                </div>
+            )}
+
+            {/* Explorer link shown after panel closes on success */}
+            {!showRatingPanel && explorerUrl && (
+                <div className="mt-4 pt-4 border-t border-[#1e3a5a]/50">
+                    {submitMessage && (
+                        <p className="font-mono text-xs text-[#00ffff] mb-2">{submitMessage}</p>
+                    )}
+                    <a
+                        href={explorerUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-mono text-xs text-[#00d4ff] hover:text-[#00ffff] transition-colors inline-block"
+                    >
+                        View on Solana Explorer &rarr;
+                    </a>
                 </div>
             )}
         </div>
