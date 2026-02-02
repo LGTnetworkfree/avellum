@@ -18,45 +18,20 @@ export function getConnection(): Connection {
     return new Connection(getHeliusRpcUrl(), 'confirmed');
 }
 
-// Token balance response from Helius
-interface TokenBalance {
-    mint: string;
-    amount: number;
-    decimals: number;
-}
-
 /**
- * Get $AVLM token balance for a wallet address using Helius API
+ * Get $AVLM token balance for a wallet address using Solana RPC.
+ * Uses the network-aware connection (devnet/mainnet) so it works
+ * regardless of which cluster the token was minted on.
  */
 export async function getAvellumBalance(walletAddress: string): Promise<number> {
     try {
-        if (!HELIUS_API_KEY) {
-            console.warn('Helius API key not configured, cannot verify balance');
-            return 0;
-        }
+        const connection = getConnection();
+        const owner = new PublicKey(walletAddress);
+        const mint = new PublicKey(AVLM_TOKEN_MINT);
 
-        const response = await fetch(
-            `https://api.helius.xyz/v0/addresses/${walletAddress}/balances?api-key=${HELIUS_API_KEY}`
-        );
-
-        if (!response.ok) {
-            throw new Error(`Helius API error: ${response.statusText}`);
-        }
-
-        const data = await response.json();
-
-        // Find AVLM token in the token balances
-        const tokens: TokenBalance[] = data.tokens || [];
-        const avlmToken = tokens.find(
-            (t: TokenBalance) => t.mint === AVLM_TOKEN_MINT
-        );
-
-        if (avlmToken) {
-            // Return raw amount (already adjusted for decimals by Helius)
-            return avlmToken.amount;
-        }
-
-        return 0;
+        const res = await connection.getParsedTokenAccountsByOwner(owner, { mint });
+        const amount = res.value[0]?.account.data.parsed.info.tokenAmount.uiAmount ?? 0;
+        return amount;
     } catch (error) {
         console.error('Error fetching AVLM balance:', error);
         return 0;
