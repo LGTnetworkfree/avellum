@@ -249,14 +249,14 @@ export default function AgentsPage() {
 
                 <div className="px-8 md:px-12 py-10 relative z-[1]">
                     {isLoading ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-start">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             {[1, 2, 3, 4, 5, 6].map((i) => (
                                 <div key={i} className="bg-[#0d1e33]/40 border border-transparent min-h-[200px] animate-pulse" />
                             ))}
                         </div>
                     ) : agents.length > 0 ? (
                         <>
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-start">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                 {agents.map((agent, i) => (
                                     <StaggerItem key={agent.id} index={i % 6}>
                                         <AgentCard agent={agent} showRating={true} />
