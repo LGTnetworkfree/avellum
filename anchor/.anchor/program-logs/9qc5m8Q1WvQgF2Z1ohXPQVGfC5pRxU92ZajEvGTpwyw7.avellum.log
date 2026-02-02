@@ -1,0 +1,43 @@
+Streaming transaction logs mentioning 9qc5m8Q1WvQgF2Z1ohXPQVGfC5pRxU92ZajEvGTpwyw7. Confirmed commitment
+Transaction executed in slot 439368695:
+  Signature: 63HCGBF8bN1akgp7Zd6tPe2UpkWpZc2H56SDGeyPDA4ZcvBeF2nFqAu8o7vz1T5q6vboUQTXqGF6XVJuLDxqYXEc
+  Status: Ok
+  Log Messages:
+    Program 9qc5m8Q1WvQgF2Z1ohXPQVGfC5pRxU92ZajEvGTpwyw7 invoke [1]
+    Program log: Instruction: RegisterAgent
+    Program 11111111111111111111111111111111 invoke [2]
+    Program 11111111111111111111111111111111 success
+    Program 9qc5m8Q1WvQgF2Z1ohXPQVGfC5pRxU92ZajEvGTpwyw7 consumed 9244 of 200000 compute units
+    Program 9qc5m8Q1WvQgF2Z1ohXPQVGfC5pRxU92ZajEvGTpwyw7 success
+Transaction executed in slot 439368698:
+  Signature: 5DyHxMXrPR7Bv7Uyvs6mtvT2vjHz6K4mpSBToFVbZGa2Ei1nbDnr45DM6PgyNMekJmHEK63r1DqcpAVYMTj8SGyi
+  Status: Ok
+  Log Messages:
+    Program 9qc5m8Q1WvQgF2Z1ohXPQVGfC5pRxU92ZajEvGTpwyw7 invoke [1]
+    Program log: Instruction: StakeInit
+    Program 11111111111111111111111111111111 invoke [2]
+    Program 11111111111111111111111111111111 success
+    Program 11111111111111111111111111111111 invoke [2]
+    Program 11111111111111111111111111111111 success
+    Program 9qc5m8Q1WvQgF2Z1ohXPQVGfC5pRxU92ZajEvGTpwyw7 consumed 8326 of 200000 compute units
+    Program 9qc5m8Q1WvQgF2Z1ohXPQVGfC5pRxU92ZajEvGTpwyw7 success
+Transaction executed in slot 439368701:
+  Signature: zeaofewsg5g9UguS86oC97oi72BZbguAGXfQyoQbEdHpwbetN3ZPFg4yPXS5QjizmynEXDDHvfATjQfwwPTnMwN
+  Status: Ok
+  Log Messages:
+    Program 9qc5m8Q1WvQgF2Z1ohXPQVGfC5pRxU92ZajEvGTpwyw7 invoke [1]
+    Program log: Instruction: StakeAdd
+    Program 11111111111111111111111111111111 invoke [2]
+    Program 11111111111111111111111111111111 success
+    Program 9qc5m8Q1WvQgF2Z1ohXPQVGfC5pRxU92ZajEvGTpwyw7 consumed 5015 of 200000 compute units
+    Program 9qc5m8Q1WvQgF2Z1ohXPQVGfC5pRxU92ZajEvGTpwyw7 success
+Transaction executed in slot 439368703:
+  Signature: 25EmnfRpsf9HKVzrnLhXNHevC62vC8EGUAzwVqebGS59WHHG1FuyJhLzH4ywFELW5Piu1KFnk77AZhMEdRzoeTcr
+  Status: Ok
+  Log Messages:
+    Program 9qc5m8Q1WvQgF2Z1ohXPQVGfC5pRxU92ZajEvGTpwyw7 invoke [1]
+    Program log: Instruction: RateAgent
+    Program 11111111111111111111111111111111 invoke [2]
+    Program 11111111111111111111111111111111 success
+    Program 9qc5m8Q1WvQgF2Z1ohXPQVGfC5pRxU92ZajEvGTpwyw7 consumed 14440 of 200000 compute units
+    Program 9qc5m8Q1WvQgF2Z1ohXPQVGfC5pRxU92ZajEvGTpwyw7 success

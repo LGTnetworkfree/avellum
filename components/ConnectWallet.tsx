@@ -2,7 +2,8 @@
 
 import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
-import { useEffect, useState } from 'react';
+import { useTokenBalance } from '@/hooks/useTokenBalance';
+import { useState, useEffect } from 'react';
 
 interface Props {
     showBalance?: boolean;
@@ -10,43 +11,32 @@ interface Props {
 
 export default function ConnectWallet({ showBalance = true }: Props) {
     const { publicKey, connected } = useWallet();
-    const [tokenBalance, setTokenBalance] = useState<number | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
+    const { balance, loading } = useTokenBalance();
+    const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
-        async function fetchBalance() {
-            if (!connected || !publicKey) {
-                setTokenBalance(null);
-                return;
-            }
+        setMounted(true);
+    }, []);
 
-            setIsLoading(true);
-            try {
-                const response = await fetch(`/api/verifier?wallet=${publicKey.toBase58()}`);
-                const data = await response.json();
-                setTokenBalance(data.tokenBalance || 0);
-            } catch (error) {
-                console.error('Error fetching balance:', error);
-                setTokenBalance(0);
-            } finally {
-                setIsLoading(false);
-            }
-        }
-
-        fetchBalance();
-    }, [connected, publicKey]);
+    if (!mounted) {
+        return (
+            <div className="flex items-center gap-4">
+                <div className="h-10 w-32 bg-[#1e3a5a]/50 animate-pulse rounded" />
+            </div>
+        );
+    }
 
     return (
         <div className="flex items-center gap-4">
             {connected && showBalance && (
-                <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-xl border border-purple-500/30">
-                    <span className="text-sm text-gray-400">$AVELLUM</span>
-                    <span className="text-sm font-bold text-white">
-                        {isLoading ? '...' : tokenBalance?.toLocaleString() || '0'}
+                <div className="hidden md:flex items-center gap-2 px-3 py-1.5 border border-[#00d4ff]/20 bg-[#00d4ff]/5 rounded-sm">
+                    <span className="text-[10px] font-mono text-[#4b6a8a] tracking-tight">$AVLM</span>
+                    <span className="text-xs font-mono font-bold text-[#00d4ff]">
+                        {loading ? '...' : balance?.toLocaleString() || '0'}
                     </span>
                 </div>
             )}
-            <WalletMultiButton className="!bg-gradient-to-r !from-purple-600 !to-pink-600 hover:!from-purple-500 hover:!to-pink-500 !rounded-xl !h-11 !font-semibold !text-sm !transition-all !duration-300">
+            <WalletMultiButton className="!h-10 !px-6 !shadow-none">
                 {connected ? (publicKey ? `${publicKey.toBase58().substring(0, 4)}...${publicKey.toBase58().substring(publicKey.toBase58().length - 4)}` : 'CONNECTED') : 'CONNECT WALLET'}
             </WalletMultiButton>
         </div>

@@ -1,51 +1,98 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
+import { Menu, X } from 'lucide-react';
 import ConnectWallet from './ConnectWallet';
 
 export default function Navbar() {
     const pathname = usePathname();
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+    const navLinks = [
+        { href: '/agents', label: 'Explorer' },
+        { href: '/dashboard', label: 'Dashboard' },
+        { href: '/docs', label: 'Docs' }
+    ];
 
     return (
-        <nav className="fixed top-8 left-0 right-0 z-40">
-            <div className="max-w-7xl mx-auto border-l border-r border-b border-[#1e3a5a] bg-[#0a1628]/95 backdrop-blur-md">
-                <div className="grid grid-cols-2 md:grid-cols-[1.5fr_2fr_1.5fr] h-16 divide-x divide-[#1e3a5a]">
+        <nav className="fixed top-6 left-0 right-0 z-40">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="h-[60px] flex items-stretch bg-[#0a1628]/80 backdrop-blur-xl border border-[#ffffff08]">
 
-                    {/* Logo Section */}
-                    <Link href="/" className="flex items-center px-6 hover:bg-[#142a44] transition-colors group">
-                        <span className="font-serif font-bold text-xl text-[#00d4ff] tracking-tight group-hover:text-white transition-colors">
-                            AVELLUM
-                        </span>
-                        <span className="ml-3 font-mono text-[0.6rem] text-[#4b6a8a] tracking-widest mt-1">
-                            v.2.0.4-CRYPTO
+                    {/* Logo */}
+                    <Link href="/" className="flex items-center gap-3 px-6 border-r border-[#ffffff08] hover:bg-[#ffffff04] transition-colors duration-200">
+                        <Image
+                            src="/logo.svg"
+                            alt="Avellum"
+                            height={36}
+                            width={36}
+                            className="nav-logo-hover"
+                        />
+                        <span className="font-sans text-[0.95rem] font-medium text-white tracking-[-0.01em]">
+                            Avellum
                         </span>
                     </Link>
 
-                    {/* Navigation Links (Center) */}
-                    <div className="hidden md:flex items-center justify-center divide-x divide-[#1e3a5a] h-full">
-                        {[
-                            { href: '/agents', label: 'EXPLORER' },
-                            { href: '/dashboard', label: 'DASHBOARD' },
-                            { href: '/docs', label: 'DOCS' }
-                        ].map((link) => (
+                    {/* Desktop Nav Links */}
+                    <div className="hidden md:flex items-stretch">
+                        {navLinks.map((link) => (
                             <Link
                                 key={link.href}
                                 href={link.href}
-                                className={`flex items-center justify-center h-full px-8 text-xs font-mono font-bold tracking-widest uppercase transition-all duration-300 hover:bg-[#00d4ff] hover:text-[#0a1628] ${pathname === link.href ? 'text-[#00d4ff] bg-[#142a44]' : 'text-[#4b6a8a]'
-                                    }`}
+                                className={`flex items-center px-5 text-[0.82rem] font-sans border-r border-[#ffffff08] nav-link-glow ${
+                                    pathname === link.href
+                                        ? 'text-white'
+                                        : 'text-[#ffffff66]'
+                                }`}
                             >
                                 {link.label}
                             </Link>
                         ))}
                     </div>
 
-                    {/* Wallet Connection (Right) */}
-                    <div className="flex items-center justify-center px-4 bg-[#0a1628]">
+                    {/* Spacer */}
+                    <div className="flex-1" />
+
+                    {/* Wallet */}
+                    <div className="hidden md:flex items-center px-5 border-l border-[#ffffff08]">
+                        <ConnectWallet />
+                    </div>
+
+                    {/* Mobile Menu Toggle */}
+                    <button
+                        onClick={() => setIsMenuOpen(!isMenuOpen)}
+                        className="md:hidden flex items-center px-5 border-l border-[#ffffff08] text-[#ffffff66] hover:text-white transition-colors duration-200"
+                    >
+                        {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
+                    </button>
+                </div>
+            </div>
+
+            {/* Mobile Menu */}
+            {isMenuOpen && (
+                <div className="md:hidden mt-px mx-4 sm:mx-6 lg:mx-8 bg-[#0a1628]/95 backdrop-blur-xl border border-[#ffffff08] border-t-0">
+                    {navLinks.map((link) => (
+                        <Link
+                            key={link.href}
+                            href={link.href}
+                            onClick={() => setIsMenuOpen(false)}
+                            className={`flex items-center px-6 py-4 text-[0.85rem] font-sans border-b border-[#ffffff08] transition-colors duration-200 ${
+                                pathname === link.href
+                                    ? 'text-white'
+                                    : 'text-[#ffffff66] hover:text-white'
+                            }`}
+                        >
+                            {link.label}
+                        </Link>
+                    ))}
+                    <div className="px-6 py-4">
                         <ConnectWallet />
                     </div>
                 </div>
-            </div>
+            )}
         </nav>
     );
 }

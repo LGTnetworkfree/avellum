@@ -1,0 +1,1 @@
+/Users/ferdinandletendre/.gemini/antigravity/scratch/avellum/anchor/target/sbpf-solana-solana/release/avellum.so: /Users/ferdinandletendre/.gemini/antigravity/scratch/avellum/anchor/programs/avellum/src/lib.rs

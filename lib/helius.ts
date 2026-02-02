@@ -1,7 +1,7 @@
 import { Connection, PublicKey } from '@solana/web3.js';
 
-const HELIUS_API_KEY = process.env.HELIUS_API_KEY;
-const AVELLUM_TOKEN_MINT = process.env.NEXT_PUBLIC_AVELLUM_TOKEN_MINT!;
+const HELIUS_API_KEY = process.env.HELIUS_API_KEY || process.env.NEXT_PUBLIC_HELIUS_API_KEY;
+const AVLM_TOKEN_MINT = process.env.NEXT_PUBLIC_AVLM_TOKEN_MINT || 'D6zGvr8zNKgqpcjNr4Hin8ELVuGEcySyRn5ugHcusQh9';
 const SOLANA_NETWORK = process.env.NEXT_PUBLIC_SOLANA_NETWORK || 'mainnet-beta';
 
 // Get Helius RPC endpoint
@@ -26,7 +26,7 @@ interface TokenBalance {
 }
 
 /**
- * Get $AVELLUM token balance for a wallet address using Helius API
+ * Get $AVLM token balance for a wallet address using Helius API
  */
 export async function getAvellumBalance(walletAddress: string): Promise<number> {
     try {
@@ -45,20 +45,20 @@ export async function getAvellumBalance(walletAddress: string): Promise<number> 
 
         const data = await response.json();
 
-        // Find AVELLUM token in the token balances
+        // Find AVLM token in the token balances
         const tokens: TokenBalance[] = data.tokens || [];
-        const avellumToken = tokens.find(
-            (t: TokenBalance) => t.mint === AVELLUM_TOKEN_MINT
+        const avlmToken = tokens.find(
+            (t: TokenBalance) => t.mint === AVLM_TOKEN_MINT
         );
 
-        if (avellumToken) {
+        if (avlmToken) {
             // Return raw amount (already adjusted for decimals by Helius)
-            return avellumToken.amount;
+            return avlmToken.amount;
         }
 
         return 0;
     } catch (error) {
-        console.error('Error fetching AVELLUM balance:', error);
+        console.error('Error fetching AVLM balance:', error);
         // Return mock balance for development
         return 1000000;
     }

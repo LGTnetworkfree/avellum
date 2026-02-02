@@ -1,0 +1,9 @@
+/Users/ferdinandletendre/.gemini/antigravity/scratch/avellum/anchor/target/sbpf-solana-solana/release/deps/libsolana_invoke-95df3d8faaca3559.rmeta: /Users/ferdinandletendre/.cargo/registry/src/index.crates.io-6f17d22bba15001f/solana-invoke-0.4.0/src/lib.rs /Users/ferdinandletendre/.cargo/registry/src/index.crates.io-6f17d22bba15001f/solana-invoke-0.4.0/src/stable_instruction_borrowed.rs /Users/ferdinandletendre/.cargo/registry/src/index.crates.io-6f17d22bba15001f/solana-invoke-0.4.0/src/../README.md
+
+/Users/ferdinandletendre/.gemini/antigravity/scratch/avellum/anchor/target/sbpf-solana-solana/release/deps/libsolana_invoke-95df3d8faaca3559.rlib: /Users/ferdinandletendre/.cargo/registry/src/index.crates.io-6f17d22bba15001f/solana-invoke-0.4.0/src/lib.rs /Users/ferdinandletendre/.cargo/registry/src/index.crates.io-6f17d22bba15001f/solana-invoke-0.4.0/src/stable_instruction_borrowed.rs /Users/ferdinandletendre/.cargo/registry/src/index.crates.io-6f17d22bba15001f/solana-invoke-0.4.0/src/../README.md
+
+/Users/ferdinandletendre/.gemini/antigravity/scratch/avellum/anchor/target/sbpf-solana-solana/release/deps/solana_invoke-95df3d8faaca3559.d: /Users/ferdinandletendre/.cargo/registry/src/index.crates.io-6f17d22bba15001f/solana-invoke-0.4.0/src/lib.rs /Users/ferdinandletendre/.cargo/registry/src/index.crates.io-6f17d22bba15001f/solana-invoke-0.4.0/src/stable_instruction_borrowed.rs /Users/ferdinandletendre/.cargo/registry/src/index.crates.io-6f17d22bba15001f/solana-invoke-0.4.0/src/../README.md
+
+/Users/ferdinandletendre/.cargo/registry/src/index.crates.io-6f17d22bba15001f/solana-invoke-0.4.0/src/lib.rs:
+/Users/ferdinandletendre/.cargo/registry/src/index.crates.io-6f17d22bba15001f/solana-invoke-0.4.0/src/stable_instruction_borrowed.rs:
+/Users/ferdinandletendre/.cargo/registry/src/index.crates.io-6f17d22bba15001f/solana-invoke-0.4.0/src/../README.md:

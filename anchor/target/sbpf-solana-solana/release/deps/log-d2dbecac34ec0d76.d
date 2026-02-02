@@ -1,0 +1,10 @@
+/Users/ferdinandletendre/.gemini/antigravity/scratch/avellum/anchor/target/sbpf-solana-solana/release/deps/liblog-d2dbecac34ec0d76.rmeta: /Users/ferdinandletendre/.cargo/registry/src/index.crates.io-6f17d22bba15001f/log-0.4.29/src/lib.rs /Users/ferdinandletendre/.cargo/registry/src/index.crates.io-6f17d22bba15001f/log-0.4.29/src/macros.rs /Users/ferdinandletendre/.cargo/registry/src/index.crates.io-6f17d22bba15001f/log-0.4.29/src/serde.rs /Users/ferdinandletendre/.cargo/registry/src/index.crates.io-6f17d22bba15001f/log-0.4.29/src/__private_api.rs
+
+/Users/ferdinandletendre/.gemini/antigravity/scratch/avellum/anchor/target/sbpf-solana-solana/release/deps/liblog-d2dbecac34ec0d76.rlib: /Users/ferdinandletendre/.cargo/registry/src/index.crates.io-6f17d22bba15001f/log-0.4.29/src/lib.rs /Users/ferdinandletendre/.cargo/registry/src/index.crates.io-6f17d22bba15001f/log-0.4.29/src/macros.rs /Users/ferdinandletendre/.cargo/registry/src/index.crates.io-6f17d22bba15001f/log-0.4.29/src/serde.rs /Users/ferdinandletendre/.cargo/registry/src/index.crates.io-6f17d22bba15001f/log-0.4.29/src/__private_api.rs
+
+/Users/ferdinandletendre/.gemini/antigravity/scratch/avellum/anchor/target/sbpf-solana-solana/release/deps/log-d2dbecac34ec0d76.d: /Users/ferdinandletendre/.cargo/registry/src/index.crates.io-6f17d22bba15001f/log-0.4.29/src/lib.rs /Users/ferdinandletendre/.cargo/registry/src/index.crates.io-6f17d22bba15001f/log-0.4.29/src/macros.rs /Users/ferdinandletendre/.cargo/registry/src/index.crates.io-6f17d22bba15001f/log-0.4.29/src/serde.rs /Users/ferdinandletendre/.cargo/registry/src/index.crates.io-6f17d22bba15001f/log-0.4.29/src/__private_api.rs
+
+/Users/ferdinandletendre/.cargo/registry/src/index.crates.io-6f17d22bba15001f/log-0.4.29/src/lib.rs:
+/Users/ferdinandletendre/.cargo/registry/src/index.crates.io-6f17d22bba15001f/log-0.4.29/src/macros.rs:
+/Users/ferdinandletendre/.cargo/registry/src/index.crates.io-6f17d22bba15001f/log-0.4.29/src/serde.rs:
+/Users/ferdinandletendre/.cargo/registry/src/index.crates.io-6f17d22bba15001f/log-0.4.29/src/__private_api.rs:
