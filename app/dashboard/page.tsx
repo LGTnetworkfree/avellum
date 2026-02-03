@@ -351,28 +351,6 @@ export default function DashboardPage() {
                 </div>
             </div>
 
-            {/* ========== CTA BANNER (disconnected) ========== */}
-            {!connected && (
-                <>
-                    <div className="gradient-separator" />
-                    <FadeIn className="px-8 md:px-12 py-14 flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
-                        <div>
-                            <span className="label-terminal !text-[#4b6a8a] block mb-3">Get Started</span>
-                            <h2 className="font-sans text-3xl md:text-4xl font-bold text-white mb-2">Start verifying.</h2>
-                            <p className="text-body text-[#a0a0a0] max-w-sm">
-                                Connect your wallet to join the Verifier Network. Rate agents, stake tokens, and earn protocol fees.
-                            </p>
-                        </div>
-                        <button
-                            onClick={() => setVisible(true)}
-                            className="btn-angular btn-interactive bg-[#00ffff] text-[#0a1628] px-8 py-4 font-sans font-semibold text-sm uppercase tracking-[0.08em] hover:bg-white cursor-pointer shrink-0"
-                        >
-                            Connect Wallet
-                        </button>
-                    </FadeIn>
-                </>
-            )}
-
         </div>
 
         {/* ========== FOOTER TRANSITION ========== */}
