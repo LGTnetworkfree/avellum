@@ -86,6 +86,11 @@ export async function POST(request: Request) {
 
         // Try database operation first
         try {
+            console.log('[rate API] ========== DATABASE OPERATIONS START ==========');
+            console.log('[rate API] Step 1: Checking if tx_signature already used...');
+            console.log('[rate API] txSignature value:', txSignature);
+            console.log('[rate API] txSignature type:', typeof txSignature);
+
             // Check tx_signature not already used (replay protection)
             // Use .maybeSingle() instead of .single() to avoid error when no match found
             const { data: existingTx, error: txCheckError } = await supabase
@@ -93,6 +98,8 @@ export async function POST(request: Request) {
                 .select('id')
                 .eq('tx_signature', txSignature)
                 .maybeSingle();
+
+            console.log('[rate API] Step 1 complete. existingTx:', existingTx, 'error:', txCheckError);
 
             if (txCheckError) {
                 console.error('[rate API] Error checking tx_signature:', txCheckError);
@@ -105,7 +112,7 @@ export async function POST(request: Request) {
                 );
             }
 
-            console.log('[rate API] Transaction signature is new, proceeding...');
+            console.log('[rate API] Step 2: Transaction signature is new, looking up verifier...');
 
             // Get or create verifier
             let { data: verifier, error: verifierError } = await supabase
@@ -114,11 +121,14 @@ export async function POST(request: Request) {
                 .eq('wallet_address', walletAddress)
                 .maybeSingle();
 
+            console.log('[rate API] Step 2 complete. verifier:', verifier?.id || 'null', 'error:', verifierError);
+
             if (verifierError) {
                 console.error('[rate API] Error fetching verifier:', verifierError);
             }
 
             if (!verifier) {
+                console.log('[rate API] Step 2b: Creating new verifier...');
                 const { data: newVerifier, error: createError } = await supabase
                     .from('verifiers')
                     .insert({
@@ -129,18 +139,23 @@ export async function POST(request: Request) {
                     .select()
                     .single();
 
+                console.log('[rate API] Step 2b complete. newVerifier:', newVerifier?.id || 'null', 'error:', createError);
                 if (createError) throw createError;
                 verifier = newVerifier;
             } else {
+                console.log('[rate API] Step 2c: Updating existing verifier balance...');
                 // Update token balance
-                await supabase
+                const { error: updateError } = await supabase
                     .from('verifiers')
                     .update({
                         token_balance: tokenBalance,
                         last_balance_check: new Date().toISOString()
                     })
                     .eq('id', verifier.id);
+                console.log('[rate API] Step 2c complete. updateError:', updateError);
             }
+
+            console.log('[rate API] Step 3: Looking up agent by address:', agentAddress);
 
             // Get agent
             const { data: agent, error: agentError } = await supabase
@@ -148,6 +163,8 @@ export async function POST(request: Request) {
                 .select('id')
                 .eq('address', agentAddress)
                 .maybeSingle();
+
+            console.log('[rate API] Step 3 complete. agent:', agent?.id || 'null', 'error:', agentError);
 
             if (agentError) {
                 console.error('[rate API] Error fetching agent:', agentError);
@@ -159,7 +176,7 @@ export async function POST(request: Request) {
                 throw new Error('Agent not in database');
             }
 
-            console.log('[rate API] Found agent with ID:', agent.id);
+            console.log('[rate API] Step 4: Found agent with ID:', agent.id, '- Upserting rating...');
 
             // Upsert rating
             const ratingData = {
@@ -171,7 +188,7 @@ export async function POST(request: Request) {
                 updated_at: new Date().toISOString()
             };
 
-            console.log('[rate API] Upserting rating:', ratingData);
+            console.log('[rate API] Step 4: Upserting rating data:', JSON.stringify(ratingData));
 
             const { data: upsertedRating, error: ratingError } = await supabase
                 .from('ratings')
@@ -179,12 +196,14 @@ export async function POST(request: Request) {
                 .select()
                 .single();
 
+            console.log('[rate API] Step 4 complete. upsertedRating:', upsertedRating?.id || 'null', 'error:', ratingError);
+
             if (ratingError) {
                 console.error('[rate API] Rating upsert error:', ratingError);
                 throw ratingError;
             }
 
-            console.log('[rate API] Rating upserted successfully:', upsertedRating);
+            console.log('[rate API] Step 5: Rating upserted successfully! Updating verifier count...');
 
             // Update verifier's rating count
             await supabase
@@ -239,6 +258,9 @@ export async function POST(request: Request) {
                 console.log('[rate API] No ratings found for agent!');
             }
 
+            console.log('[rate API] ========== DATABASE OPERATIONS SUCCESS ==========');
+            console.log('[rate API] Rating saved to database successfully!');
+
             return NextResponse.json({
                 success: true,
                 txSignature,
@@ -249,7 +271,10 @@ export async function POST(request: Request) {
             });
         } catch (dbError) {
             // Database not available, use mock storage
-            console.error('[rate API] Database error, falling back to mock storage:', dbError);
+            console.error('[rate API] ========== DATABASE ERROR - FALLING BACK TO MOCK ==========');
+            console.error('[rate API] Error type:', dbError?.constructor?.name);
+            console.error('[rate API] Error message:', dbError instanceof Error ? dbError.message : String(dbError));
+            console.error('[rate API] Full error:', dbError);
 
             const ratingKey = `${walletAddress}:${agentAddress}`;
             mockRatings.set(ratingKey, {
@@ -265,7 +290,8 @@ export async function POST(request: Request) {
                 explorerUrl,
                 tokenWeight: tokenBalance,
                 tokenType,
-                source: 'mock'
+                source: 'mock',
+                debugError: dbError instanceof Error ? dbError.message : String(dbError)
             });
         }
     } catch (error) {
