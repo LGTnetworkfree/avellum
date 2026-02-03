@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { createServerClient } from '@/lib/supabase';
 
 // Mock agent data
 const MOCK_AGENTS: Record<string, {
@@ -103,6 +103,7 @@ interface RouteParams {
  * Public API endpoint to get trust score for an agent
  */
 export async function GET(request: Request, { params }: RouteParams) {
+    const supabase = createServerClient();
     try {
         const { address } = await params;
 
