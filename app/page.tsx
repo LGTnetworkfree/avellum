@@ -75,9 +75,12 @@ export default function HomePage() {
 
           {/* Right — Revenue Model */}
           <div className="px-8 md:px-12 py-8 border-t md:border-t-0 border-[#1e3a5a]">
-            <span className="label-terminal !text-[#4b6a8a] block mb-4">Verifier Revenue</span>
+            <span className="label-terminal !text-[#4b6a8a] block mb-4">
+              Verifier Revenue
+              <span className="ml-2 text-[0.5rem] uppercase tracking-wider text-[#00ffff]/60 border border-[#00ffff]/30 px-1.5 py-0.5 rounded">Coming Soon</span>
+            </span>
             <p className="font-sans text-2xl font-bold text-white leading-snug">
-              100% <span className="text-[#4b6a8a] text-2xl">of protocol fees go to verifiers.</span>
+              100% <span className="text-[#4b6a8a] text-2xl">of protocol fees will go to verifiers.</span>
             </p>
           </div>
         </div>
@@ -142,8 +145,8 @@ export default function HomePage() {
         <div className="px-8 md:px-12 pb-12 grid grid-cols-1 md:grid-cols-2 gap-4 relative z-[1]">
           {[
             { id: 'step-index', num: '01', title: 'Index', desc: 'Discover and catalog AI agents from x402, MCP, and A2A registries into a unified on-chain directory.' },
-            { id: 'step-verify', num: '02', title: 'Verify', desc: 'Decentralized verifiers stake tokens to audit agent behavior, capabilities, and safety through structured challenges.' },
-            { id: 'step-score', num: '03', title: 'Score', desc: 'Token-weighted trust scores are computed from verifier consensus. Verifiers earn protocol revenue for accurate ratings.' },
+            { id: 'step-verify', num: '02', title: 'Verify', desc: 'Decentralized verifiers hold $AVLM or SOL to rate agent behavior, capabilities, and safety through on-chain attestations.' },
+            { id: 'step-score', num: '03', title: 'Score', desc: 'Token-weighted trust scores are computed from verifier consensus. Higher token balances mean more voting weight.' },
             { id: 'step-query', num: '04', title: 'Query', desc: 'Any app or agent can query trust scores via a public API before interacting — instant, permissionless, on-chain.' },
           ].map((step, i) => (
             <StaggerItem key={step.id} index={i}>
@@ -169,7 +172,7 @@ export default function HomePage() {
           <span className="label-terminal !text-[#4b6a8a] block mb-3">GET STARTED</span>
           <h2 className="font-sans text-3xl md:text-4xl font-bold text-white mb-2">Ready to verify?</h2>
           <p className="text-body text-[#a0a0a0] max-w-sm">
-            Start rating agents and earning revenue.
+            Start rating agents and shaping the trust layer.
           </p>
         </div>
         <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
