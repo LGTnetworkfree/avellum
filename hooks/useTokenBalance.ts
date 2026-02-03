@@ -40,10 +40,14 @@ export function useTokenBalance(): TokenBalanceState {
         setFetching(true);
         setError(null);
 
+        let avlmFailed = false;
+        let solFailed = false;
+
+        // Fetch AVLM balance (separate try/catch)
         try {
-            // Fetch AVLM balance
             console.log('[useTokenBalance] Fetching AVLM for', publicKey.toBase58().slice(0, 8));
             const res = await connection.getParsedTokenAccountsByOwner(publicKey, { mint: AVLM_MINT });
+            console.log('[useTokenBalance] AVLM token accounts found:', res.value.length);
 
             if (res.value.length === 0) {
                 console.log('[useTokenBalance] No AVLM token account → balance = 0');
@@ -54,20 +58,34 @@ export function useTokenBalance(): TokenBalanceState {
                 console.log('[useTokenBalance] AVLM balance:', bal);
                 setAvlmBalance(bal);
             }
-
-            // Fetch SOL balance
-            console.log('[useTokenBalance] Fetching SOL balance');
-            const lamports = await connection.getBalance(publicKey);
-            const solBal = lamports / 1e9;
-            console.log('[useTokenBalance] SOL balance:', solBal);
-            setSolBalance(solBal);
-
         } catch (err) {
-            console.error('[useTokenBalance] RPC error:', err);
-            setError('Failed to fetch balance');
-        } finally {
-            setFetching(false);
+            console.error('[useTokenBalance] AVLM fetch error:', err);
+            setAvlmBalance(0); // Default to 0 on error
+            avlmFailed = true;
         }
+
+        // Fetch SOL balance (separate try/catch)
+        try {
+            console.log('[useTokenBalance] Fetching SOL balance for', publicKey.toBase58().slice(0, 8));
+            const lamports = await connection.getBalance(publicKey);
+            console.log('[useTokenBalance] Raw lamports:', lamports);
+            const solBal = lamports / 1e9;
+            console.log('[useTokenBalance] SOL balance:', solBal, 'SOL');
+            setSolBalance(solBal);
+        } catch (err) {
+            console.error('[useTokenBalance] SOL fetch error:', err);
+            setSolBalance(null);
+            solFailed = true;
+        }
+
+        // Only set error if BOTH fetches failed
+        if (avlmFailed && solFailed) {
+            setError('Failed to fetch balances');
+        } else {
+            setError(null);
+        }
+
+        setFetching(false);
     }, [connection, publicKey, connected]);
 
     useEffect(() => {
