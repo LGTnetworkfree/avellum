@@ -7,7 +7,9 @@ const SOLANA_NETWORK = process.env.NEXT_PUBLIC_SOLANA_NETWORK || 'mainnet-beta';
 // Get Helius RPC endpoint
 function getHeliusRpcUrl(): string {
     if (HELIUS_API_KEY) {
-        return `https://${SOLANA_NETWORK}.helius-rpc.com/?api-key=${HELIUS_API_KEY}`;
+        // Helius uses 'mainnet' and 'devnet', not 'mainnet-beta'
+        const heliusNetwork = SOLANA_NETWORK === 'mainnet-beta' ? 'mainnet' : SOLANA_NETWORK;
+        return `https://${heliusNetwork}.helius-rpc.com/?api-key=${HELIUS_API_KEY}`;
     }
     // Fallback to public RPC
     return `https://api.${SOLANA_NETWORK}.solana.com`;
