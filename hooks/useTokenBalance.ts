@@ -10,10 +10,12 @@ export const MIN_SOL_TO_VOTE = 0.1;
 
 const DECIMALS = 9;
 
-// Fallback public RPC endpoints
+// Fallback public RPC endpoints (tried in order)
 const FALLBACK_RPCS = [
     'https://api.mainnet-beta.solana.com',
-    'https://solana-mainnet.g.alchemy.com/v2/demo',
+    'https://solana-api.projectserum.com',
+    'https://rpc.ankr.com/solana',
+    'https://solana.public-rpc.com',
 ];
 
 interface TokenBalanceState {
@@ -50,27 +52,41 @@ export function useTokenBalance(): TokenBalanceState {
         console.log('[useTokenBalance] Primary connection:', connection.rpcEndpoint);
         console.log('[useTokenBalance] Wallet:', publicKey.toBase58());
 
+        // Helper to add timeout to a promise
+        function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
+            return Promise.race([
+                promise,
+                new Promise<T>((_, reject) =>
+                    setTimeout(() => reject(new Error(`Timeout after ${ms}ms for ${label}`)), ms)
+                )
+            ]);
+        }
+
         // Helper to try fetching with fallback RPCs
         async function fetchWithFallback<T>(
             fetchFn: (conn: Connection) => Promise<T>,
             description: string
         ): Promise<T> {
+            const TIMEOUT_MS = 10000; // 10 second timeout per RPC
+
             // Try primary connection first
             try {
-                console.log(`[useTokenBalance] Trying ${description} with primary RPC`);
-                return await fetchFn(connection);
+                console.log(`[useTokenBalance] Trying ${description} with primary RPC:`, connection.rpcEndpoint);
+                return await withTimeout(fetchFn(connection), TIMEOUT_MS, 'primary');
             } catch (primaryErr) {
-                console.warn(`[useTokenBalance] Primary RPC failed for ${description}:`, primaryErr);
+                const errMsg = primaryErr instanceof Error ? primaryErr.message : String(primaryErr);
+                console.warn(`[useTokenBalance] Primary RPC failed for ${description}:`, errMsg);
             }
 
             // Try fallback RPCs
             for (const rpcUrl of FALLBACK_RPCS) {
                 try {
                     console.log(`[useTokenBalance] Trying ${description} with fallback:`, rpcUrl);
-                    const fallbackConn = new Connection(rpcUrl, 'confirmed');
-                    return await fetchFn(fallbackConn);
+                    const fallbackConn = new Connection(rpcUrl, { commitment: 'confirmed' });
+                    return await withTimeout(fetchFn(fallbackConn), TIMEOUT_MS, rpcUrl);
                 } catch (fallbackErr) {
-                    console.warn(`[useTokenBalance] Fallback ${rpcUrl} failed:`, fallbackErr);
+                    const errMsg = fallbackErr instanceof Error ? fallbackErr.message : String(fallbackErr);
+                    console.warn(`[useTokenBalance] Fallback ${rpcUrl} failed:`, errMsg);
                 }
             }
 
