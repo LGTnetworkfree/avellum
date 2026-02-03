@@ -8,7 +8,18 @@ import { useState, useEffect, useCallback } from 'react';
 import TrustBadge from '@/components/TrustBadge';
 import Footer from '@/components/Footer';
 import { FadeIn, ScaleIn, StaggerItem, LiveCounter, StatBar, HeroSection, HeroTitle, HeroParagraph, HeroLabel } from '@/components/ScrollAnimations';
+import { getExplorerUrl } from '@/lib/memo';
 import type { Agent } from '@/lib/supabase';
+
+interface UserRating {
+    id: string;
+    agentAddress: string;
+    agentName: string;
+    score: number;
+    tokenWeight: number;
+    txSignature: string | null;
+    date: string;
+}
 
 function truncateAddress(addr: string): string {
     return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
@@ -21,12 +32,19 @@ function getConfidenceLabel(totalRatings: number): string {
 }
 
 export default function DashboardPage() {
-    const { connected } = useWallet();
+    const { connected, publicKey } = useWallet();
     const { setVisible } = useWalletModal();
 
     const [topAgents, setTopAgents] = useState<Agent[]>([]);
     const [agentsLoading, setAgentsLoading] = useState(true);
     const [counts, setCounts] = useState({ total: 0, x402scan: 0, mcp: 0, a2a: 0 });
+
+    // User ratings state
+    const [userRatings, setUserRatings] = useState<UserRating[]>([]);
+    const [userRatingsLoading, setUserRatingsLoading] = useState(false);
+    const [userTotalWeight, setUserTotalWeight] = useState(0);
+
+    const network = process.env.NEXT_PUBLIC_SOLANA_NETWORK || 'mainnet-beta';
 
     const fetchData = useCallback(async () => {
         setAgentsLoading(true);
@@ -58,6 +76,33 @@ export default function DashboardPage() {
     useEffect(() => {
         fetchData();
     }, [fetchData]);
+
+    // Fetch user ratings when wallet connects
+    const fetchUserRatings = useCallback(async () => {
+        if (!connected || !publicKey) {
+            setUserRatings([]);
+            setUserTotalWeight(0);
+            return;
+        }
+
+        setUserRatingsLoading(true);
+        try {
+            const res = await fetch(`/api/user/ratings?wallet=${publicKey.toBase58()}`);
+            const data = await res.json();
+            if (res.ok) {
+                setUserRatings(data.ratings || []);
+                setUserTotalWeight(data.totalWeight || 0);
+            }
+        } catch (error) {
+            console.error('Error fetching user ratings:', error);
+        } finally {
+            setUserRatingsLoading(false);
+        }
+    }, [connected, publicKey]);
+
+    useEffect(() => {
+        fetchUserRatings();
+    }, [fetchUserRatings]);
 
     const networkStats = [
         { label: 'Agents Indexed', value: counts.total, bar: Math.min(100, counts.total / 20) },
@@ -197,6 +242,109 @@ export default function DashboardPage() {
                                     View All Agents
                                 </Link>
                             </div>
+                        </div>
+                    </StaggerItem>
+                </div>
+            </div>
+
+            {/* ========== MY RATINGS ========== */}
+            <div className="section-gradient border-t border-[#1e3a5a]">
+                <div className="px-8 md:px-12 pt-10 pb-10">
+                    <StaggerItem index={1}>
+                        <div className="overflow-hidden card-hover max-w-2xl mx-auto">
+                            {/* Header */}
+                            <div className="px-6 py-5 border-b border-[#1e3a5a]/50 flex justify-between items-center">
+                                <div className="flex items-center gap-3">
+                                    <span className="label-terminal text-[#00ffff]">My Ratings</span>
+                                    <span className="h-px flex-1 bg-[#1e3a5a] min-w-[40px]" />
+                                </div>
+                                <span className="label-terminal !text-[#2a4a6a]">Score</span>
+                            </div>
+
+                            {/* Content */}
+                            {!connected ? (
+                                <div className="px-6 py-12 text-center">
+                                    <p className="text-[#4b6a8a] font-sans text-sm mb-4">Connect wallet to see your ratings</p>
+                                    <button
+                                        onClick={() => setVisible(true)}
+                                        className="btn-angular bg-[#00ffff]/10 border border-[#00ffff]/30 text-[#00ffff] px-6 py-2 font-sans font-semibold text-xs uppercase tracking-[0.08em] hover:bg-[#00ffff]/20 transition-all"
+                                    >
+                                        Connect
+                                    </button>
+                                </div>
+                            ) : userRatingsLoading ? (
+                                <div className="divide-y divide-[#1e3a5a]/30">
+                                    {Array.from({ length: 3 }).map((_, i) => (
+                                        <div key={i} className="px-6 py-4 flex items-center gap-4 animate-pulse">
+                                            <div className="flex-1 min-w-0 space-y-2">
+                                                <div className="h-4 bg-[#1e3a5a]/30 rounded w-32" />
+                                                <div className="h-3 bg-[#1e3a5a]/20 rounded w-24" />
+                                            </div>
+                                            <div className="h-8 w-12 bg-[#1e3a5a]/30 rounded" />
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : userRatings.length > 0 ? (
+                                <div className="divide-y divide-[#1e3a5a]/30">
+                                    {userRatings.map((rating) => (
+                                        <div
+                                            key={rating.id}
+                                            className="px-6 py-4 flex items-center gap-4 hover:bg-[#00ffff]/[0.02] transition-colors group/row"
+                                        >
+                                            <div className="flex-1 min-w-0">
+                                                <Link
+                                                    href={`/agents/${rating.agentAddress}`}
+                                                    className="font-sans text-sm font-medium text-[#00d4ff] mb-1 group-hover/row:text-[#00ffff] transition-colors duration-300 truncate block"
+                                                >
+                                                    {rating.agentName || truncateAddress(rating.agentAddress)}
+                                                </Link>
+                                                <div className="flex gap-3 items-center">
+                                                    <span className="font-sans font-medium text-[0.6rem] tracking-[0.08em] text-[#4b6a8a]">
+                                                        {new Date(rating.date).toLocaleDateString()}
+                                                    </span>
+                                                    {rating.txSignature && (
+                                                        <a
+                                                            href={getExplorerUrl(rating.txSignature, network)}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="font-sans font-medium text-[0.6rem] tracking-[0.08em] text-[#2a4a6a] hover:text-[#00d4ff] transition-colors"
+                                                        >
+                                                            TX
+                                                        </a>
+                                                    )}
+                                                </div>
+                                            </div>
+                                            <div className="text-right">
+                                                <span className="font-sans text-lg font-bold text-white">
+                                                    {rating.score}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="px-6 py-8 text-center">
+                                    <p className="text-[#4b6a8a] font-sans text-sm mb-3">You haven&apos;t rated any agents yet.</p>
+                                    <Link
+                                        href="/agents"
+                                        className="font-sans font-medium text-[0.65rem] tracking-[0.15em] uppercase text-[#00d4ff] hover:text-[#00ffff] transition-colors"
+                                    >
+                                        Browse Agents
+                                    </Link>
+                                </div>
+                            )}
+
+                            {/* Footer */}
+                            {connected && userRatings.length > 0 && (
+                                <div className="px-6 py-4 border-t border-[#1e3a5a]/30 flex justify-between items-center">
+                                    <span className="font-sans font-medium text-[0.6rem] tracking-[0.12em] uppercase text-[#4b6a8a]">
+                                        {userRatings.length} {userRatings.length === 1 ? 'rating' : 'ratings'}
+                                    </span>
+                                    <span className="font-sans font-medium text-[0.6rem] tracking-[0.12em] uppercase text-[#4b6a8a]">
+                                        {userTotalWeight.toLocaleString()} total weight
+                                    </span>
+                                </div>
+                            )}
                         </div>
                     </StaggerItem>
                 </div>
