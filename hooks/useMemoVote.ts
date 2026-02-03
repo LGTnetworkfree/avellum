@@ -11,6 +11,8 @@ interface VoteResult {
     txSignature?: string;
     explorerUrl?: string;
     error?: string;
+    source?: 'database' | 'mock';
+    debugError?: string;
 }
 
 export function useMemoVote() {
@@ -58,12 +60,20 @@ export function useMemoVote() {
             });
 
             const data = await response.json();
+            console.log('[useMemoVote] API response:', data);
 
             if (!response.ok) {
                 return { success: false, txSignature, explorerUrl, error: data.error || 'Server rejected the rating' };
             }
 
-            return { success: true, txSignature, explorerUrl };
+            // Include source and debugError from API response for debugging
+            return {
+                success: true,
+                txSignature,
+                explorerUrl,
+                source: data.source,
+                debugError: data.debugError
+            };
         } catch (err: unknown) {
             const message = err instanceof Error ? err.message : 'Unknown error';
             // Detect wallet rejection
