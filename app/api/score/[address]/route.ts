@@ -150,8 +150,8 @@ export async function GET(request: Request, { params }: RouteParams) {
             caller_ip: clientIp
         }).then(() => { }, () => { });
 
-        // Return trust score response
-        return NextResponse.json({
+        // Return trust score response with caching
+        const response = NextResponse.json({
             address: agent.address,
             name: agent.name,
             description: agent.description,
@@ -162,6 +162,9 @@ export async function GET(request: Request, { params }: RouteParams) {
             updated_at: agent.updated_at,
             source: 'database'
         });
+        // Cache for 30s, allow stale for 5 min while revalidating
+        response.headers.set('Cache-Control', 's-maxage=30, stale-while-revalidate=300');
+        return response;
     } catch (error) {
         console.error('API error:', error);
         return NextResponse.json(

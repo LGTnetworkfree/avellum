@@ -47,7 +47,14 @@ export default function ParticleBackground() {
     resize();
     window.addEventListener('resize', resize);
 
+    let isVisible = true;
+
     const draw = () => {
+      if (!isVisible) {
+        animationId = requestAnimationFrame(draw);
+        return;
+      }
+
       const w = window.innerWidth;
       const h = window.innerHeight;
       ctx.clearRect(0, 0, w, h);
@@ -70,11 +77,18 @@ export default function ParticleBackground() {
       animationId = requestAnimationFrame(draw);
     };
 
+    // Pause animation when tab is hidden
+    const handleVisibility = () => {
+      isVisible = document.visibilityState === 'visible';
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+
     draw();
 
     return () => {
       cancelAnimationFrame(animationId);
       window.removeEventListener('resize', resize);
+      document.removeEventListener('visibilitychange', handleVisibility);
     };
   }, []);
 

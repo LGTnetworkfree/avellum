@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import SolanaWalletProvider from "@/components/WalletProvider";
 import Navbar from "@/components/Navbar";
@@ -8,6 +9,13 @@ import Ticker from "@/components/Ticker";
 import ParticleBackground from "@/components/ParticleBackground";
 import PageTransition from "@/components/PageTransition";
 import LoadingScreen from "@/components/LoadingScreen";
+
+// Optimized font loading with next/font (replaces external @import)
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-sans",
+});
 
 export const metadata: Metadata = {
   title: "Avellum // Trust Layer",
@@ -33,8 +41,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
-      <body className="antialiased min-h-screen">
+    <html lang="en" className={`dark ${inter.variable}`}>
+      <body className="antialiased min-h-screen font-sans">
         <SolanaWalletProvider>
           <LoadingScreen />
           <div className="aurora-wrap">
