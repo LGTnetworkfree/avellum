@@ -2,7 +2,7 @@ import { Connection, PublicKey } from '@solana/web3.js';
 
 const HELIUS_API_KEY = process.env.HELIUS_API_KEY || process.env.NEXT_PUBLIC_HELIUS_API_KEY;
 const AVLM_TOKEN_MINT = process.env.NEXT_PUBLIC_AVLM_TOKEN_MINT || 'D6zGvr8zNKgqpcjNr4Hin8ELVuGEcySyRn5ugHcusQh9';
-const SOLANA_NETWORK = process.env.NEXT_PUBLIC_SOLANA_NETWORK || 'devnet';
+const SOLANA_NETWORK = process.env.NEXT_PUBLIC_SOLANA_NETWORK || 'mainnet-beta';
 
 // Get Helius RPC endpoint
 function getHeliusRpcUrl(): string {
@@ -20,7 +20,7 @@ export function getConnection(): Connection {
 
 /**
  * Get $AVLM token balance for a wallet address using Solana RPC.
- * Uses the network-aware connection (devnet/mainnet) so it works
+ * Uses the network-aware connection so it works
  * regardless of which cluster the token was minted on.
  */
 export async function getAvellumBalance(walletAddress: string): Promise<number> {

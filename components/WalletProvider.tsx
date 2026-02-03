@@ -16,7 +16,7 @@ interface Props {
 
 export default function SolanaWalletProvider({ children }: Props) {
     // Get network from environment
-    const networkEnv = process.env.NEXT_PUBLIC_SOLANA_NETWORK || 'devnet';
+    const networkEnv = process.env.NEXT_PUBLIC_SOLANA_NETWORK || 'mainnet-beta';
     const network = networkEnv as WalletAdapterNetwork;
 
     // Use Helius RPC if available, otherwise fallback to public RPC

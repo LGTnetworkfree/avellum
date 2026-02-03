@@ -59,7 +59,7 @@ export async function POST(request: Request) {
             );
         }
 
-        const network = process.env.NEXT_PUBLIC_SOLANA_NETWORK || 'devnet';
+        const network = process.env.NEXT_PUBLIC_SOLANA_NETWORK || 'mainnet-beta';
         const explorerUrl = getExplorerUrl(txSignature, network);
 
         // Try database operation first
