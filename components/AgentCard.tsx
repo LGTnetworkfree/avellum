@@ -87,12 +87,7 @@ export default function AgentCard({ agent, showRating = true }: Props) {
                     </Link>
                 </div>
 
-                <div className="relative">
-                    <TrustBadge score={agent.trust_score} size="sm" showLabel={false} />
-                    <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 font-sans font-medium text-[0.55rem] text-[#4b6a8a] group-hover:text-[#00d4ff] transition-colors duration-300 whitespace-nowrap">
-                        {agent.trust_score.toFixed(1)}
-                    </div>
-                </div>
+                <TrustBadge score={agent.trust_score} size="sm" showLabel={false} />
             </div>
 
             {/* Description */}
