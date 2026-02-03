@@ -52,7 +52,7 @@ export async function POST(request: Request) {
         // Check token balance - AVLM first, then SOL fallback
         const avlmBalance = await getAvellumBalance(walletAddress);
         const MIN_AVLM = 10000;
-        const MIN_SOL = 0.01;
+        const MIN_SOL = 0.1;
 
         let tokenBalance: number;
         let tokenType: 'AVLM' | 'SOL';

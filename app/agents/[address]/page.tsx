@@ -278,7 +278,7 @@ export default function AgentDetailPage({ params }: Props) {
                         <div className="card-hover p-8 max-w-2xl text-center">
                             <p className="text-[#4b6a8a] font-sans text-sm mb-4">Connect your wallet to rate this agent.</p>
                             <p className="font-sans font-medium text-[0.6rem] tracking-[0.15em] text-[#2a4a6a] uppercase mb-6">
-                                You need at least 10,000 $AVLM or 0.01 SOL to submit ratings
+                                You need at least 10,000 $AVLM or 0.1 SOL to submit ratings
                             </p>
                             <button
                                 onClick={() => setVisible(true)}

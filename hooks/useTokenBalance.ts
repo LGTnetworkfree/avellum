@@ -6,7 +6,7 @@ import { useEffect, useState, useCallback } from 'react';
 
 export const AVLM_MINT = new PublicKey('D6zGvr8zNKgqpcjNr4Hin8ELVuGEcySyRn5ugHcusQh9');
 export const MIN_AVLM_TO_VOTE = 10_000;
-export const MIN_SOL_TO_VOTE = 0.01;
+export const MIN_SOL_TO_VOTE = 0.1;
 
 const DECIMALS = 9;
 
