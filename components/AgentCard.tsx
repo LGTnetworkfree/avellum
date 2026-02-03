@@ -21,7 +21,7 @@ const registryLabels: Record<string, string> = {
     a2a: 'A2A'
 };
 
-export default function AgentCard({ agent, showRating = true }: Props) {
+export default function AgentCard({ agent: initialAgent, showRating = true }: Props) {
     const { connected, publicKey } = useWallet();
     const { setVisible } = useWalletModal();
     const {
@@ -35,11 +35,17 @@ export default function AgentCard({ agent, showRating = true }: Props) {
         refetch: refetchBalance
     } = useTokenBalance();
     const { submitVote, isSubmitting } = useMemoVote();
+    const [agent, setAgent] = useState<Agent>(initialAgent);
     const [rating, setRating] = useState(50);
     const [submitMessage, setSubmitMessage] = useState<string | null>(null);
     const [explorerUrl, setExplorerUrl] = useState<string | null>(null);
     const [showRatingPanel, setShowRatingPanel] = useState(false);
     const [copied, setCopied] = useState(false);
+
+    // Sync with prop changes
+    useEffect(() => {
+        setAgent(initialAgent);
+    }, [initialAgent]);
 
     // canVote now comes from useTokenBalance hook (checks AVLM first, then SOL fallback)
 
@@ -69,6 +75,17 @@ export default function AgentCard({ agent, showRating = true }: Props) {
             setSubmitMessage(`Rating submitted! Weight: ${(displayBalance ?? 0).toLocaleString()} ${voteToken === 'SOL' ? 'SOL' : '$AVLM'}`);
             setExplorerUrl(result.explorerUrl ?? null);
             setShowRatingPanel(false);
+
+            // Refetch agent data to update rating count
+            try {
+                const response = await fetch(`/api/score/${agent.address}`);
+                if (response.ok) {
+                    const updatedAgent = await response.json();
+                    setAgent(updatedAgent);
+                }
+            } catch (e) {
+                console.error('Failed to refresh agent data:', e);
+            }
         } else {
             setSubmitMessage(result.error || 'Failed to submit rating');
         }
