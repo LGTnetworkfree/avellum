@@ -174,179 +174,180 @@ export default function DashboardPage() {
                 </div>
             </FadeIn>
 
-            {/* ========== TOP AGENTS ========== */}
+            {/* ========== TOP AGENTS & MY RATINGS (Side by Side) ========== */}
             <div className="section-gradient">
                 <div className="px-8 md:px-12 pt-10 pb-10">
-                    <StaggerItem index={0}>
-                        <div className="overflow-hidden card-hover max-w-2xl mx-auto">
-                            {/* Header */}
-                            <div className="px-6 py-5 border-b border-[#1e3a5a]/50 flex justify-between items-center">
-                                <div className="flex items-center gap-3">
-                                    <span className="label-terminal text-[#00ffff]">Top Agents</span>
-                                    <span className="h-px flex-1 bg-[#1e3a5a] min-w-[40px]" />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* TOP AGENTS */}
+                        <StaggerItem index={0}>
+                            <div className="overflow-hidden card-hover h-full flex flex-col">
+                                {/* Header */}
+                                <div className="px-6 py-5 border-b border-[#1e3a5a]/50 flex justify-between items-center">
+                                    <div className="flex items-center gap-3">
+                                        <span className="label-terminal text-[#00ffff]">Top Agents</span>
+                                        <span className="h-px flex-1 bg-[#1e3a5a] min-w-[40px]" />
+                                    </div>
+                                    <span className="label-terminal !text-[#2a4a6a]">Trust</span>
                                 </div>
-                                <span className="label-terminal !text-[#2a4a6a]">Trust</span>
-                            </div>
 
-                            {/* List */}
-                            <div className="divide-y divide-[#1e3a5a]/30">
-                                {agentsLoading ? (
-                                    Array.from({ length: 5 }).map((_, i) => (
-                                        <div key={i} className="px-6 py-4 flex items-center gap-4 animate-pulse">
-                                            <span className="font-sans text-lg font-bold text-[#1e3a5a] w-6 text-center">
-                                                {String(i + 1).padStart(2, '0')}
-                                            </span>
-                                            <div className="flex-1 min-w-0 space-y-2">
-                                                <div className="h-4 bg-[#1e3a5a]/30 rounded w-32" />
-                                                <div className="h-3 bg-[#1e3a5a]/20 rounded w-20" />
+                                {/* List */}
+                                <div className="divide-y divide-[#1e3a5a]/30 flex-1">
+                                    {agentsLoading ? (
+                                        Array.from({ length: 5 }).map((_, i) => (
+                                            <div key={i} className="px-6 py-4 flex items-center gap-4 animate-pulse">
+                                                <span className="font-sans text-lg font-bold text-[#1e3a5a] w-6 text-center">
+                                                    {String(i + 1).padStart(2, '0')}
+                                                </span>
+                                                <div className="flex-1 min-w-0 space-y-2">
+                                                    <div className="h-4 bg-[#1e3a5a]/30 rounded w-32" />
+                                                    <div className="h-3 bg-[#1e3a5a]/20 rounded w-20" />
+                                                </div>
+                                                <div className="h-8 w-12 bg-[#1e3a5a]/30 rounded" />
                                             </div>
-                                            <div className="h-8 w-12 bg-[#1e3a5a]/30 rounded" />
+                                        ))
+                                    ) : topAgents.length > 0 ? (
+                                        topAgents.map((agent, i) => (
+                                            <Link
+                                                key={agent.id}
+                                                href={`/agents/${agent.address}`}
+                                                className="px-6 py-4 flex items-center gap-4 hover:bg-[#00ffff]/[0.02] transition-colors group/row block"
+                                            >
+                                                <span className="font-sans text-lg font-bold text-[#1e3a5a] group-hover/row:text-[#00ffff] transition-colors duration-300 w-6 text-center">
+                                                    {String(i + 1).padStart(2, '0')}
+                                                </span>
+                                                <div className="flex-1 min-w-0">
+                                                    <div className="font-sans text-sm font-medium text-[#00d4ff] mb-1 group-hover/row:text-[#00ffff] transition-colors duration-300 truncate">
+                                                        {agent.name || truncateAddress(agent.address)}
+                                                    </div>
+                                                    <div className="flex gap-2 items-center">
+                                                        <span className="border border-[#1e3a5a] text-[#00d4ff] font-sans font-medium text-[0.6rem] tracking-[0.15em] uppercase px-2 py-0.5 group-hover/row:border-[#00ffff]/40 transition-all duration-300">
+                                                            {getConfidenceLabel(agent.total_ratings)}
+                                                        </span>
+                                                        <span className="font-sans font-medium text-[0.6rem] tracking-[0.15em] uppercase text-[#4b6a8a]">
+                                                            {agent.total_ratings} {agent.total_ratings === 1 ? 'rating' : 'ratings'}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <TrustBadge score={agent.trust_score} size="sm" showLabel={false} />
+                                            </Link>
+                                        ))
+                                    ) : (
+                                        <div className="px-6 py-8 text-center">
+                                            <p className="text-[#4b6a8a] font-sans text-sm">No agents with ratings yet.</p>
                                         </div>
-                                    ))
-                                ) : topAgents.length > 0 ? (
-                                    topAgents.map((agent, i) => (
-                                        <Link
-                                            key={agent.id}
-                                            href={`/agents/${agent.address}`}
-                                            className="px-6 py-4 flex items-center gap-4 hover:bg-[#00ffff]/[0.02] transition-colors group/row block"
-                                        >
-                                            <span className="font-sans text-lg font-bold text-[#1e3a5a] group-hover/row:text-[#00ffff] transition-colors duration-300 w-6 text-center">
-                                                {String(i + 1).padStart(2, '0')}
-                                            </span>
-                                            <div className="flex-1 min-w-0">
-                                                <div className="font-sans text-sm font-medium text-[#00d4ff] mb-1 group-hover/row:text-[#00ffff] transition-colors duration-300 truncate">
-                                                    {agent.name || truncateAddress(agent.address)}
+                                    )}
+                                </div>
+
+                                {/* Footer */}
+                                <div className="px-6 py-4 border-t border-[#1e3a5a]/30 text-center mt-auto">
+                                    <Link href="/agents" className="font-sans font-medium text-[0.65rem] tracking-[0.15em] uppercase text-[#4b6a8a] hover:text-[#00ffff] transition-colors duration-300">
+                                        View All Agents
+                                    </Link>
+                                </div>
+                            </div>
+                        </StaggerItem>
+
+                        {/* MY RATINGS */}
+                        <StaggerItem index={1}>
+                            <div className="overflow-hidden card-hover h-full flex flex-col">
+                                {/* Header */}
+                                <div className="px-6 py-5 border-b border-[#1e3a5a]/50 flex justify-between items-center">
+                                    <div className="flex items-center gap-3">
+                                        <span className="label-terminal text-[#00ffff]">My Ratings</span>
+                                        <span className="h-px flex-1 bg-[#1e3a5a] min-w-[40px]" />
+                                    </div>
+                                    <span className="label-terminal !text-[#2a4a6a]">Score</span>
+                                </div>
+
+                                {/* Content */}
+                                <div className="flex-1">
+                                    {!connected ? (
+                                        <div className="px-6 py-12 text-center">
+                                            <p className="text-[#4b6a8a] font-sans text-sm mb-4">Connect wallet to see your ratings</p>
+                                            <button
+                                                onClick={() => setVisible(true)}
+                                                className="btn-angular bg-[#00ffff]/10 border border-[#00ffff]/30 text-[#00ffff] px-6 py-2 font-sans font-semibold text-xs uppercase tracking-[0.08em] hover:bg-[#00ffff]/20 transition-all"
+                                            >
+                                                Connect
+                                            </button>
+                                        </div>
+                                    ) : userRatingsLoading ? (
+                                        <div className="divide-y divide-[#1e3a5a]/30">
+                                            {Array.from({ length: 3 }).map((_, i) => (
+                                                <div key={i} className="px-6 py-4 flex items-center gap-4 animate-pulse">
+                                                    <div className="flex-1 min-w-0 space-y-2">
+                                                        <div className="h-4 bg-[#1e3a5a]/30 rounded w-32" />
+                                                        <div className="h-3 bg-[#1e3a5a]/20 rounded w-24" />
+                                                    </div>
+                                                    <div className="h-8 w-12 bg-[#1e3a5a]/30 rounded" />
                                                 </div>
-                                                <div className="flex gap-2 items-center">
-                                                    <span className="border border-[#1e3a5a] text-[#00d4ff] font-sans font-medium text-[0.6rem] tracking-[0.15em] uppercase px-2 py-0.5 group-hover/row:border-[#00ffff]/40 transition-all duration-300">
-                                                        {getConfidenceLabel(agent.total_ratings)}
-                                                    </span>
-                                                    <span className="font-sans font-medium text-[0.6rem] tracking-[0.15em] uppercase text-[#4b6a8a]">
-                                                        {agent.total_ratings} {agent.total_ratings === 1 ? 'rating' : 'ratings'}
-                                                    </span>
+                                            ))}
+                                        </div>
+                                    ) : userRatings.length > 0 ? (
+                                        <div className="divide-y divide-[#1e3a5a]/30">
+                                            {userRatings.map((rating) => (
+                                                <div
+                                                    key={rating.id}
+                                                    className="px-6 py-4 flex items-center gap-4 hover:bg-[#00ffff]/[0.02] transition-colors group/row"
+                                                >
+                                                    <div className="flex-1 min-w-0">
+                                                        <Link
+                                                            href={`/agents/${rating.agentAddress}`}
+                                                            className="font-sans text-sm font-medium text-[#00d4ff] mb-1 group-hover/row:text-[#00ffff] transition-colors duration-300 truncate block"
+                                                        >
+                                                            {rating.agentName || truncateAddress(rating.agentAddress)}
+                                                        </Link>
+                                                        <div className="flex gap-3 items-center">
+                                                            <span className="font-sans font-medium text-[0.6rem] tracking-[0.08em] text-[#4b6a8a]">
+                                                                {new Date(rating.date).toLocaleDateString()}
+                                                            </span>
+                                                            {rating.txSignature && (
+                                                                <a
+                                                                    href={getExplorerUrl(rating.txSignature, network)}
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    className="font-sans font-medium text-[0.6rem] tracking-[0.08em] text-[#2a4a6a] hover:text-[#00d4ff] transition-colors"
+                                                                >
+                                                                    TX
+                                                                </a>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                    <div className="text-right">
+                                                        <span className="font-sans text-lg font-bold text-white">
+                                                            {rating.score}
+                                                        </span>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <TrustBadge score={agent.trust_score} size="sm" showLabel={false} />
-                                        </Link>
-                                    ))
-                                ) : (
-                                    <div className="px-6 py-8 text-center">
-                                        <p className="text-[#4b6a8a] font-sans text-sm">No agents with ratings yet.</p>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <div className="px-6 py-8 text-center">
+                                            <p className="text-[#4b6a8a] font-sans text-sm mb-3">You haven&apos;t rated any agents yet.</p>
+                                            <Link
+                                                href="/agents"
+                                                className="font-sans font-medium text-[0.65rem] tracking-[0.15em] uppercase text-[#00d4ff] hover:text-[#00ffff] transition-colors"
+                                            >
+                                                Browse Agents
+                                            </Link>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Footer */}
+                                {connected && userRatings.length > 0 && (
+                                    <div className="px-6 py-4 border-t border-[#1e3a5a]/30 flex justify-between items-center mt-auto">
+                                        <span className="font-sans font-medium text-[0.6rem] tracking-[0.12em] uppercase text-[#4b6a8a]">
+                                            {userRatings.length} {userRatings.length === 1 ? 'rating' : 'ratings'}
+                                        </span>
+                                        <span className="font-sans font-medium text-[0.6rem] tracking-[0.12em] uppercase text-[#4b6a8a]">
+                                            {userTotalWeight.toLocaleString()} total weight
+                                        </span>
                                     </div>
                                 )}
                             </div>
-
-                            {/* Footer */}
-                            <div className="px-6 py-4 border-t border-[#1e3a5a]/30 text-center">
-                                <Link href="/agents" className="font-sans font-medium text-[0.65rem] tracking-[0.15em] uppercase text-[#4b6a8a] hover:text-[#00ffff] transition-colors duration-300">
-                                    View All Agents
-                                </Link>
-                            </div>
-                        </div>
-                    </StaggerItem>
-                </div>
-            </div>
-
-            {/* ========== MY RATINGS ========== */}
-            <div className="section-gradient border-t border-[#1e3a5a]">
-                <div className="px-8 md:px-12 pt-10 pb-10">
-                    <StaggerItem index={1}>
-                        <div className="overflow-hidden card-hover max-w-2xl mx-auto">
-                            {/* Header */}
-                            <div className="px-6 py-5 border-b border-[#1e3a5a]/50 flex justify-between items-center">
-                                <div className="flex items-center gap-3">
-                                    <span className="label-terminal text-[#00ffff]">My Ratings</span>
-                                    <span className="h-px flex-1 bg-[#1e3a5a] min-w-[40px]" />
-                                </div>
-                                <span className="label-terminal !text-[#2a4a6a]">Score</span>
-                            </div>
-
-                            {/* Content */}
-                            {!connected ? (
-                                <div className="px-6 py-12 text-center">
-                                    <p className="text-[#4b6a8a] font-sans text-sm mb-4">Connect wallet to see your ratings</p>
-                                    <button
-                                        onClick={() => setVisible(true)}
-                                        className="btn-angular bg-[#00ffff]/10 border border-[#00ffff]/30 text-[#00ffff] px-6 py-2 font-sans font-semibold text-xs uppercase tracking-[0.08em] hover:bg-[#00ffff]/20 transition-all"
-                                    >
-                                        Connect
-                                    </button>
-                                </div>
-                            ) : userRatingsLoading ? (
-                                <div className="divide-y divide-[#1e3a5a]/30">
-                                    {Array.from({ length: 3 }).map((_, i) => (
-                                        <div key={i} className="px-6 py-4 flex items-center gap-4 animate-pulse">
-                                            <div className="flex-1 min-w-0 space-y-2">
-                                                <div className="h-4 bg-[#1e3a5a]/30 rounded w-32" />
-                                                <div className="h-3 bg-[#1e3a5a]/20 rounded w-24" />
-                                            </div>
-                                            <div className="h-8 w-12 bg-[#1e3a5a]/30 rounded" />
-                                        </div>
-                                    ))}
-                                </div>
-                            ) : userRatings.length > 0 ? (
-                                <div className="divide-y divide-[#1e3a5a]/30">
-                                    {userRatings.map((rating) => (
-                                        <div
-                                            key={rating.id}
-                                            className="px-6 py-4 flex items-center gap-4 hover:bg-[#00ffff]/[0.02] transition-colors group/row"
-                                        >
-                                            <div className="flex-1 min-w-0">
-                                                <Link
-                                                    href={`/agents/${rating.agentAddress}`}
-                                                    className="font-sans text-sm font-medium text-[#00d4ff] mb-1 group-hover/row:text-[#00ffff] transition-colors duration-300 truncate block"
-                                                >
-                                                    {rating.agentName || truncateAddress(rating.agentAddress)}
-                                                </Link>
-                                                <div className="flex gap-3 items-center">
-                                                    <span className="font-sans font-medium text-[0.6rem] tracking-[0.08em] text-[#4b6a8a]">
-                                                        {new Date(rating.date).toLocaleDateString()}
-                                                    </span>
-                                                    {rating.txSignature && (
-                                                        <a
-                                                            href={getExplorerUrl(rating.txSignature, network)}
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
-                                                            className="font-sans font-medium text-[0.6rem] tracking-[0.08em] text-[#2a4a6a] hover:text-[#00d4ff] transition-colors"
-                                                        >
-                                                            TX
-                                                        </a>
-                                                    )}
-                                                </div>
-                                            </div>
-                                            <div className="text-right">
-                                                <span className="font-sans text-lg font-bold text-white">
-                                                    {rating.score}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            ) : (
-                                <div className="px-6 py-8 text-center">
-                                    <p className="text-[#4b6a8a] font-sans text-sm mb-3">You haven&apos;t rated any agents yet.</p>
-                                    <Link
-                                        href="/agents"
-                                        className="font-sans font-medium text-[0.65rem] tracking-[0.15em] uppercase text-[#00d4ff] hover:text-[#00ffff] transition-colors"
-                                    >
-                                        Browse Agents
-                                    </Link>
-                                </div>
-                            )}
-
-                            {/* Footer */}
-                            {connected && userRatings.length > 0 && (
-                                <div className="px-6 py-4 border-t border-[#1e3a5a]/30 flex justify-between items-center">
-                                    <span className="font-sans font-medium text-[0.6rem] tracking-[0.12em] uppercase text-[#4b6a8a]">
-                                        {userRatings.length} {userRatings.length === 1 ? 'rating' : 'ratings'}
-                                    </span>
-                                    <span className="font-sans font-medium text-[0.6rem] tracking-[0.12em] uppercase text-[#4b6a8a]">
-                                        {userTotalWeight.toLocaleString()} total weight
-                                    </span>
-                                </div>
-                            )}
-                        </div>
-                    </StaggerItem>
+                        </StaggerItem>
+                    </div>
                 </div>
             </div>
 
