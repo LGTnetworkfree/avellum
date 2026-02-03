@@ -160,6 +160,33 @@ export async function POST(request: Request) {
                 })
                 .eq('id', verifier.id);
 
+            // Update agent's total_ratings count and recalculate trust_score
+            // First get the current count and all ratings for this agent
+            const { data: agentRatings } = await supabase
+                .from('ratings')
+                .select('score, token_weight')
+                .eq('agent_id', agent.id);
+
+            if (agentRatings && agentRatings.length > 0) {
+                // Calculate weighted trust score
+                let totalWeight = 0;
+                let weightedSum = 0;
+                for (const r of agentRatings) {
+                    totalWeight += r.token_weight || 1;
+                    weightedSum += (r.score || 0) * (r.token_weight || 1);
+                }
+                const newTrustScore = totalWeight > 0 ? weightedSum / totalWeight : 0;
+
+                await supabase
+                    .from('agents')
+                    .update({
+                        total_ratings: agentRatings.length,
+                        trust_score: newTrustScore,
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq('id', agent.id);
+            }
+
             return NextResponse.json({
                 success: true,
                 txSignature,
