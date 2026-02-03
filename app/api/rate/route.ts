@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase';
-import { getAvellumBalance } from '@/lib/helius';
+import { getAvellumBalance, getSolBalance } from '@/lib/helius';
 import { verifyMemoTransaction } from '@/lib/verify-memo-tx';
 import { getExplorerUrl } from '@/lib/memo';
 
@@ -49,14 +49,29 @@ export async function POST(request: Request) {
             );
         }
 
-        // Check token balance
-        const tokenBalance = await getAvellumBalance(walletAddress);
+        // Check token balance - AVLM first, then SOL fallback
+        const avlmBalance = await getAvellumBalance(walletAddress);
+        const MIN_AVLM = 10000;
+        const MIN_SOL = 0.01;
 
-        if (tokenBalance < 10000) {
-            return NextResponse.json(
-                { error: 'You must hold at least 10,000 $AVLM to rate agents' },
-                { status: 403 }
-            );
+        let tokenBalance: number;
+        let tokenType: 'AVLM' | 'SOL';
+
+        if (avlmBalance >= MIN_AVLM) {
+            tokenBalance = avlmBalance;
+            tokenType = 'AVLM';
+        } else {
+            // Fallback to SOL
+            const solBalance = await getSolBalance(walletAddress);
+            if (solBalance >= MIN_SOL) {
+                tokenBalance = solBalance;
+                tokenType = 'SOL';
+            } else {
+                return NextResponse.json(
+                    { error: `You need at least ${MIN_AVLM.toLocaleString()} $AVLM or ${MIN_SOL} SOL to rate agents` },
+                    { status: 403 }
+                );
+            }
         }
 
         const network = process.env.NEXT_PUBLIC_SOLANA_NETWORK || 'mainnet-beta';
@@ -150,6 +165,7 @@ export async function POST(request: Request) {
                 txSignature,
                 explorerUrl,
                 tokenWeight: tokenBalance,
+                tokenType,
                 source: 'database'
             });
         } catch (dbError) {
@@ -169,6 +185,7 @@ export async function POST(request: Request) {
                 txSignature,
                 explorerUrl,
                 tokenWeight: tokenBalance,
+                tokenType,
                 source: 'mock'
             });
         }

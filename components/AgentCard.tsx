@@ -6,7 +6,7 @@ import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 import Link from 'next/link';
 import TrustBadge from './TrustBadge';
 import RatingSlider from './RatingSlider';
-import { useTokenBalance, MIN_AVLM_TO_VOTE } from '@/hooks/useTokenBalance';
+import { useTokenBalance, MIN_AVLM_TO_VOTE, MIN_SOL_TO_VOTE } from '@/hooks/useTokenBalance';
 import { useMemoVote } from '@/hooks/useMemoVote';
 import type { Agent } from '@/lib/supabase';
 
@@ -24,7 +24,16 @@ const registryLabels: Record<string, string> = {
 export default function AgentCard({ agent, showRating = true }: Props) {
     const { connected, publicKey } = useWallet();
     const { setVisible } = useWalletModal();
-    const { balance, loading: balanceLoading, error: balanceError, refetch: refetchBalance } = useTokenBalance();
+    const {
+        avlmBalance,
+        solBalance,
+        loading: balanceLoading,
+        error: balanceError,
+        canVote,
+        voteToken,
+        displayBalance,
+        refetch: refetchBalance
+    } = useTokenBalance();
     const { submitVote, isSubmitting } = useMemoVote();
     const [rating, setRating] = useState(50);
     const [submitMessage, setSubmitMessage] = useState<string | null>(null);
@@ -32,7 +41,7 @@ export default function AgentCard({ agent, showRating = true }: Props) {
     const [showRatingPanel, setShowRatingPanel] = useState(false);
     const [copied, setCopied] = useState(false);
 
-    const canVote = balance !== null && balance >= MIN_AVLM_TO_VOTE;
+    // canVote now comes from useTokenBalance hook (checks AVLM first, then SOL fallback)
 
     useEffect(() => {
         if (canVote && submitMessage?.includes('must hold')) {
@@ -47,7 +56,7 @@ export default function AgentCard({ agent, showRating = true }: Props) {
         }
 
         if (!canVote) {
-            setSubmitMessage(`You must hold at least ${MIN_AVLM_TO_VOTE.toLocaleString()} $AVLM to rate agents`);
+            setSubmitMessage(`You need at least ${MIN_AVLM_TO_VOTE.toLocaleString()} $AVLM or ${MIN_SOL_TO_VOTE} SOL to rate agents`);
             return;
         }
 
@@ -57,7 +66,7 @@ export default function AgentCard({ agent, showRating = true }: Props) {
         const result = await submitVote(agent.address, rating);
 
         if (result.success) {
-            setSubmitMessage(`Rating submitted! Weight: ${(balance ?? 0).toLocaleString()} $AVLM`);
+            setSubmitMessage(`Rating submitted! Weight: ${(displayBalance ?? 0).toLocaleString()} ${voteToken === 'SOL' ? 'SOL' : '$AVLM'}`);
             setExplorerUrl(result.explorerUrl ?? null);
             setShowRatingPanel(false);
         } else {
@@ -159,7 +168,7 @@ export default function AgentCard({ agent, showRating = true }: Props) {
                         </div>
                     ) : !canVote ? (
                         <p className="font-sans text-xs font-medium text-[#ff6b6b]">
-                            You must hold at least {MIN_AVLM_TO_VOTE.toLocaleString()} $AVLM to rate agents
+                            You need at least {MIN_AVLM_TO_VOTE.toLocaleString()} $AVLM or {MIN_SOL_TO_VOTE} SOL to rate agents
                         </p>
                     ) : (
                         <>
@@ -167,7 +176,7 @@ export default function AgentCard({ agent, showRating = true }: Props) {
 
                             <div className="flex items-center justify-between gap-4">
                                 <span className="font-sans font-medium text-[0.6rem] tracking-[0.15em] text-[#2a4a6a] uppercase">
-                                    Weight: {(balance ?? 0).toLocaleString()} $AVLM
+                                    Weight: {(displayBalance ?? 0).toLocaleString()} {voteToken === 'SOL' ? 'SOL' : '$AVLM'}
                                 </span>
                                 <button
                                     onClick={handleSubmitRating}

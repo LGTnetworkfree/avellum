@@ -11,7 +11,7 @@ interface Props {
 
 export default function ConnectWallet({ showBalance = true }: Props) {
     const { publicKey, connected } = useWallet();
-    const { balance, loading } = useTokenBalance();
+    const { avlmBalance, solBalance, loading } = useTokenBalance();
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
@@ -29,11 +29,26 @@ export default function ConnectWallet({ showBalance = true }: Props) {
     return (
         <div className="flex items-center gap-4">
             {connected && showBalance && (
-                <div className="hidden md:flex items-center gap-2 px-3 py-1.5 border border-[#00d4ff]/20 bg-[#00d4ff]/5 rounded-sm">
-                    <span className="text-[10px] font-sans font-medium text-[#4b6a8a] tracking-tight">$AVLM</span>
-                    <span className="text-xs font-sans font-bold text-[#00d4ff]">
-                        {loading ? '...' : balance?.toLocaleString() || '0'}
-                    </span>
+                <div className="hidden md:flex items-center gap-3 px-3 py-1.5 border border-[#00d4ff]/20 bg-[#00d4ff]/5 rounded-sm">
+                    {loading ? (
+                        <span className="text-xs font-sans font-bold text-[#00d4ff]">...</span>
+                    ) : (
+                        <>
+                            <div className="flex items-center gap-1">
+                                <span className="text-[10px] font-sans font-medium text-[#4b6a8a] tracking-tight">$AVLM</span>
+                                <span className="text-xs font-sans font-bold text-[#00d4ff]">
+                                    {avlmBalance?.toLocaleString() || '0'}
+                                </span>
+                            </div>
+                            <span className="text-[#2a4a6a]">|</span>
+                            <div className="flex items-center gap-1">
+                                <span className="text-[10px] font-sans font-medium text-[#4b6a8a] tracking-tight">SOL</span>
+                                <span className="text-xs font-sans font-bold text-[#00d4ff]">
+                                    {solBalance?.toFixed(4) || '0'}
+                                </span>
+                            </div>
+                        </>
+                    )}
                 </div>
             )}
             <WalletMultiButton className="!h-10 !px-6 !shadow-none">

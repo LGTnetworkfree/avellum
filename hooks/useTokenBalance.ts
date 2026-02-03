@@ -6,19 +6,33 @@ import { useEffect, useState, useCallback } from 'react';
 
 export const AVLM_MINT = new PublicKey('D6zGvr8zNKgqpcjNr4Hin8ELVuGEcySyRn5ugHcusQh9');
 export const MIN_AVLM_TO_VOTE = 10_000;
+export const MIN_SOL_TO_VOTE = 0.01;
 
 const DECIMALS = 9;
 
-export function useTokenBalance() {
+interface TokenBalanceState {
+    avlmBalance: number | null;
+    solBalance: number | null;
+    loading: boolean;
+    error: string | null;
+    canVote: boolean;
+    voteToken: 'AVLM' | 'SOL' | null;
+    displayBalance: number | null;
+    refetch: () => Promise<void>;
+}
+
+export function useTokenBalance(): TokenBalanceState {
     const { connection } = useConnection();
     const { publicKey, connected } = useWallet();
-    const [balance, setBalance] = useState<number | null>(null);
+    const [avlmBalance, setAvlmBalance] = useState<number | null>(null);
+    const [solBalance, setSolBalance] = useState<number | null>(null);
     const [fetching, setFetching] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     const fetchBalance = useCallback(async () => {
         if (!connected || !publicKey) {
-            setBalance(null);
+            setAvlmBalance(null);
+            setSolBalance(null);
             setError(null);
             return;
         }
@@ -27,23 +41,30 @@ export function useTokenBalance() {
         setError(null);
 
         try {
-            console.log('[useTokenBalance] Fetching for', publicKey.toBase58().slice(0, 8), '… mint:', AVLM_MINT.toBase58().slice(0, 8));
+            // Fetch AVLM balance
+            console.log('[useTokenBalance] Fetching AVLM for', publicKey.toBase58().slice(0, 8));
             const res = await connection.getParsedTokenAccountsByOwner(publicKey, { mint: AVLM_MINT });
-            console.log('[useTokenBalance] Token accounts found:', res.value.length);
 
             if (res.value.length === 0) {
-                console.log('[useTokenBalance] No token account → balance = 0');
-                setBalance(0);
+                console.log('[useTokenBalance] No AVLM token account → balance = 0');
+                setAvlmBalance(0);
             } else {
                 const info = res.value[0].account.data.parsed.info.tokenAmount;
                 const bal = Number(info.amount) / 10 ** DECIMALS;
-                console.log('[useTokenBalance] Raw:', info.amount, '→', bal, 'AVLM');
-                setBalance(bal);
+                console.log('[useTokenBalance] AVLM balance:', bal);
+                setAvlmBalance(bal);
             }
+
+            // Fetch SOL balance
+            console.log('[useTokenBalance] Fetching SOL balance');
+            const lamports = await connection.getBalance(publicKey);
+            const solBal = lamports / 1e9;
+            console.log('[useTokenBalance] SOL balance:', solBal);
+            setSolBalance(solBal);
+
         } catch (err) {
             console.error('[useTokenBalance] RPC error:', err);
-            setError('Failed to fetch AVLM balance');
-            // Keep balance as null (unknown) — don't set to 0
+            setError('Failed to fetch balance');
         } finally {
             setFetching(false);
         }
@@ -54,7 +75,24 @@ export function useTokenBalance() {
     }, [fetchBalance]);
 
     // loading = actively fetching OR wallet connected but balance not yet resolved
-    const loading = fetching || (connected && !!publicKey && balance === null && !error);
+    const loading = fetching || (connected && !!publicKey && avlmBalance === null && solBalance === null && !error);
 
-    return { balance, loading, error, refetch: fetchBalance };
+    // Determine if user can vote and with which token
+    // Priority: AVLM first, then SOL fallback
+    const hasEnoughAvlm = avlmBalance !== null && avlmBalance >= MIN_AVLM_TO_VOTE;
+    const hasEnoughSol = solBalance !== null && solBalance >= MIN_SOL_TO_VOTE;
+    const canVote = hasEnoughAvlm || hasEnoughSol;
+    const voteToken: 'AVLM' | 'SOL' | null = hasEnoughAvlm ? 'AVLM' : hasEnoughSol ? 'SOL' : null;
+    const displayBalance = hasEnoughAvlm ? avlmBalance : hasEnoughSol ? solBalance : (avlmBalance ?? solBalance);
+
+    return {
+        avlmBalance,
+        solBalance,
+        loading,
+        error,
+        canVote,
+        voteToken,
+        displayBalance,
+        refetch: fetchBalance
+    };
 }

@@ -7,7 +7,7 @@ import Link from 'next/link';
 import TrustBadge from '@/components/TrustBadge';
 import RatingSlider from '@/components/RatingSlider';
 import Footer from '@/components/Footer';
-import { useTokenBalance, MIN_AVLM_TO_VOTE } from '@/hooks/useTokenBalance';
+import { useTokenBalance, MIN_AVLM_TO_VOTE, MIN_SOL_TO_VOTE } from '@/hooks/useTokenBalance';
 import { useMemoVote } from '@/hooks/useMemoVote';
 import type { Agent } from '@/lib/supabase';
 
@@ -25,9 +25,17 @@ export default function AgentDetailPage({ params }: Props) {
     const { address } = use(params);
     const { connected, publicKey } = useWallet();
     const { setVisible } = useWalletModal();
-    const { balance, loading: balanceLoading, error: balanceError, refetch: refetchBalance } = useTokenBalance();
+    const {
+        avlmBalance,
+        solBalance,
+        loading: balanceLoading,
+        error: balanceError,
+        canVote,
+        voteToken,
+        displayBalance,
+        refetch: refetchBalance
+    } = useTokenBalance();
     const { submitVote, isSubmitting } = useMemoVote();
-    const canVote = balance !== null && balance >= MIN_AVLM_TO_VOTE;
     const [agent, setAgent] = useState<Agent | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [rating, setRating] = useState(50);
@@ -55,7 +63,7 @@ export default function AgentDetailPage({ params }: Props) {
     async function handleSubmitRating() {
         if (!connected || !publicKey) return;
         if (!canVote) {
-            setSubmitMessage(`You must hold at least ${MIN_AVLM_TO_VOTE.toLocaleString()} $AVLM to rate agents`);
+            setSubmitMessage(`You need at least ${MIN_AVLM_TO_VOTE.toLocaleString()} $AVLM or ${MIN_SOL_TO_VOTE} SOL to rate agents`);
             return;
         }
 
@@ -228,7 +236,7 @@ export default function AgentDetailPage({ params }: Props) {
                                 </div>
                             ) : !canVote ? (
                                 <p className="font-sans text-xs font-medium text-[#ff6b6b]">
-                                    You must hold at least {MIN_AVLM_TO_VOTE.toLocaleString()} $AVLM to rate agents
+                                    You need at least {MIN_AVLM_TO_VOTE.toLocaleString()} $AVLM or {MIN_SOL_TO_VOTE} SOL to rate agents
                                 </p>
                             ) : (
                                 <>
@@ -236,7 +244,7 @@ export default function AgentDetailPage({ params }: Props) {
 
                                     <div className="flex items-center justify-between gap-4 mt-6">
                                         <span className="font-sans font-medium text-[0.6rem] tracking-[0.15em] text-[#2a4a6a] uppercase">
-                                            Weight: {(balance ?? 0).toLocaleString()} $AVLM
+                                            Weight: {(displayBalance ?? 0).toLocaleString()} {voteToken === 'SOL' ? 'SOL' : '$AVLM'}
                                         </span>
                                         <button
                                             onClick={handleSubmitRating}
@@ -270,7 +278,7 @@ export default function AgentDetailPage({ params }: Props) {
                         <div className="card-hover p-8 max-w-2xl text-center">
                             <p className="text-[#4b6a8a] font-sans text-sm mb-4">Connect your wallet to rate this agent.</p>
                             <p className="font-sans font-medium text-[0.6rem] tracking-[0.15em] text-[#2a4a6a] uppercase mb-6">
-                                You must hold at least 10,000 $AVLM to submit ratings
+                                You need at least 10,000 $AVLM or 0.01 SOL to submit ratings
                             </p>
                             <button
                                 onClick={() => setVisible(true)}
