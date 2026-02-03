@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { createServerClient } from '@/lib/supabase';
 import { getAvellumBalance } from '@/lib/helius';
 import { verifyMemoTransaction } from '@/lib/verify-memo-tx';
 import { getExplorerUrl } from '@/lib/memo';
@@ -20,6 +20,7 @@ interface RatingRequest {
  * Submit a rating for an agent (requires on-chain memo verification)
  */
 export async function POST(request: Request) {
+    const supabase = createServerClient();
     try {
         const body: RatingRequest = await request.json();
         const { walletAddress, agentAddress, score, timestamp, txSignature } = body;
@@ -185,6 +186,7 @@ export async function POST(request: Request) {
  * Get rating for a specific wallet/agent pair
  */
 export async function GET(request: Request) {
+    const supabase = createServerClient();
     const { searchParams } = new URL(request.url);
     const walletAddress = searchParams.get('wallet');
     const agentAddress = searchParams.get('agent');

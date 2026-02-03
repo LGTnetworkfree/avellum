@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { createServerClient } from '@/lib/supabase';
 import { getAvellumBalance } from '@/lib/helius';
 
 /**
@@ -7,6 +7,7 @@ import { getAvellumBalance } from '@/lib/helius';
  * Get verifier stats and ratings
  */
 export async function GET(request: Request) {
+    const supabase = createServerClient();
     try {
         const { searchParams } = new URL(request.url);
         const walletAddress = searchParams.get('wallet');

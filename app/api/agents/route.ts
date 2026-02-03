@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { createServerClient } from '@/lib/supabase';
 
 // Mock agents data for when database is not set up
 const MOCK_AGENTS = [
@@ -106,6 +106,7 @@ const MOCK_AGENTS = [
  * List all indexed agents with optional filters
  */
 export async function GET(request: Request) {
+    const supabase = createServerClient();
     try {
         const { searchParams } = new URL(request.url);
 
@@ -113,8 +114,8 @@ export async function GET(request: Request) {
         const search = searchParams.get('search')?.trim() || null;
         const minScore = searchParams.get('minScore');
         const maxScore = searchParams.get('maxScore');
-        const limit = parseInt(searchParams.get('limit') || '24');
-        const offset = parseInt(searchParams.get('offset') || '0');
+        const limit = Math.min(Math.max(parseInt(searchParams.get('limit') || '24') || 24, 1), 100);
+        const offset = Math.max(parseInt(searchParams.get('offset') || '0') || 0, 0);
 
         // Try to fetch from Supabase
         let query = supabase.from('agents').select('*', { count: 'exact' });
