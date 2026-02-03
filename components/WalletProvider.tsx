@@ -22,10 +22,17 @@ export default function SolanaWalletProvider({ children }: Props) {
     // Use Helius RPC if available, otherwise fallback to public RPC
     const endpoint = useMemo(() => {
         const heliusKey = process.env.NEXT_PUBLIC_HELIUS_API_KEY;
+        let url: string;
         if (heliusKey) {
-            return `https://${networkEnv}.helius-rpc.com/?api-key=${heliusKey}`;
+            // Helius uses 'mainnet' and 'devnet', not 'mainnet-beta'
+            const heliusNetwork = networkEnv === 'mainnet-beta' ? 'mainnet' : networkEnv;
+            url = `https://${heliusNetwork}.helius-rpc.com/?api-key=${heliusKey}`;
+            console.log('[WalletProvider] Using Helius RPC for', heliusNetwork);
+        } else {
+            url = clusterApiUrl(network);
+            console.log('[WalletProvider] Using public RPC:', url);
         }
-        return clusterApiUrl(network);
+        return url;
     }, [network, networkEnv]);
 
     // Supported wallets
