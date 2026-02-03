@@ -33,7 +33,7 @@ export function parseMemoString(memo: string): { agentAddress: string; score: nu
 /**
  * Build a Solana Explorer URL for a transaction signature.
  */
-export function getExplorerUrl(txSignature: string, network: string = 'devnet'): string {
+export function getExplorerUrl(txSignature: string, network: string = 'mainnet-beta'): string {
     const cluster = network === 'mainnet-beta' ? '' : `?cluster=${network}`;
     return `https://explorer.solana.com/tx/${txSignature}${cluster}`;
 }

@@ -41,7 +41,7 @@ export function useMemoVote() {
             const txSignature = await sendTransaction(transaction, connection);
             await connection.confirmTransaction(txSignature, 'confirmed');
 
-            const network = process.env.NEXT_PUBLIC_SOLANA_NETWORK || 'devnet';
+            const network = process.env.NEXT_PUBLIC_SOLANA_NETWORK || 'mainnet-beta';
             const explorerUrl = getExplorerUrl(txSignature, network);
 
             // POST to the API for server-side verification and persistence
