@@ -172,13 +172,16 @@ export async function GET(request: Request) {
             });
         }
 
-        return NextResponse.json({
+        // Add caching headers - stale-while-revalidate for better performance
+        const response = NextResponse.json({
             agents: data || [],
             total: count ?? 0,
             limit,
             offset,
             source: 'database'
         });
+        response.headers.set('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
+        return response;
     } catch (error) {
         console.error('API error:', error);
 

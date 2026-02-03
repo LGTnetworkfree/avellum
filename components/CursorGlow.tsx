@@ -163,7 +163,15 @@ export default function CursorGlow() {
       follower!.style.opacity = "1";
     }
 
+    let isPageVisible = true;
+
     function tick() {
+      // Skip expensive operations when tab is hidden
+      if (!isPageVisible) {
+        rafId.current = requestAnimationFrame(tick);
+        return;
+      }
+
       const mx = mouse.current.x;
       const my = mouse.current.y;
       const now = performance.now();
@@ -211,6 +219,12 @@ export default function CursorGlow() {
       rafId.current = requestAnimationFrame(tick);
     }
 
+    // Pause animation when tab is hidden
+    const handleVisibility = () => {
+      isPageVisible = document.visibilityState === "visible";
+    };
+    document.addEventListener("visibilitychange", handleVisibility);
+
     document.addEventListener("mousemove", onMouseMove);
     document.body.addEventListener("mouseover", onMouseOver);
     document.body.addEventListener("mouseout", onMouseOut);
@@ -221,6 +235,7 @@ export default function CursorGlow() {
 
     return () => {
       cancelAnimationFrame(rafId.current);
+      document.removeEventListener("visibilitychange", handleVisibility);
       document.removeEventListener("mousemove", onMouseMove);
       document.body.removeEventListener("mouseover", onMouseOver);
       document.body.removeEventListener("mouseout", onMouseOut);
