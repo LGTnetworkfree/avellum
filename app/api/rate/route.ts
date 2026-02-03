@@ -57,22 +57,41 @@ export async function POST(request: Request) {
         }
 
         // Check token balance - AVLM first, then SOL fallback
-        const avlmBalance = await getAvellumBalance(walletAddress);
+        // Note: AVLM fetch may fail on mainnet if token doesn't exist there, that's OK
+        let avlmBalance = 0;
+        try {
+            avlmBalance = await getAvellumBalance(walletAddress);
+            console.log('[rate API] AVLM balance fetched:', avlmBalance);
+        } catch (avlmError) {
+            console.log('[rate API] AVLM balance fetch failed (expected on mainnet):', avlmError);
+            // Continue - we'll fall back to SOL
+        }
+
         const MIN_AVLM = 10000;
         const MIN_SOL = 0.1;
 
         let tokenBalance: number;
+        let tokenWeight: number; // Stored in DB - always an integer
         let tokenType: 'AVLM' | 'SOL';
 
         if (avlmBalance >= MIN_AVLM) {
             tokenBalance = avlmBalance;
+            tokenWeight = Math.floor(avlmBalance); // Store as integer
             tokenType = 'AVLM';
+            console.log('[rate API] Using AVLM for voting. Balance:', avlmBalance, 'Weight:', tokenWeight);
         } else {
             // Fallback to SOL
             const solBalance = await getSolBalance(walletAddress);
+            console.log('[rate API] SOL balance fetched:', solBalance);
             if (solBalance >= MIN_SOL) {
                 tokenBalance = solBalance;
+                // Convert SOL to lamports for storage (integer)
+                // This makes SOL weight comparable: 0.15 SOL = 150,000,000 lamports
+                // But that's too big. Let's use SOL * 10000 for reasonable weighting
+                // 0.15 SOL = 1500 weight (comparable to someone with 1500 AVLM)
+                tokenWeight = Math.floor(solBalance * 10000);
                 tokenType = 'SOL';
+                console.log('[rate API] Using SOL for voting. Balance:', solBalance, 'Weight:', tokenWeight);
             } else {
                 return NextResponse.json(
                     { error: `You need at least ${MIN_AVLM.toLocaleString()} $AVLM or ${MIN_SOL} SOL to rate agents` },
@@ -129,18 +148,24 @@ export async function POST(request: Request) {
 
             if (!verifier) {
                 console.log('[rate API] Step 2b: Creating new verifier...');
+                const verifierData = {
+                    wallet_address: walletAddress,
+                    token_balance: tokenWeight, // Use integer weight
+                    last_balance_check: new Date().toISOString()
+                };
+                console.log('[rate API] Step 2b: Inserting verifier data:', JSON.stringify(verifierData));
+
                 const { data: newVerifier, error: createError } = await supabase
                     .from('verifiers')
-                    .insert({
-                        wallet_address: walletAddress,
-                        token_balance: tokenBalance,
-                        last_balance_check: new Date().toISOString()
-                    })
+                    .insert(verifierData)
                     .select()
                     .single();
 
                 console.log('[rate API] Step 2b complete. newVerifier:', newVerifier?.id || 'null', 'error:', createError);
-                if (createError) throw createError;
+                if (createError) {
+                    console.error('[rate API] Step 2b FAILED with code:', createError.code, 'message:', createError.message);
+                    throw createError;
+                }
                 verifier = newVerifier;
             } else {
                 console.log('[rate API] Step 2c: Updating existing verifier balance...');
@@ -148,11 +173,14 @@ export async function POST(request: Request) {
                 const { error: updateError } = await supabase
                     .from('verifiers')
                     .update({
-                        token_balance: tokenBalance,
+                        token_balance: tokenWeight, // Use integer weight
                         last_balance_check: new Date().toISOString()
                     })
                     .eq('id', verifier.id);
                 console.log('[rate API] Step 2c complete. updateError:', updateError);
+                if (updateError) {
+                    console.error('[rate API] Step 2c FAILED with code:', updateError.code, 'message:', updateError.message);
+                }
             }
 
             console.log('[rate API] Step 3: Looking up agent by address:', agentAddress);
@@ -178,17 +206,18 @@ export async function POST(request: Request) {
 
             console.log('[rate API] Step 4: Found agent with ID:', agent.id, '- Upserting rating...');
 
-            // Upsert rating
+            // Upsert rating - ensure all values are correct types
             const ratingData = {
                 verifier_id: verifier.id,
                 agent_id: agent.id,
-                score,
-                token_weight: tokenBalance,
+                score: Math.floor(score), // Ensure integer
+                token_weight: tokenWeight, // Already an integer
                 tx_signature: txSignature,
                 updated_at: new Date().toISOString()
             };
 
             console.log('[rate API] Step 4: Upserting rating data:', JSON.stringify(ratingData));
+            console.log('[rate API] Step 4: Data types - verifier_id:', typeof verifier.id, 'agent_id:', typeof agent.id, 'score:', typeof ratingData.score, 'token_weight:', typeof ratingData.token_weight);
 
             const { data: upsertedRating, error: ratingError } = await supabase
                 .from('ratings')
@@ -199,7 +228,7 @@ export async function POST(request: Request) {
             console.log('[rate API] Step 4 complete. upsertedRating:', upsertedRating?.id || 'null', 'error:', ratingError);
 
             if (ratingError) {
-                console.error('[rate API] Rating upsert error:', ratingError);
+                console.error('[rate API] Step 4 FAILED with code:', ratingError.code, 'message:', ratingError.message, 'details:', ratingError.details);
                 throw ratingError;
             }
 
@@ -265,7 +294,8 @@ export async function POST(request: Request) {
                 success: true,
                 txSignature,
                 explorerUrl,
-                tokenWeight: tokenBalance,
+                tokenWeight: tokenWeight,
+                displayBalance: tokenBalance, // Original balance for display
                 tokenType,
                 source: 'database'
             });
@@ -279,7 +309,7 @@ export async function POST(request: Request) {
             const ratingKey = `${walletAddress}:${agentAddress}`;
             mockRatings.set(ratingKey, {
                 score,
-                tokenWeight: tokenBalance,
+                tokenWeight: tokenWeight,
                 txSignature,
                 updatedAt: new Date().toISOString()
             });
@@ -288,7 +318,8 @@ export async function POST(request: Request) {
                 success: true,
                 txSignature,
                 explorerUrl,
-                tokenWeight: tokenBalance,
+                tokenWeight: tokenWeight,
+                displayBalance: tokenBalance, // Original balance for display
                 tokenType,
                 source: 'mock',
                 debugError: dbError instanceof Error ? dbError.message : String(dbError)
