@@ -224,11 +224,11 @@ export default function AgentDetailPage({ params }: Props) {
                     {connected ? (
                         <div className="card-hover p-8 max-w-2xl">
                             {balanceLoading ? (
-                                <p className="font-sans text-xs font-medium text-[#4b6a8a]">Loading $AVLM balance...</p>
+                                <p className="font-sans text-xs font-medium text-[#4b6a8a]">Loading balance...</p>
                             ) : balanceError ? (
                                 <div className="flex items-center gap-3">
                                     <p className="font-sans text-xs font-medium text-[#ff6b6b]">
-                                        Could not fetch $AVLM balance.
+                                        Could not fetch balance.
                                     </p>
                                     <button onClick={refetchBalance} className="font-sans text-xs font-medium text-[#00d4ff] hover:text-[#00ffff] underline transition-colors">
                                         Retry

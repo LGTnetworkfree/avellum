@@ -156,11 +156,11 @@ export default function AgentCard({ agent, showRating = true }: Props) {
             {showRatingPanel && connected && (
                 <div className="mt-4 pt-4 border-t border-[#1e3a5a]/50 space-y-4">
                     {balanceLoading ? (
-                        <p className="font-sans text-xs font-medium text-[#4b6a8a]">Loading $AVLM balance...</p>
+                        <p className="font-sans text-xs font-medium text-[#4b6a8a]">Loading balance...</p>
                     ) : balanceError ? (
                         <div className="flex items-center gap-3">
                             <p className="font-sans text-xs font-medium text-[#ff6b6b]">
-                                Could not fetch $AVLM balance.
+                                Could not fetch balance.
                             </p>
                             <button onClick={refetchBalance} className="font-sans text-xs font-medium text-[#00d4ff] hover:text-[#00ffff] underline transition-colors">
                                 Retry
