@@ -87,11 +87,16 @@ export async function POST(request: Request) {
         // Try database operation first
         try {
             // Check tx_signature not already used (replay protection)
-            const { data: existingTx } = await supabase
+            // Use .maybeSingle() instead of .single() to avoid error when no match found
+            const { data: existingTx, error: txCheckError } = await supabase
                 .from('ratings')
                 .select('id')
                 .eq('tx_signature', txSignature)
-                .single();
+                .maybeSingle();
+
+            if (txCheckError) {
+                console.error('[rate API] Error checking tx_signature:', txCheckError);
+            }
 
             if (existingTx) {
                 return NextResponse.json(
@@ -100,12 +105,18 @@ export async function POST(request: Request) {
                 );
             }
 
+            console.log('[rate API] Transaction signature is new, proceeding...');
+
             // Get or create verifier
-            let { data: verifier } = await supabase
+            let { data: verifier, error: verifierError } = await supabase
                 .from('verifiers')
                 .select('*')
                 .eq('wallet_address', walletAddress)
-                .single();
+                .maybeSingle();
+
+            if (verifierError) {
+                console.error('[rate API] Error fetching verifier:', verifierError);
+            }
 
             if (!verifier) {
                 const { data: newVerifier, error: createError } = await supabase
@@ -136,28 +147,44 @@ export async function POST(request: Request) {
                 .from('agents')
                 .select('id')
                 .eq('address', agentAddress)
-                .single();
+                .maybeSingle();
 
-            if (agentError || !agent) throw new Error('Agent not in database');
+            if (agentError) {
+                console.error('[rate API] Error fetching agent:', agentError);
+                throw new Error(`Agent fetch error: ${agentError.message}`);
+            }
+
+            if (!agent) {
+                console.error('[rate API] Agent not found for address:', agentAddress);
+                throw new Error('Agent not in database');
+            }
+
+            console.log('[rate API] Found agent with ID:', agent.id);
 
             // Upsert rating
-            const { error: ratingError } = await supabase
-                .from('ratings')
-                .upsert(
-                    {
-                        verifier_id: verifier.id,
-                        agent_id: agent.id,
-                        score,
-                        token_weight: tokenBalance,
-                        tx_signature: txSignature,
-                        updated_at: new Date().toISOString()
-                    },
-                    {
-                        onConflict: 'verifier_id,agent_id'
-                    }
-                );
+            const ratingData = {
+                verifier_id: verifier.id,
+                agent_id: agent.id,
+                score,
+                token_weight: tokenBalance,
+                tx_signature: txSignature,
+                updated_at: new Date().toISOString()
+            };
 
-            if (ratingError) throw ratingError;
+            console.log('[rate API] Upserting rating:', ratingData);
+
+            const { data: upsertedRating, error: ratingError } = await supabase
+                .from('ratings')
+                .upsert(ratingData, { onConflict: 'verifier_id,agent_id' })
+                .select()
+                .single();
+
+            if (ratingError) {
+                console.error('[rate API] Rating upsert error:', ratingError);
+                throw ratingError;
+            }
+
+            console.log('[rate API] Rating upserted successfully:', upsertedRating);
 
             // Update verifier's rating count
             await supabase
