@@ -1,7 +1,7 @@
 'use client';
 
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
-import { PublicKey } from '@solana/web3.js';
+import { Connection, PublicKey } from '@solana/web3.js';
 import { useEffect, useState, useCallback } from 'react';
 
 export const AVLM_MINT = new PublicKey('D6zGvr8zNKgqpcjNr4Hin8ELVuGEcySyRn5ugHcusQh9');
@@ -9,6 +9,12 @@ export const MIN_AVLM_TO_VOTE = 10_000;
 export const MIN_SOL_TO_VOTE = 0.1;
 
 const DECIMALS = 9;
+
+// Fallback public RPC endpoints
+const FALLBACK_RPCS = [
+    'https://api.mainnet-beta.solana.com',
+    'https://solana-mainnet.g.alchemy.com/v2/demo',
+];
 
 interface TokenBalanceState {
     avlmBalance: number | null;
@@ -40,17 +46,46 @@ export function useTokenBalance(): TokenBalanceState {
         setFetching(true);
         setError(null);
 
+        // Log the RPC endpoint being used
+        console.log('[useTokenBalance] Primary connection:', connection.rpcEndpoint);
+        console.log('[useTokenBalance] Wallet:', publicKey.toBase58());
+
+        // Helper to try fetching with fallback RPCs
+        async function fetchWithFallback<T>(
+            fetchFn: (conn: Connection) => Promise<T>,
+            description: string
+        ): Promise<T> {
+            // Try primary connection first
+            try {
+                console.log(`[useTokenBalance] Trying ${description} with primary RPC`);
+                return await fetchFn(connection);
+            } catch (primaryErr) {
+                console.warn(`[useTokenBalance] Primary RPC failed for ${description}:`, primaryErr);
+            }
+
+            // Try fallback RPCs
+            for (const rpcUrl of FALLBACK_RPCS) {
+                try {
+                    console.log(`[useTokenBalance] Trying ${description} with fallback:`, rpcUrl);
+                    const fallbackConn = new Connection(rpcUrl, 'confirmed');
+                    return await fetchFn(fallbackConn);
+                } catch (fallbackErr) {
+                    console.warn(`[useTokenBalance] Fallback ${rpcUrl} failed:`, fallbackErr);
+                }
+            }
+
+            throw new Error(`All RPCs failed for ${description}`);
+        }
+
         let avlmFailed = false;
         let solFailed = false;
 
-        // Log the RPC endpoint being used
-        console.log('[useTokenBalance] Connection endpoint:', connection.rpcEndpoint);
-        console.log('[useTokenBalance] Wallet:', publicKey.toBase58());
-
-        // Fetch AVLM balance (separate try/catch)
+        // Fetch AVLM balance
         try {
-            console.log('[useTokenBalance] Fetching AVLM for', publicKey.toBase58().slice(0, 8), 'mint:', AVLM_MINT.toBase58().slice(0, 8));
-            const res = await connection.getParsedTokenAccountsByOwner(publicKey, { mint: AVLM_MINT });
+            const res = await fetchWithFallback(
+                async (conn) => conn.getParsedTokenAccountsByOwner(publicKey, { mint: AVLM_MINT }),
+                'AVLM balance'
+            );
             console.log('[useTokenBalance] AVLM token accounts found:', res.value.length);
 
             if (res.value.length === 0) {
@@ -63,33 +98,31 @@ export function useTokenBalance(): TokenBalanceState {
                 setAvlmBalance(bal);
             }
         } catch (err: unknown) {
-            const errMsg = err instanceof Error ? err.message : String(err);
-            console.error('[useTokenBalance] AVLM fetch error:', errMsg);
-            console.error('[useTokenBalance] AVLM full error:', err);
-            setAvlmBalance(0); // Default to 0 on error
+            console.error('[useTokenBalance] AVLM fetch failed on all RPCs:', err);
+            setAvlmBalance(0);
             avlmFailed = true;
         }
 
-        // Fetch SOL balance (separate try/catch)
+        // Fetch SOL balance
         try {
-            console.log('[useTokenBalance] Fetching SOL balance for', publicKey.toBase58().slice(0, 8));
-            const lamports = await connection.getBalance(publicKey);
+            const lamports = await fetchWithFallback(
+                async (conn) => conn.getBalance(publicKey),
+                'SOL balance'
+            );
             console.log('[useTokenBalance] Raw lamports:', lamports);
             const solBal = lamports / 1e9;
             console.log('[useTokenBalance] SOL balance:', solBal, 'SOL');
             setSolBalance(solBal);
         } catch (err: unknown) {
-            const errMsg = err instanceof Error ? err.message : String(err);
-            console.error('[useTokenBalance] SOL fetch error:', errMsg);
-            console.error('[useTokenBalance] SOL full error:', err);
+            console.error('[useTokenBalance] SOL fetch failed on all RPCs:', err);
             setSolBalance(null);
             solFailed = true;
         }
 
-        // Only set error if BOTH fetches failed
+        // Only set error if BOTH fetches failed on ALL RPCs
         if (avlmFailed && solFailed) {
-            console.error('[useTokenBalance] Both AVLM and SOL fetches failed!');
-            setError('Failed to fetch balances. Check console for details.');
+            console.error('[useTokenBalance] Both AVLM and SOL fetches failed on all RPCs!');
+            setError('Failed to fetch balances. Please try again.');
         } else {
             setError(null);
         }
