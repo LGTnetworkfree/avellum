@@ -11,11 +11,11 @@ export const MIN_SOL_TO_VOTE = 0.1;
 const DECIMALS = 9;
 
 // Fallback public RPC endpoints (tried in order)
+// These are free, reliable mainnet RPCs
 const FALLBACK_RPCS = [
     'https://api.mainnet-beta.solana.com',
-    'https://solana-api.projectserum.com',
     'https://rpc.ankr.com/solana',
-    'https://solana.public-rpc.com',
+    'https://solana-mainnet.rpc.extrnode.com',
 ];
 
 interface TokenBalanceState {
@@ -49,8 +49,17 @@ export function useTokenBalance(): TokenBalanceState {
         setError(null);
 
         // Log the RPC endpoint being used
-        console.log('[useTokenBalance] Primary connection:', connection.rpcEndpoint);
-        console.log('[useTokenBalance] Wallet:', publicKey.toBase58());
+        console.log('[useTokenBalance] ========== BALANCE FETCH START ==========');
+        console.log('[useTokenBalance] Primary RPC:', connection.rpcEndpoint);
+        console.log('[useTokenBalance] Wallet address:', publicKey.toBase58());
+
+        // Quick connectivity test - get slot number
+        try {
+            const slot = await connection.getSlot();
+            console.log('[useTokenBalance] Primary RPC is alive, current slot:', slot);
+        } catch (e) {
+            console.warn('[useTokenBalance] Primary RPC connectivity test failed:', e);
+        }
 
         // Helper to add timeout to a promise
         function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
@@ -137,12 +146,14 @@ export function useTokenBalance(): TokenBalanceState {
 
         // Only set error if BOTH fetches failed on ALL RPCs
         if (avlmFailed && solFailed) {
-            console.error('[useTokenBalance] Both AVLM and SOL fetches failed on all RPCs!');
+            console.error('[useTokenBalance] ❌ Both AVLM and SOL fetches failed on all RPCs!');
             setError('Failed to fetch balances. Please try again.');
         } else {
+            console.log('[useTokenBalance] ✅ At least one balance fetched successfully');
             setError(null);
         }
 
+        console.log('[useTokenBalance] ========== BALANCE FETCH END ==========');
         setFetching(false);
     }, [connection, publicKey, connected]);
 

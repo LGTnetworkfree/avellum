@@ -11,12 +11,25 @@ interface Props {
 
 export default function ConnectWallet({ showBalance = true }: Props) {
     const { publicKey, connected } = useWallet();
-    const { avlmBalance, solBalance, loading } = useTokenBalance();
+    const { avlmBalance, solBalance, loading, error } = useTokenBalance();
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
         setMounted(true);
     }, []);
+
+    // Debug logging
+    useEffect(() => {
+        if (connected) {
+            console.log('[ConnectWallet] Balance state:', {
+                avlmBalance,
+                solBalance,
+                loading,
+                error,
+                wallet: publicKey?.toBase58().slice(0, 8)
+            });
+        }
+    }, [connected, avlmBalance, solBalance, loading, error, publicKey]);
 
     if (!mounted) {
         return (
