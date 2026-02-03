@@ -40,6 +40,13 @@ export async function POST(request: Request) {
             );
         }
 
+        console.log('[rate API] Rating submission:', {
+            walletAddress: walletAddress.slice(0, 8) + '...',
+            agentAddress: agentAddress.slice(0, 8) + '...',
+            score,
+            timestamp
+        });
+
         // Verify the on-chain memo transaction
         const verification = await verifyMemoTransaction(txSignature, walletAddress, agentAddress, score, timestamp);
         if (!verification.valid) {
@@ -162,22 +169,36 @@ export async function POST(request: Request) {
 
             // Update agent's total_ratings count and recalculate trust_score
             // First get the current count and all ratings for this agent
-            const { data: agentRatings } = await supabase
+            const { data: agentRatings, error: ratingsQueryError } = await supabase
                 .from('ratings')
                 .select('score, token_weight')
                 .eq('agent_id', agent.id);
+
+            console.log('[rate API] Agent ID:', agent.id);
+            console.log('[rate API] Ratings query error:', ratingsQueryError);
+            console.log('[rate API] All ratings for agent:', agentRatings);
 
             if (agentRatings && agentRatings.length > 0) {
                 // Calculate weighted trust score
                 let totalWeight = 0;
                 let weightedSum = 0;
                 for (const r of agentRatings) {
-                    totalWeight += r.token_weight || 1;
-                    weightedSum += (r.score || 0) * (r.token_weight || 1);
+                    const weight = r.token_weight || 1;
+                    const ratingScore = r.score || 0;
+                    totalWeight += weight;
+                    weightedSum += ratingScore * weight;
+                    console.log(`[rate API] Rating: score=${ratingScore}, weight=${weight}`);
                 }
                 const newTrustScore = totalWeight > 0 ? weightedSum / totalWeight : 0;
 
-                await supabase
+                console.log('[rate API] Calculation:', {
+                    totalWeight,
+                    weightedSum,
+                    newTrustScore,
+                    totalRatings: agentRatings.length
+                });
+
+                const { error: updateError } = await supabase
                     .from('agents')
                     .update({
                         total_ratings: agentRatings.length,
@@ -185,6 +206,10 @@ export async function POST(request: Request) {
                         updated_at: new Date().toISOString()
                     })
                     .eq('id', agent.id);
+
+                console.log('[rate API] Agent update error:', updateError);
+            } else {
+                console.log('[rate API] No ratings found for agent!');
             }
 
             return NextResponse.json({
@@ -197,7 +222,7 @@ export async function POST(request: Request) {
             });
         } catch (dbError) {
             // Database not available, use mock storage
-            console.log('Using mock rating storage');
+            console.error('[rate API] Database error, falling back to mock storage:', dbError);
 
             const ratingKey = `${walletAddress}:${agentAddress}`;
             mockRatings.set(ratingKey, {
