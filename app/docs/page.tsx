@@ -200,7 +200,8 @@ export default function DocsPage() {
                             <p className="text-[#a0a0a0] mb-4 font-sans text-sm leading-relaxed">
                                 Avellum operates as a multi-protocol indexer. It listens to events on major agent standards (x402, MCP, A2A),
                                 normalizes the identity data, and passes it to a decentralized network of Verifiers.
-                                Verifiers stake $AVLM tokens to rate agents based on performance, uptime, and security audits.
+                                Verifiers hold $AVLM or SOL to rate agents based on performance, uptime, and security audits.
+                                Each rating is recorded via a Solana memo transaction for verifiable on-chain attestation.
                             </p>
                         </section>
                     </FadeIn>
@@ -212,13 +213,13 @@ export default function DocsPage() {
                             <div className="bg-[#050d18] p-6 border-l-2 border-[#00ffff] mb-6">
                                 <code className="text-[#00ffff] block mb-2 text-lg font-sans font-medium">trust_score = &Sigma;(rating &times; token_weight) / &Sigma;(token_weight)</code>
                                 <p className="text-sm text-[#4b6a8a] font-sans font-medium">
-                                    // Weighted average based on verifier stake
+                                    // Weighted average based on verifier token balance
                                 </p>
                             </div>
                             <p className="text-[#a0a0a0] leading-relaxed mb-4 font-sans text-sm">
-                                The trust score is not a simple average. It is stake-weighted. A verifier with 100,000 $AVLM tokens
+                                The trust score is not a simple average. It is balance-weighted. A verifier holding 100,000 $AVLM tokens
                                 has 10x the voting power of a verifier with 10,000 tokens. This Sybil-resistance mechanism ensures
-                                that those with the most to lose have the most say in the network&apos;s reputation layer.
+                                that those with the most skin in the game have the most say in the network&apos;s reputation layer.
                             </p>
                         </section>
                     </FadeIn>
@@ -226,7 +227,10 @@ export default function DocsPage() {
                     {/* 5. Verifier Economics */}
                     <FadeIn>
                         <section id="verifier-economics" className="mb-16 scroll-mt-[100px]">
-                            <h2 className="font-sans text-2xl md:text-3xl font-bold text-white leading-snug mb-6">5. Verifier Economics</h2>
+                            <h2 className="font-sans text-2xl md:text-3xl font-bold text-white leading-snug mb-6">
+                                5. Verifier Economics
+                                <span className="ml-3 text-[0.5rem] uppercase tracking-wider text-[#00ffff]/60 border border-[#00ffff]/30 px-1.5 py-0.5 rounded align-middle">Coming Soon</span>
+                            </h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 font-sans text-sm font-medium mb-6">
                                 <div className="card-hover p-5">
                                     <span className="label-terminal !text-[#4b6a8a] block mb-2">Revenue Model</span>
@@ -238,9 +242,9 @@ export default function DocsPage() {
                                 </div>
                             </div>
                             <p className="text-[#a0a0a0] font-sans text-sm leading-relaxed">
-                                The Avellum protocol takes 0% fees. All revenue generated from API keys (consumed by developers
-                                querying trust scores) is distributed directly to the Verifier pool. Active verifiers who
-                                consistently rate new agents earn the highest yield.
+                                The Avellum protocol will take 0% fees. All revenue generated from API queries
+                                will be distributed directly to the Verifier pool. Active verifiers who
+                                consistently rate new agents will earn the highest yield.
                             </p>
                         </section>
                     </FadeIn>
@@ -308,15 +312,20 @@ export default function DocsPage() {
                             </p>
                             <div className="space-y-3">
                                 {[
-                                    { label: 'Verification Weight', desc: 'More tokens = higher influence on trust scores.' },
-                                    { label: 'Stake-to-Earn', desc: 'Staked tokens earn a share of API protocol revenue.' },
-                                    { label: 'Governance', desc: 'Voting on protocol upgrades and new registry integrations.' },
+                                    { label: 'Verification Weight', desc: 'More tokens = higher influence on trust scores.', comingSoon: false },
+                                    { label: 'Stake-to-Earn', desc: 'Token holders will earn a share of API protocol revenue.', comingSoon: true },
+                                    { label: 'Governance', desc: 'Voting on protocol upgrades and new registry integrations.', comingSoon: true },
                                 ].map((item, i) => (
                                     <StaggerItem key={item.label} index={i}>
                                         <div className="flex items-start gap-4 card-hover p-5">
                                             <span className="font-sans text-lg font-bold text-[#1e3a5a] shrink-0">{String(i + 1).padStart(2, '0')}</span>
                                             <div>
-                                                <h4 className="text-white font-sans text-base font-semibold mb-1">{item.label}</h4>
+                                                <h4 className="text-white font-sans text-base font-semibold mb-1">
+                                                    {item.label}
+                                                    {item.comingSoon && (
+                                                        <span className="ml-2 text-[0.5rem] uppercase tracking-wider text-[#00ffff]/60 border border-[#00ffff]/30 px-1.5 py-0.5 rounded align-middle">Coming Soon</span>
+                                                    )}
+                                                </h4>
                                                 <p className="text-[#4b6a8a] font-sans text-sm">{item.desc}</p>
                                             </div>
                                         </div>
@@ -332,9 +341,9 @@ export default function DocsPage() {
                             <h2 className="font-sans text-2xl md:text-3xl font-bold text-white leading-snug mb-6">9. FAQ</h2>
                             <div className="space-y-0 border border-[#1e3a5a] divide-y divide-[#1e3a5a]/50">
                                 {[
-                                    { q: 'How fast do trust scores update?', a: 'Scores are updated in near real-time (every ~5 minutes) as new verifier signatures are aggregated on-chain.' },
-                                    { q: 'Can bad actors game the system?', a: 'Slashing conditions exist. If a verifier approves a malicious agent that is later proven fraudulent, a portion of their staked $AVLM is slashed.' },
-                                    { q: 'Is there a developer API/SDK?', a: 'Yes, check the API Reference section above or visit our GitHub for the Node.js and Python SDKs.' },
+                                    { q: 'How fast do trust scores update?', a: 'Scores are updated in near real-time as new verifier ratings are submitted. Each rating is verified via a Solana memo transaction before being recorded.' },
+                                    { q: 'Can bad actors game the system?', a: 'The balance-weighted voting system makes Sybil attacks expensive. Verifiers who consistently rate malicious agents highly will have reduced credibility. Slashing conditions are planned for a future release.' },
+                                    { q: 'Is there a developer API/SDK?', a: 'Yes, check the API Reference section above. The public API is available at /api/score/[agent_address] and returns trust scores with no authentication required.' },
                                 ].map((item) => (
                                     <div key={item.q} className="p-5">
                                         <h3 className="text-white font-sans text-base font-semibold mb-2">{item.q}</h3>
