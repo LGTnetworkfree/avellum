@@ -2,9 +2,9 @@ import Link from 'next/link';
 
 const footerLinks = [
   { label: 'X (TWITTER)', href: 'https://x.com/Avellumxyz', external: true },
-  { label: 'GITHUB', href: 'https://github.com', external: true },
+  { label: 'GITHUB', href: 'https://github.com/LGTnetworkfree/avellum', external: true },
   { label: 'DOCS', href: '/docs', external: false },
-  { label: 'CONTACT', href: 'mailto:contact@avellum.io', external: false },
+  { label: 'CONTACT', href: 'mailto:contact@avellum.xyz', external: false },
 ];
 
 export default function Footer() {
