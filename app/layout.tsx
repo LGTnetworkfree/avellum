@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Outfit } from "next/font/google";
 import "./globals.css";
 import SolanaWalletProvider from "@/components/WalletProvider";
 import Navbar from "@/components/Navbar";
@@ -10,9 +10,10 @@ import ParticleBackground from "@/components/ParticleBackground";
 import PageTransition from "@/components/PageTransition";
 import LoadingScreen from "@/components/LoadingScreen";
 
-// Optimized font loading with next/font (replaces external @import)
-const inter = Inter({
+// Outfit - geometric wide sans-serif from Google Fonts
+const outfit = Outfit({
   subsets: ["latin"],
+  weight: ["300", "400", "500", "700"],
   display: "swap",
   variable: "--font-sans",
 });
@@ -41,7 +42,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`dark ${inter.variable}`}>
+    <html lang="en" className={`dark ${outfit.variable}`}>
       <body className="antialiased min-h-screen font-sans">
         <SolanaWalletProvider>
           <LoadingScreen />

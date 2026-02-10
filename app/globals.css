@@ -8,7 +8,7 @@
   --border-color: #1e3a5a;
   --accent: #00ffff;
 
-  /* Fonts — Inter loaded via next/font, fallback to system fonts */
+  /* Fonts — Outfit loaded via next/font/google, fallback to system fonts */
   --font-serif: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
   --font-heading: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
