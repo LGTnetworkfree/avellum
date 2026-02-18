@@ -7,12 +7,25 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Server-side Supabase client with service role (for API routes)
+// IMPORTANT: This client uses the service role key which bypasses RLS
 export function createServerClient() {
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-    if (serviceRoleKey) {
-        return createClient(supabaseUrl, serviceRoleKey);
+
+    if (!serviceRoleKey) {
+        throw new Error(
+            'SUPABASE_SERVICE_ROLE_KEY is not configured. ' +
+            'Server-side operations require the service role key.'
+        );
     }
-    return supabase;
+
+    return createClient(supabaseUrl, serviceRoleKey, {
+        auth: {
+            // Disable session persistence for server-side client
+            persistSession: false,
+            // Auto-refresh is not needed for service role
+            autoRefreshToken: false,
+        },
+    });
 }
 
 // Type definitions for database tables

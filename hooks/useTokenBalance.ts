@@ -11,7 +11,6 @@ export const MIN_SOL_TO_VOTE = 0.1;
 const DECIMALS = 9;
 
 // Fallback public RPC endpoints (tried in order)
-// These are free, reliable mainnet RPCs
 const FALLBACK_RPCS = [
     'https://api.mainnet-beta.solana.com',
     'https://rpc.ankr.com/solana',
@@ -48,19 +47,6 @@ export function useTokenBalance(): TokenBalanceState {
         setFetching(true);
         setError(null);
 
-        // Log the RPC endpoint being used
-        console.log('[useTokenBalance] ========== BALANCE FETCH START ==========');
-        console.log('[useTokenBalance] Primary RPC:', connection.rpcEndpoint);
-        console.log('[useTokenBalance] Wallet address:', publicKey.toBase58());
-
-        // Quick connectivity test - get slot number
-        try {
-            const slot = await connection.getSlot();
-            console.log('[useTokenBalance] Primary RPC is alive, current slot:', slot);
-        } catch (e) {
-            console.warn('[useTokenBalance] Primary RPC connectivity test failed:', e);
-        }
-
         // Helper to add timeout to a promise
         function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
             return Promise.race([
@@ -76,26 +62,22 @@ export function useTokenBalance(): TokenBalanceState {
             fetchFn: (conn: Connection) => Promise<T>,
             description: string
         ): Promise<T> {
-            const TIMEOUT_MS = 10000; // 10 second timeout per RPC
+            const TIMEOUT_MS = 10000;
 
             // Try primary connection first
             try {
-                console.log(`[useTokenBalance] Trying ${description} with primary RPC:`, connection.rpcEndpoint);
                 return await withTimeout(fetchFn(connection), TIMEOUT_MS, 'primary');
-            } catch (primaryErr) {
-                const errMsg = primaryErr instanceof Error ? primaryErr.message : String(primaryErr);
-                console.warn(`[useTokenBalance] Primary RPC failed for ${description}:`, errMsg);
+            } catch {
+                // Primary failed, try fallbacks
             }
 
             // Try fallback RPCs
             for (const rpcUrl of FALLBACK_RPCS) {
                 try {
-                    console.log(`[useTokenBalance] Trying ${description} with fallback:`, rpcUrl);
                     const fallbackConn = new Connection(rpcUrl, { commitment: 'confirmed' });
                     return await withTimeout(fetchFn(fallbackConn), TIMEOUT_MS, rpcUrl);
-                } catch (fallbackErr) {
-                    const errMsg = fallbackErr instanceof Error ? fallbackErr.message : String(fallbackErr);
-                    console.warn(`[useTokenBalance] Fallback ${rpcUrl} failed:`, errMsg);
+                } catch {
+                    // This fallback failed, try next
                 }
             }
 
@@ -111,19 +93,15 @@ export function useTokenBalance(): TokenBalanceState {
                 async (conn) => conn.getParsedTokenAccountsByOwner(publicKey, { mint: AVLM_MINT }),
                 'AVLM balance'
             );
-            console.log('[useTokenBalance] AVLM token accounts found:', res.value.length);
 
             if (res.value.length === 0) {
-                console.log('[useTokenBalance] No AVLM token account → balance = 0');
                 setAvlmBalance(0);
             } else {
                 const info = res.value[0].account.data.parsed.info.tokenAmount;
                 const bal = Number(info.amount) / 10 ** DECIMALS;
-                console.log('[useTokenBalance] AVLM balance:', bal);
                 setAvlmBalance(bal);
             }
-        } catch (err: unknown) {
-            console.error('[useTokenBalance] AVLM fetch failed on all RPCs:', err);
+        } catch {
             setAvlmBalance(0);
             avlmFailed = true;
         }
@@ -134,26 +112,20 @@ export function useTokenBalance(): TokenBalanceState {
                 async (conn) => conn.getBalance(publicKey),
                 'SOL balance'
             );
-            console.log('[useTokenBalance] Raw lamports:', lamports);
             const solBal = lamports / 1e9;
-            console.log('[useTokenBalance] SOL balance:', solBal, 'SOL');
             setSolBalance(solBal);
-        } catch (err: unknown) {
-            console.error('[useTokenBalance] SOL fetch failed on all RPCs:', err);
+        } catch {
             setSolBalance(null);
             solFailed = true;
         }
 
         // Only set error if BOTH fetches failed on ALL RPCs
         if (avlmFailed && solFailed) {
-            console.error('[useTokenBalance] ❌ Both AVLM and SOL fetches failed on all RPCs!');
             setError('Failed to fetch balances. Please try again.');
         } else {
-            console.log('[useTokenBalance] ✅ At least one balance fetched successfully');
             setError(null);
         }
 
-        console.log('[useTokenBalance] ========== BALANCE FETCH END ==========');
         setFetching(false);
     }, [connection, publicKey, connected]);
 

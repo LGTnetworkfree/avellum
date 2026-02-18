@@ -72,17 +72,7 @@ export default function AgentCard({ agent: initialAgent, showRating = true }: Pr
         const result = await submitVote(agent.address, rating);
 
         if (result.success) {
-            // Log the full result for debugging
-            console.log('[AgentCard] Rating result:', result);
-
-            // Show warning if saved to mock instead of database
-            if (result.source === 'mock') {
-                console.warn('[AgentCard] WARNING: Rating saved to MOCK storage, not database!');
-                console.warn('[AgentCard] Debug error:', result.debugError);
-                setSubmitMessage(`Rating submitted (MOCK - not saved to DB: ${result.debugError})`);
-            } else {
-                setSubmitMessage(`Rating submitted! Weight: ${(displayBalance ?? 0).toLocaleString()} ${voteToken === 'SOL' ? 'SOL' : '$AVLM'}`);
-            }
+            setSubmitMessage(`Rating submitted! Weight: ${(displayBalance ?? 0).toLocaleString()} ${voteToken === 'SOL' ? 'SOL' : '$AVLM'}`);
             setExplorerUrl(result.explorerUrl ?? null);
             setShowRatingPanel(false);
 
@@ -93,8 +83,8 @@ export default function AgentCard({ agent: initialAgent, showRating = true }: Pr
                     const updatedAgent = await response.json();
                     setAgent(updatedAgent);
                 }
-            } catch (e) {
-                console.error('Failed to refresh agent data:', e);
+            } catch {
+                // Silently fail - the rating was submitted successfully
             }
         } else {
             setSubmitMessage(result.error || 'Failed to submit rating');

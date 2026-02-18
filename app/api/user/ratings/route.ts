@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase';
+import { isValidSolanaAddress } from '@/lib/validation';
+import { checkEndpointRateLimit, addRateLimitHeaders, rateLimitExceededResponse } from '@/lib/rate-limit';
+import { logger } from '@/lib/logger';
 
 /**
  * GET /api/user/ratings
@@ -9,7 +12,12 @@ import { createServerClient } from '@/lib/supabase';
  * - wallet: wallet address (required)
  */
 export async function GET(request: Request) {
-    const supabase = createServerClient();
+    // Rate limiting check
+    const rateLimitResult = checkEndpointRateLimit(request, 'userRatings');
+    if (!rateLimitResult.allowed) {
+        return rateLimitExceededResponse(rateLimitResult);
+    }
+
     const { searchParams } = new URL(request.url);
     const walletAddress = searchParams.get('wallet');
 
@@ -20,7 +28,16 @@ export async function GET(request: Request) {
         );
     }
 
+    if (!isValidSolanaAddress(walletAddress)) {
+        return NextResponse.json(
+            { error: 'Invalid wallet address format' },
+            { status: 400 }
+        );
+    }
+
     try {
+        const supabase = createServerClient();
+
         // First get the verifier ID for this wallet
         const { data: verifier, error: verifierError } = await supabase
             .from('verifiers')
@@ -29,17 +46,22 @@ export async function GET(request: Request) {
             .maybeSingle();
 
         if (verifierError) {
-            console.error('[user/ratings] Verifier query error:', verifierError);
-            return NextResponse.json({ error: verifierError.message }, { status: 500 });
+            logger.error('Verifier query error:', verifierError.message);
+            return NextResponse.json(
+                { error: 'Failed to fetch verifier' },
+                { status: 500 }
+            );
         }
 
         if (!verifier) {
             // No verifier found = no ratings
-            return NextResponse.json({
+            const response = NextResponse.json({
                 ratings: [],
                 totalRatings: 0,
                 totalWeight: 0
             });
+            addRateLimitHeaders(response.headers, rateLimitResult);
+            return response;
         }
 
         // Get all ratings for this verifier with agent info
@@ -58,8 +80,11 @@ export async function GET(request: Request) {
             .order('updated_at', { ascending: false });
 
         if (ratingsError) {
-            console.error('[user/ratings] Ratings query error:', ratingsError);
-            return NextResponse.json({ error: ratingsError.message }, { status: 500 });
+            logger.error('Ratings query error:', ratingsError.message);
+            return NextResponse.json(
+                { error: 'Failed to fetch ratings' },
+                { status: 500 }
+            );
         }
 
         // Calculate totals
@@ -79,13 +104,20 @@ export async function GET(request: Request) {
             };
         }) || [];
 
-        return NextResponse.json({
+        const response = NextResponse.json({
             ratings: formattedRatings,
             totalRatings: formattedRatings.length,
             totalWeight
         });
+
+        addRateLimitHeaders(response.headers, rateLimitResult);
+        return response;
+
     } catch (error) {
-        console.error('[user/ratings] Error:', error);
-        return NextResponse.json({ error: 'Failed to fetch ratings' }, { status: 500 });
+        logger.error('User ratings error:', error);
+        return NextResponse.json(
+            { error: 'Failed to fetch ratings' },
+            { status: 500 }
+        );
     }
 }
